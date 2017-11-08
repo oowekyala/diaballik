@@ -42,9 +42,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="classes\GameBoard.cs" />
+    <Compile Include="classes\GameBoardMemento.cs" />
     <Compile Include="classes\Piece.cs" />
-    <Compile Include="classes\Player.cs" />
-    <Compile Include="classes\Tile.cs" />
+    <Compile Include="classes\IPlayer.cs" />
+    <Compile Include="classes\PlayerAction.cs" />
+    <Compile Include="classes\Position2D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

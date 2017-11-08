@@ -1,22 +1,39 @@
-﻿namespace CSDiaballik
+﻿using System;
+using System.Collections.Generic;
+
+namespace CSDiaballik
 {
     public class GameBoard
     {
-        private CSDiaballik.Piece[][] pieces;
+        private Piece[][] pieces;
+        
+        
         private int size;
 
-        public void getAvailableMoves(int x, int y)
+
+        public GameBoardMemento GetMemento()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        /// <param name="xs">x source</param>
-        /// <param name="ys">y source</param>
-        /// <param name="xd">x dest</param>
-        /// <param name="yd">y dest</param>
-        public void movePiece(int xs, int ys, int xd, int yd)
+
+        /// <summary>
+        /// Gets the positions to which this piece can legally be moved.
+        /// </summary>
+        /// <param name="p">The piece</param>
+        public List<Position2D> GetValidMoves(Piece p)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Moves a piece to a new location.
+        /// </summary>
+        /// <param name="p">Piece to move</param>
+        /// <param name="dst">New position</param>
+        public void MovePiece(Piece p, Position2D dst)
+        {
+            throw new NotImplementedException();
         }
     }
 }

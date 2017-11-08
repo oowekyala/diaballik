@@ -5,14 +5,15 @@ namespace CSDiaballik
 {
     public class Piece
     {
-        public Color color { get; }
-        public Player player { get; }
+        public Color Color { get; }
+        public IPlayer Player { get; }
+        public Position2D Position { get; set; }
 
 
-        public Piece(Player p)
+        public Piece(IPlayer p)
         {
-            player = p;
-            color = p.color;
+            Player = p;
+            Color = p.Color;
         }
     }
 }
