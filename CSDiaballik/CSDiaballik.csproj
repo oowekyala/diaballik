@@ -41,8 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="classes\Game.cs" />
     <Compile Include="classes\GameBoard.cs" />
     <Compile Include="classes\GameBoardMemento.cs" />
+    <Compile Include="classes\AiPlayer.cs" />
+    <Compile Include="classes\GameMemento.cs" />
     <Compile Include="classes\Piece.cs" />
     <Compile Include="classes\IPlayer.cs" />
     <Compile Include="classes\PlayerAction.cs" />
