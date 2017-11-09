@@ -16,6 +16,22 @@ namespace CSDiaballik
             Progressive
         }
     }
+
+
+    public class NoobAiPlayer : AiPlayer
+    {
+        
+    }
+
+    public class StartingAiPlayer : AiPlayer
+    {
+        
+    }
+
+    public class ProgressiveAiPlayer : AiPlayer
+    {
+        
+    }
     
     
     
