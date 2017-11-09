@@ -15,8 +15,8 @@ namespace CSDiaballik
             _isFirstPlayer = !_isFirstPlayer;
             Color = _isFirstPlayer ? Color.Blue : Color.Red;
         }
-
-        public PlayerBuilder SetIsAi()
+        
+        public PlayerBuilder SetIsAi(AiPlayer.AiLevel level)
         {
             _isAi = true;
         }

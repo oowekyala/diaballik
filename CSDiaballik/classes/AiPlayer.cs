@@ -8,6 +8,13 @@ namespace CSDiaballik
         public abstract string Name { get; }
         public abstract Piece BallBearer { get; set; }
         public abstract PlayerAction GetNextMove();
+
+        public enum AiLevel
+        {
+            Noob,
+            Starting,
+            Progressive
+        }
     }
     
     
