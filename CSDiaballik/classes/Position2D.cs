@@ -1,9 +1,9 @@
 ﻿namespace CSDiaballik
 {
     /// <summary>
-    /// Utility class to store a position.
+    /// Utility value to store a position.
     /// </summary>
-    public class Position2D
+    public struct Position2D
     {
         public int X { get; }
         public int Y { get; }

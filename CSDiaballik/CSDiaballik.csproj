@@ -45,7 +45,9 @@
     <Compile Include="classes\GameBoard.cs" />
     <Compile Include="classes\GameBoardMemento.cs" />
     <Compile Include="classes\AiPlayer.cs" />
+    <Compile Include="classes\GameBuilder.cs" />
     <Compile Include="classes\GameMemento.cs" />
+    <Compile Include="classes\InitStrategy.cs" />
     <Compile Include="classes\Piece.cs" />
     <Compile Include="classes\IPlayer.cs" />
     <Compile Include="classes\PlayerAction.cs" />

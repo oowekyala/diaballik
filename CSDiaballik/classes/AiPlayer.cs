@@ -9,4 +9,9 @@ namespace CSDiaballik
         public abstract Piece BallBearer { get; set; }
         public abstract PlayerAction GetNextMove();
     }
+    
+    
+    
+    
+    
 }
