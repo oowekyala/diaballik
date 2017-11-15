@@ -17,6 +17,8 @@
         {
             return new MementoNode(this, action);
         }
+        
+        
     }
 
 
@@ -48,12 +50,15 @@
         private PlayerBuilder _p1Spec;
         private PlayerBuilder _p2Spec;
         private bool _isFirstPlayerPlaying;
+        
 
         public RootMemento(Game game)
         {
             _isFirstPlayerPlaying = game.CurrentPlayer == game.Player1;
             _p1Spec = PlayerToSpec(game.Player1);
             _p2Spec = PlayerToSpec(game.Player2);
+            
+            
         }
 
         private static PlayerBuilder PlayerToSpec(IPlayer player)
@@ -80,6 +85,11 @@
             return spec;
         }
 
+        public Game ToGame()
+        {
+            
+        }
+        
         public override GameMemento GetParent()
         {
             return null;

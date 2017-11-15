@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CSDiaballik
 {
@@ -8,7 +10,8 @@ namespace CSDiaballik
     public class PlayerBuilder
     {
         private static bool _isFirstPlayer;
-        private bool _isAi;
+        private AiPlayer.AiLevel _aiLevel;
+        private List<Position2D> _piecesList;
 
         public PlayerBuilder()
         {
@@ -18,7 +21,14 @@ namespace CSDiaballik
 
         public PlayerBuilder SetIsAi(AiPlayer.AiLevel level)
         {
-            _isAi = true;
+            _aiLevel = level;
+            return this;
+        }
+
+        public PlayerBuilder Pieces(List<Position2D> pos)
+        {
+            _piecesList = pos;
+            return this;
         }
 
         public Color Color { set; get; }
@@ -31,6 +41,20 @@ namespace CSDiaballik
         /// <returns>A new player</returns>
         public IPlayer Build()
         {
+
+            switch (_aiLevel)
+            {
+                case AiPlayer.AiLevel.Noob:
+                    break;
+                case AiPlayer.AiLevel.Starting:
+                    break;
+                case AiPlayer.AiLevel.Progressive:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
+            
         }
     }
 
@@ -56,10 +80,9 @@ namespace CSDiaballik
 
         public Game Build()
         {
+            var board = InitStrategy.InitBoard(_playerBuilder1, _playerBuilder2);
             var player1 = _playerBuilder1.Build();
             var player2 = _playerBuilder2.Build();
-
-            var board = InitStrategy.InitBoard(player1, player2);
 
             return new Game(board, player1, player2);
         }
