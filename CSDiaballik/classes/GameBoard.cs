@@ -56,6 +56,20 @@ namespace CSDiaballik
                 .ToList();
         }
 
+        /// <summary>
+        /// Moves a piece to a new location. Does not check whether the move satisfies the rules of the game.
+        /// </summary>
+        /// <param name="p">Piece to move</param>
+        /// <param name="dst">New position</param>
+        /// <exception cref="ArgumentException">If the piece or destination position is invalid</exception>
+        public void MovePiece(Piece p, Position2D dst)
+        {
+            CheckPieceIsOnBoard(p);
+            CheckPositionIsValid(dst);
+            _pieces[p.Position.X, p.Position.Y] = null;
+            _pieces[dst.X, dst.Y] = p;
+        }
+
         private void CheckPieceIsOnBoard(Piece p)
         {
             CheckPositionIsValid(p.Position);
@@ -78,20 +92,6 @@ namespace CSDiaballik
             {
                 throw new ArgumentException("Illegal: position is out of the board " + p);
             }
-        }
-
-        /// <summary>
-        /// Moves a piece to a new location. Does not check whether the move satisfies the rules of the game.
-        /// </summary>
-        /// <param name="p">Piece to move</param>
-        /// <param name="dst">New position</param>
-        /// <exception cref="ArgumentException">If the piece or destination position is invalid</exception>
-        public void MovePiece(Piece p, Position2D dst)
-        {
-            CheckPieceIsOnBoard(p);
-            CheckPositionIsValid(dst);
-            _pieces[p.Position.X, p.Position.Y] = null;
-            _pieces[dst.X, dst.Y] = p;
         }
     }
 }

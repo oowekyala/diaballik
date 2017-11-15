@@ -15,13 +15,15 @@ namespace CSDiaballik
             _isFirstPlayer = !_isFirstPlayer;
             Color = _isFirstPlayer ? Color.Blue : Color.Red;
         }
-        
+
         public PlayerBuilder SetIsAi(AiPlayer.AiLevel level)
         {
             _isAi = true;
         }
 
         public Color Color { set; get; }
+
+        public string Name { set; get; }
 
         /// <summary>
         /// Builds a player with the specified configuration.
