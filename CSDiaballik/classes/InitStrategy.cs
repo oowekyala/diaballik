@@ -8,14 +8,14 @@
         /// <param name="p1">First player</param>
         /// <param name="p2">Second player</param>
         /// <returns>A new initialised gameboard. </returns>
-        GameBoard InitBoard(IPlayer p1, IPlayer p2);
+        GameBoard InitBoard(PlayerBuilder p1, PlayerBuilder p2);
     }
 
 
 
     public class StandardInitStrategy : IInitStrategy
     {
-        public GameBoard InitBoard(IPlayer p1, IPlayer p2)
+        public GameBoard InitBoard(PlayerBuilder p1, PlayerBuilder p2)
         {
             throw new System.NotImplementedException();
         }
@@ -24,7 +24,7 @@
 
     public class BallRandomStrategy : IInitStrategy
     {
-        public GameBoard InitBoard(IPlayer p1, IPlayer p2)
+        public GameBoard InitBoard(PlayerBuilder p1, PlayerBuilder p2)
         {
             throw new System.NotImplementedException();
         }
@@ -32,7 +32,7 @@
 
     public class EnemyAmongUsStrategy : IInitStrategy
     {
-        public GameBoard InitBoard(IPlayer p1, IPlayer p2)
+        public GameBoard InitBoard(PlayerBuilder p1, PlayerBuilder p2)
         {
             throw new System.NotImplementedException();
         }
