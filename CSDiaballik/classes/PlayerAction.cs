@@ -17,10 +17,12 @@
         /// </summary>
         public class MoveBall : PlayerAction
         {
-            public Piece Dst { get; }
+            public Position2D Src { get; }
+            public Position2D Dst { get; }
 
-            public MoveBall(Piece dst)
+            public MoveBall(Piece src, Position2D dst)
             {
+                Src = src.Position;
                 Dst = dst;
             }
         }
@@ -30,18 +32,21 @@
         /// </summary>
         public class MovePiece : PlayerAction
         {
-            public Piece Piece { get; }
+            public Position2D Piece { get; }
             public Position2D Dst { get; }
 
             public MovePiece(Piece p, Position2D dst)
             {
-                Piece = p;
+                Piece = p.Position;
                 Dst = dst;
             }
         }
 
-        public class Undo : PlayerAction{
-            
+        /// <summary>
+        /// Undo the last action of the player.
+        /// </summary>
+        public class Undo : PlayerAction
+        {
         }
     }
 }

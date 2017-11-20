@@ -5,8 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Diaballik_WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="525" Background="#FFAD8FD8">
     <Grid>
-        
+        <Button Content="New Game" HorizontalAlignment="Left" Margin="26,192,0,0" VerticalAlignment="Top" Width="153" Height="23"/>
+        <Button Content="Load Game" HorizontalAlignment="Left" Margin="184,192,0,0" VerticalAlignment="Top" Width="153" Height="23"/>
+        <Button Content="Replay Game" HorizontalAlignment="Left" Margin="342,192,0,0" VerticalAlignment="Top" Width="153" Height="23"/>
+        <Button Content="Quit" HorizontalAlignment="Left" Margin="184,220,0,0" VerticalAlignment="Top" Width="153" Height="23"/>
+        <Label Content="Diaballik" HorizontalAlignment="Left" Margin="117,33,0,0" VerticalAlignment="Top" FontSize="72" FontFamily="MV Boli" Width="278"/>
+
     </Grid>
 </Window>
