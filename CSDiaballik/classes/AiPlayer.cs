@@ -7,7 +7,7 @@ namespace CSDiaballik
     {
         public abstract AiLevel Level { get; }
 
-        protected AiPlayer(Color color, string name, List<Piece> pieces) : base(color, name, pieces)
+        protected AiPlayer(Color color, string name, List<Position2D> pieces) : base(color, name, pieces)
         {
         }
 
@@ -29,7 +29,7 @@ namespace CSDiaballik
             throw new System.NotImplementedException();
         }
 
-        public NoobAiPlayer(Color color, string name, List<Piece> pieces) : base(color, name, pieces)
+        public NoobAiPlayer(Color color, string name, List<Position2D> pieces) : base(color, name, pieces)
         {
         }
     }
@@ -44,7 +44,7 @@ namespace CSDiaballik
             throw new System.NotImplementedException();
         }
 
-        public StartingAiPlayer(Color color, string name, List<Piece> pieces) : base(color, name, pieces)
+        public StartingAiPlayer(Color color, string name, List<Position2D> pieces) : base(color, name, pieces)
         {
         }
     }
@@ -58,7 +58,7 @@ namespace CSDiaballik
             throw new System.NotImplementedException();
         }
 
-        public ProgressiveAiPlayer(Color color, string name, List<Piece> pieces) : base(color, name, pieces)
+        public ProgressiveAiPlayer(Color color, string name, List<Position2D> pieces) : base(color, name, pieces)
         {
         }
     }

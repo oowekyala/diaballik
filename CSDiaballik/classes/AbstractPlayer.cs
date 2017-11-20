@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace CSDiaballik
 {
@@ -15,11 +16,11 @@ namespace CSDiaballik
         public abstract PlayerAction GetNextMove();
 
 
-        protected AbstractPlayer(Color color, string name, List<Piece> pieces)
+        protected AbstractPlayer(Color color, string name, List<Position2D> pieces)
         {
             _color = color;
             _name = name;
-            Pieces = pieces;
+            Pieces = pieces.Select(p => new Piece(this)).ToList();
         }
     }
 }

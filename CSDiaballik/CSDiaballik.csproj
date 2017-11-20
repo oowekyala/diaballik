@@ -52,11 +52,15 @@
     <Compile Include="classes\Piece.cs" />
     <Compile Include="classes\IPlayer.cs" />
     <Compile Include="classes\PlayerAction.cs" />
+    <Compile Include="classes\PlayerBuilder.cs" />
     <Compile Include="classes\Position2D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="tests" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
