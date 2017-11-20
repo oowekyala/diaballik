@@ -11,7 +11,7 @@ namespace CSDiaballik
     {
         private static bool _isFirstPlayer;
         private AiPlayer.AiLevel _aiLevel;
-        private List<Position2D> _piecesList;
+        private IEnumerable<Position2D> _piecesList;
 
         public PlayerBuilder()
         {
@@ -25,7 +25,7 @@ namespace CSDiaballik
             return this;
         }
 
-        public PlayerBuilder Pieces(List<Position2D> pos)
+        public PlayerBuilder Pieces(IEnumerable<Position2D> pos)
         {
             _piecesList = pos;
             return this;

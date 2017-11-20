@@ -16,7 +16,7 @@ namespace CSDiaballik
         public abstract PlayerAction GetNextMove();
 
 
-        protected AbstractPlayer(Color color, string name, List<Position2D> pieces)
+        protected AbstractPlayer(Color color, string name, IEnumerable<Position2D> pieces)
         {
             _color = color;
             _name = name;

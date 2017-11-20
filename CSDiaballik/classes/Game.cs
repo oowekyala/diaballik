@@ -9,15 +9,21 @@ namespace CSDiaballik
         public IPlayer Player1 { get; }
         public IPlayer Player2 { get; }
         public IPlayer CurrentPlayer { get; }
+        public int BoardSize => _board.Size;
 
 
         public Game(GameBoard board, IPlayer player1, IPlayer player2)
+            : this(board, player1, player2, new Random().Next(0, 1) == 1)
+        {
+        }
+
+        public Game(GameBoard board, IPlayer player1, IPlayer player2, bool isFirstPlayerPlaying)
         {
             _board = board;
             Player1 = player1;
             Player2 = player2;
 
-            CurrentPlayer = new Random().Next(0, 2) == 0 ? player1 : player2;
+            CurrentPlayer = isFirstPlayerPlaying ? player1 : player2;
         }
 
 
@@ -29,8 +35,5 @@ namespace CSDiaballik
         {
             throw new NotImplementedException();
         }
-        
-        
-        
     }
 }

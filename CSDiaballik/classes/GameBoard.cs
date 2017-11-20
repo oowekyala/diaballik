@@ -7,13 +7,14 @@ namespace CSDiaballik
     public class GameBoard
     {
         private readonly Piece[,] _pieces;
-        private readonly int _size;
+
+        public int Size { get; }
 
 
-        private GameBoard(int size, IEnumerable<Piece> p1Pieces, IEnumerable<Piece> p2Pieces)
+        public GameBoard(int size, IEnumerable<Piece> p1Pieces, IEnumerable<Piece> p2Pieces)
         {
-            _size = size;
-            _pieces = new Piece[_size, _size];
+            Size = size;
+            _pieces = new Piece[Size, Size];
 
             PutPiecesOnBoard(p1Pieces);
             PutPiecesOnBoard(p2Pieces);
@@ -82,8 +83,8 @@ namespace CSDiaballik
 
         private bool IsPositionOnBoard(Position2D p)
         {
-            return p.X >= 0 && p.X < _size
-                   && p.Y >= 0 && p.Y < _size;
+            return p.X >= 0 && p.X < Size
+                   && p.Y >= 0 && p.Y < Size;
         }
 
         private void CheckPositionIsValid(Position2D p)
