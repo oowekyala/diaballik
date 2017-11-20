@@ -2,6 +2,9 @@
 
 namespace CSDiaballik
 {
+    /// <summary>
+    /// Represents the game. This class should be immutable to clients.
+    /// </summary>
     public class Game
     {
         private GameBoard _board;
@@ -28,12 +31,14 @@ namespace CSDiaballik
 
 
         /// <summary>
-        /// Updates the game with the given player action. May change the current player as well.
+        /// Creates a new game, updated with the given player action. May change the current player as well.
         /// </summary>
         /// <param name="playerAction">The action to be played by the current player</param>
-        public void Update(PlayerAction playerAction)
+        /// <returns>The updated Game</returns>
+        public Game Update(PlayerAction playerAction)
         {
             throw new NotImplementedException();
+            return this;
         }
     }
 }

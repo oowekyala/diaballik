@@ -15,17 +15,24 @@ namespace CSDiaballik
         /// </summary>
         /// <param name="action">The transition from this memento to the result</param>
         /// <returns>A new memento</returns>
-        public MementoNode Next(PlayerAction action)
+        public MementoNode CreateNext(PlayerAction action)
         {
             return new MementoNode(this, action);
         }
+
+        /// <summary>
+        /// Turns this memento into a Game.
+        /// </summary>
+        /// <returns>A game</returns>
+        public abstract Game ToGame();
     }
 
 
     public class MementoNode : GameMemento
     {
-        private GameMemento _previous;
-        private PlayerAction _action;
+        private readonly GameMemento _previous;
+        private readonly PlayerAction _action;
+        private Game _gameInstance;
 
 
         public MementoNode(GameMemento previous, PlayerAction action)
@@ -39,6 +46,11 @@ namespace CSDiaballik
         {
             return _previous;
         }
+
+        public override Game ToGame()
+        {
+            return _gameInstance ?? (_gameInstance = _previous.ToGame().Update(_action));
+        }
     }
 
 
@@ -51,6 +63,7 @@ namespace CSDiaballik
         private readonly PlayerBuilder _p2Spec;
         private readonly bool _isFirstPlayerPlaying;
         private readonly int _boardSize;
+        private Game _gameInstance;
 
 
         public RootMemento(Game game)
@@ -92,15 +105,13 @@ namespace CSDiaballik
             return spec;
         }
 
-        public Game ToGame()
+        public override Game ToGame()
         {
             var p1 = _p1Spec.Build();
             var p2 = _p2Spec.Build();
 
             var board = new GameBoard(_boardSize, p1.Pieces, p2.Pieces);
-
-
-            return new Game(board, p1, p2, _isFirstPlayerPlaying);
+            return _gameInstance ?? (_gameInstance = new Game(board, p1, p2, _isFirstPlayerPlaying));
         }
 
         public override GameMemento GetParent()
