@@ -110,5 +110,10 @@ namespace CSDiaballik
                 throw new ArgumentException("Illegal: position is out of the board " + p);
             }
         }
+
+        public bool PositionHasPiece(Position2D pos)
+        {
+            return _pieces[pos.X, pos.Y] != null;
+        }
     }
 }
