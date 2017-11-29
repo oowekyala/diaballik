@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSDiaballik", "CSDiaballik\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diaballik_WPF", "Diaballik_WPF\Diaballik_WPF.csproj", "{F61871AE-5EF9-4CCF-9AC2-60A2A672CC17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diaballik_UnitTests", "Diaballik_UnitTests\Diaballik_UnitTests.csproj", "{B115F7F2-BF3F-4CA0-AE0E-B12EDCDDAC55}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSDiaballikTests", "CSDiaballikTests\CSDiaballikTests.csproj", "{03021F09-939E-487D-AEE9-4CFB09848B16}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{F61871AE-5EF9-4CCF-9AC2-60A2A672CC17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F61871AE-5EF9-4CCF-9AC2-60A2A672CC17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F61871AE-5EF9-4CCF-9AC2-60A2A672CC17}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B115F7F2-BF3F-4CA0-AE0E-B12EDCDDAC55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B115F7F2-BF3F-4CA0-AE0E-B12EDCDDAC55}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B115F7F2-BF3F-4CA0-AE0E-B12EDCDDAC55}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B115F7F2-BF3F-4CA0-AE0E-B12EDCDDAC55}.Release|Any CPU.Build.0 = Release|Any CPU
 		{03021F09-939E-487D-AEE9-4CFB09848B16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{03021F09-939E-487D-AEE9-4CFB09848B16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03021F09-939E-487D-AEE9-4CFB09848B16}.Release|Any CPU.ActiveCfg = Release|Any CPU
