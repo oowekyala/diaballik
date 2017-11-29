@@ -4,6 +4,22 @@ using System.Linq;
 
 namespace CSDiaballik
 {
+    /// <summary>
+    /// Represents the game board and manages the moving of pieces. 
+    /// 
+    /// By convention, if n is the value of Size, the four corners
+    /// of the board have the positions:
+    /// <pre>
+    /// (0, 0) --- (0, n-1)
+    ///   |            |
+    ///   |            |
+    /// (n-1, 0) --- (n-1, n-1)
+    /// </pre>
+    /// 
+    /// By convention, the first player owns the row n-1 (the bottom 
+    /// one), and the second player owns the row 0 (the top one).
+    /// 
+    /// </summary>
     public class GameBoard
     {
         private readonly Piece[,] _pieces;
@@ -54,7 +70,7 @@ namespace CSDiaballik
                     new Position2D(pos.X, pos.Y + 1)
                 }.Where(p => IsPositionOnBoard(p)
                              && _pieces[p.X, p.Y] == null)
-                .ToList();
+                 .ToList();
         }
 
         /// <summary>
