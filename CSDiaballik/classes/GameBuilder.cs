@@ -12,7 +12,7 @@ namespace CSDiaballik
             get => _size;
             set => _size = value % 2 == 1 && value > 1
                                ? value
-                               : throw new ArgumentException("The size of the board must be odd");
+                               : throw new ArgumentException("The size of the board must be odd and > 1");
         }
 
         private readonly PlayerBuilder _playerBuilder1 = new PlayerBuilder();

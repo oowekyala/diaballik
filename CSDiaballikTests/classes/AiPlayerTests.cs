@@ -1,17 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CSDiaballik;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using NUnit.Framework;
 
 namespace CSDiaballik.Tests
 {
-    [TestClass()]
+    [TestFixture]
     public class AiPlayerTests
     {
-        [TestMethod()]
+        [Test]
         public void GetNextMoveTest()
         {
             Assert.Fail();
