@@ -21,16 +21,6 @@ namespace CSDiaballik.Tests
             Assert.AreEqual(p2, g.Player2);
         }
 
-        [Test]
-        public void GameTest1()
-        {
-            Assert.Fail();
-        }
-
-        [Test]
-        public void UpdateTest()
-        {
-            Assert.Fail();
-        }
+      
     }
 }

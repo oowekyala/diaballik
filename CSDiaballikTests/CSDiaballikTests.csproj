@@ -44,6 +44,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -54,9 +57,10 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="classes\AiPlayerTests.cs" />
+    <Compile Include="classes\PlayerTests.cs" />
     <Compile Include="classes\GameBoardTests.cs" />
     <Compile Include="classes\GameTests.cs" />
+    <Compile Include="classes\TestUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

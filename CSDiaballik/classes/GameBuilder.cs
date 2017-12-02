@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 
 namespace CSDiaballik
 {
+    /// <summary>
+    /// Builds a game, enforcing the correctness of its arguments throughout the process.
+    /// </summary>
     public class GameBuilder
     {
         public IInitStrategy InitStrategy { get; set; }
@@ -19,6 +23,7 @@ namespace CSDiaballik
         private readonly PlayerBuilder _playerBuilder2 = new PlayerBuilder();
         private int _size;
 
+
         public GameBuilder()
         {
         }
@@ -31,12 +36,14 @@ namespace CSDiaballik
             return this;
         }
 
+
         private static IPlayer CreatePlayer(PlayerBoardSpec spec, PlayerBuilder builder)
         {
             var player = builder.Pieces(spec.Positions).Build();
-            player.BallBearer = player.Pieces.Find(p => p.Position.Y == spec.Ball);
+            player.BallBearer = player.Pieces.First(p => p.Position.Y == spec.Ball);
             return player;
         }
+
 
         public Game Build()
         {

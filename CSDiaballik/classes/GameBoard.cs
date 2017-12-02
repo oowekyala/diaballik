@@ -85,6 +85,7 @@ namespace CSDiaballik
             CheckPositionIsValid(dst);
             _pieces[p.Position.X, p.Position.Y] = null;
             _pieces[dst.X, dst.Y] = p;
+            p.Position = dst;
         }
 
         private void CheckPieceIsOnBoard(Piece p)

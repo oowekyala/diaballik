@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 
@@ -6,21 +7,22 @@ namespace CSDiaballik
 {
     public abstract class AbstractPlayer : IPlayer
     {
-        private readonly Color _color;
-        private readonly string _name;
+        public Color Color { get; }
 
-        Color IPlayer.Color => _color;
-        string IPlayer.Name => _name;
-        Piece IPlayer.BallBearer { get; set; }
-        public List<Piece> Pieces { get; }
+        public string Name { get; }
+
+        public Piece BallBearer { get; set; }
+
+        public ReadOnlyCollection<Piece> Pieces { get; }
+
         public abstract PlayerAction GetNextMove();
 
 
         protected AbstractPlayer(Color color, string name, IEnumerable<Position2D> pieces)
         {
-            _color = color;
-            _name = name;
-            Pieces = pieces.Select(p => new Piece(this)).ToList();
+            Color = color;
+            Name = name;
+            Pieces = pieces.Select(p => new Piece(this, p)).ToList().AsReadOnly();
         }
     }
 }

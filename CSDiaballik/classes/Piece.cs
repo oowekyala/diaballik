@@ -13,9 +13,10 @@ namespace CSDiaballik
         public Position2D Position { get; set; }
 
         
-        public Piece(IPlayer p)
+        public Piece(IPlayer p, Position2D pos)
         {
             Player = p;
+            Position = pos;
             Color = p.Color;
         }
     }
