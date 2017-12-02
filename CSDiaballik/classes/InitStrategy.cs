@@ -24,6 +24,7 @@ namespace CSDiaballik
         public IEnumerable<Position2D> Positions { get; }
         public int Ball { get; }
 
+
         public PlayerBoardSpec(IEnumerable<Position2D> positions, int ball)
         {
             Positions = positions;
@@ -36,8 +37,8 @@ namespace CSDiaballik
     {
         public ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size, PlayerBuilder p1, PlayerBuilder p2)
         {
-            var pos1 = Enumerable.Range(0, size - 1).Select(i => new Position2D(size - 1, i));
-            var pos2 = Enumerable.Range(0, size - 1).Select(i => new Position2D(0, i));
+            var pos1 = Enumerable.Range(0, size).Select(i => new Position2D(size - 1, i));
+            var pos2 = Enumerable.Range(0, size).Select(i => new Position2D(0, i));
 
             return (new PlayerBoardSpec(pos1, size / 2), new PlayerBoardSpec(pos2, size / 2));
         }
@@ -48,8 +49,8 @@ namespace CSDiaballik
     {
         public ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size, PlayerBuilder p1, PlayerBuilder p2)
         {
-            var pos1 = Enumerable.Range(0, size - 1).Select(i => new Position2D(size - 1, i));
-            var pos2 = Enumerable.Range(0, size - 1).Select(i => new Position2D(0, i));
+            var pos1 = Enumerable.Range(0, size).Select(i => new Position2D(size - 1, i));
+            var pos2 = Enumerable.Range(0, size).Select(i => new Position2D(0, i));
             var rand = new Random();
 
             return (new PlayerBoardSpec(pos1, rand.Next(size)), new PlayerBoardSpec(pos2, rand.Next(size)));
@@ -72,10 +73,11 @@ namespace CSDiaballik
             pos2[num] = tmp;
         }
 
+
         public ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size, PlayerBuilder p1, PlayerBuilder p2)
         {
-            var pos1 = Enumerable.Range(0, size - 1).Select(i => new Position2D(size - 1, i)).ToList();
-            var pos2 = Enumerable.Range(0, size - 1).Select(i => new Position2D(0, i)).ToList();
+            var pos1 = Enumerable.Range(0, size).Select(i => new Position2D(size - 1, i)).ToList();
+            var pos2 = Enumerable.Range(0, size).Select(i => new Position2D(0, i)).ToList();
 
             if (size == 1)
             {

@@ -32,15 +32,28 @@ namespace CSDiaballik
             Size = size;
             _pieces = new Piece[Size, Size];
 
-            PutPiecesOnBoard(p1Pieces);
-            PutPiecesOnBoard(p2Pieces);
+            var p2PiecesList = p2Pieces as IList<Piece> ?? p2Pieces.ToList();
+            var p1PiecesList = p1Pieces as IList<Piece> ?? p1Pieces.ToList();
+
+            if (p1PiecesList.Count != p2PiecesList.Count || p1PiecesList.Count != size)
+            {
+                throw new ArgumentException("One or more players have an incorrect number of pieces");
+            }
+
+            PutPiecesOnBoard(p1PiecesList);
+            PutPiecesOnBoard(p2PiecesList);
         }
+
 
         private void PutPiecesOnBoard(IEnumerable<Piece> ps)
         {
             foreach (var piece in ps)
             {
                 var pos = piece.Position;
+                if (_pieces[pos.X, pos.Y] != null)
+                {
+                    throw new ArgumentException("Two pieces cannot be at the same position");
+                }
                 _pieces[pos.X, pos.Y] = piece;
             }
         }
@@ -73,6 +86,7 @@ namespace CSDiaballik
                  .ToList();
         }
 
+
         /// <summary>
         /// Moves a piece to a new location. Does not check whether the move satisfies the rules of the game.
         /// </summary>
@@ -88,6 +102,7 @@ namespace CSDiaballik
             p.Position = dst;
         }
 
+
         private void CheckPieceIsOnBoard(Piece p)
         {
             CheckPositionIsValid(p.Position);
@@ -98,11 +113,13 @@ namespace CSDiaballik
             }
         }
 
+
         private bool IsPositionOnBoard(Position2D p)
         {
             return p.X >= 0 && p.X < Size
                    && p.Y >= 0 && p.Y < Size;
         }
+
 
         private void CheckPositionIsValid(Position2D p)
         {
@@ -111,6 +128,7 @@ namespace CSDiaballik
                 throw new ArgumentException("Illegal: position is out of the board " + p);
             }
         }
+
 
         public bool PositionHasPiece(Position2D pos)
         {

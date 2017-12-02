@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace CSDiaballik.Tests
 {
@@ -10,17 +8,16 @@ namespace CSDiaballik.Tests
         [Test]
         public void GameTest()
         {
-            var p1Pieces = new List<Piece>();
-            var p2Pieces = new List<Piece>();
+            const int size = 7;
+            var pos = TestUtil.RandomPositionsPair(size, size);
+            var p1 = TestUtil.DummyPlayer(pos.Item1);
+            var p2 = TestUtil.DummyPlayer(pos.Item2);
 
-            var gb = new GameBoard(7, p1Pieces, p2Pieces);
-            var p1 = new NoobAiPlayer(Color.Blue, "toto", new List<Position2D>());
-            var p2 = new NoobAiPlayer(Color.Blue, "titi", new List<Position2D>()); 
+            var gb = new GameBoard(7, p1.Pieces, p2.Pieces);
+
             var g = new Game(gb, p1, p2);
-            Assert.AreEqual(p1, g.Player1);
-            Assert.AreEqual(p2, g.Player2);
+            Assert.AreSame(p1, g.Player1);
+            Assert.AreSame(p2, g.Player2);
         }
-
-      
     }
 }

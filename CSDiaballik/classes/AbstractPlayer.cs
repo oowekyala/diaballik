@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
@@ -22,7 +23,14 @@ namespace CSDiaballik
         {
             Color = color;
             Name = name;
-            Pieces = pieces.Select(p => new Piece(this, p)).ToList().AsReadOnly();
+
+            var position2Ds = pieces as IList<Position2D> ?? pieces.ToList();
+            Pieces = position2Ds.Select(p => new Piece(this, p)).Distinct().ToList().AsReadOnly();
+
+            if (position2Ds.Count > Pieces.Count)
+            {
+                throw new ArgumentException("Duplicate positions, check calling code");
+            }
         }
     }
 }

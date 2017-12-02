@@ -13,5 +13,11 @@
             X = x;
             Y = y;
         }
+
+
+        public override string ToString()
+        {
+            return "Position2D(" + X + ", " + Y + ")";
+        }
     }
 }
