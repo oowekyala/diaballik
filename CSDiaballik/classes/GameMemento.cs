@@ -2,6 +2,9 @@
 
 namespace CSDiaballik
 {
+    /// <summary>
+    ///     Represents one state in the history of the game.
+    /// </summary>
     public abstract class GameMemento
     {
         /// <summary>
@@ -44,21 +47,17 @@ namespace CSDiaballik
         }
 
 
-        public override GameMemento GetParent()
-        {
-            return _previous;
-        }
+        public override GameMemento GetParent() => _previous;
 
 
-        public override Game ToGame()
-        {
-            return _gameInstance ?? (_gameInstance = _previous.ToGame().Update(_action));
-        }
+        // Only works with immutable games
+        public override Game ToGame() => _gameInstance ?? (_gameInstance = _previous.ToGame().Update(_action));
     }
 
 
     /// <summary>
     ///     Contains enough info to build the initial state of the game. Has no parent.
+    ///     Can be serialized on disk and rebuilt.
     /// </summary>
     public class RootMemento : GameMemento
     {
@@ -104,6 +103,9 @@ namespace CSDiaballik
                 case ProgressiveAiPlayer _:
                     spec.SetIsAi(AiPlayer.AiLevel.Progressive);
                     break;
+                case HumanPlayer _:
+                    spec.SetIsHuman();
+                    break;
             }
 
             return spec;
@@ -120,9 +122,6 @@ namespace CSDiaballik
         }
 
 
-        public override GameMemento GetParent()
-        {
-            return null;
-        }
+        public override GameMemento GetParent() => null;
     }
 }

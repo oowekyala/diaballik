@@ -1,4 +1,7 @@
-﻿namespace CSDiaballik
+﻿using System.Collections;
+using System.Collections.Generic;
+
+namespace CSDiaballik
 {
     /// <summary>
     ///     Utility value to store a position.
@@ -14,6 +17,16 @@
             X = x;
             Y = y;
         }
+
+
+        public IEnumerable<Position2D> Neighbours()
+            => new List<Position2D>
+            {
+                new Position2D(X - 1, Y),
+                new Position2D(X + 1, Y),
+                new Position2D(X, Y - 1),
+                new Position2D(X, Y + 1)
+            };
 
 
         public override string ToString() => "Position2D(" + X + ", " + Y + ")";

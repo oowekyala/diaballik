@@ -3,7 +3,7 @@
 namespace CSDiaballik
 {
     /// <summary>
-    ///     Represents the game. This class should be immutable to clients.
+    ///     Represents the game. This class appears mutable to clients.
     /// </summary>
     public class Game
     {
@@ -24,6 +24,8 @@ namespace CSDiaballik
             Player2 = player2;
 
             CurrentPlayer = isFirstPlayerPlaying ? player1 : player2;
+
+            _lastMemento = new RootMemento(this);
         }
 
 
@@ -34,13 +36,12 @@ namespace CSDiaballik
 
 
         /// <summary>
-        ///     Creates a new game, updated with the given player action. May change the current player as well.
+        ///     Updates this game with the given player action. May change the current player as well.
         /// </summary>
         /// <param name="playerAction">The action to be played by the current player</param>
-        /// <returns>The updated Game</returns>
+        /// <returns>This game</returns>
         public Game Update(PlayerAction playerAction)
         {
-            throw new NotImplementedException();
             return this;
         }
     }

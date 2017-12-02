@@ -12,6 +12,7 @@ namespace CSDiaballik
         private static bool _isFirstPlayer;
         private AiPlayer.AiLevel _aiLevel;
         private IEnumerable<Position2D> _piecesList;
+        private bool _isHuman;
 
 
         public PlayerBuilder()
@@ -26,9 +27,22 @@ namespace CSDiaballik
         public string Name { set; get; }
 
 
+        /// <summary>
+        ///     Specify that the current player is an Ai.
+        /// </summary>
+        /// <param name="level"></param>
+        /// <returns></returns>
         public PlayerBuilder SetIsAi(AiPlayer.AiLevel level)
         {
             _aiLevel = level;
+            _isHuman = false;
+            return this;
+        }
+
+
+        public PlayerBuilder SetIsHuman()
+        {
+            _isHuman = true;
             return this;
         }
 
@@ -46,6 +60,11 @@ namespace CSDiaballik
         /// <returns>A new player</returns>
         public IPlayer Build()
         {
+            if (_isHuman)
+            {
+                return new HumanPlayer(Color, Name, _piecesList);
+            }
+
             switch (_aiLevel)
             {
                 case AiPlayer.AiLevel.Noob:

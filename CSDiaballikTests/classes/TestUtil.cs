@@ -102,6 +102,6 @@ namespace CSDiaballik.Tests
             => new NoobAiPlayer(RandomColor(), "dummy" + rng.Next(100), positions);
 
 
-        public static List<A> ToList<A>(this ValueTuple<A, A> tuple) => new List<A> {tuple.Item1, tuple.Item2};
+        public static List<T> ToList<T>(this ValueTuple<T, T> tuple) => new List<T> {tuple.Item1, tuple.Item2};
     }
 }

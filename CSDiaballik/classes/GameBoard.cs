@@ -20,7 +20,10 @@ namespace CSDiaballik
     public class GameBoard
     {
         private readonly Piece[,] _pieces;
+        
 
+        
+        
 
         public GameBoard(int size, IEnumerable<Piece> p1Pieces, IEnumerable<Piece> p2Pieces)
         {
@@ -57,31 +60,17 @@ namespace CSDiaballik
         }
 
 
-        public GameBoardMemento GetMemento()
-        {
-            throw new NotImplementedException();
-        }
-
-
         /// <summary>
         ///     Gets the positions to which this piece can legally be moved.
         /// </summary>
-        /// <param name="pie">The piece</param>
+        /// <param name="piece">The piece</param>
         /// <exception cref="ArgumentException">If the piece is invalid</exception>
-        public List<Position2D> GetValidMoves(Piece pie)
+        public IEnumerable<Position2D> GetValidMoves(Piece piece)
         {
-            CheckPieceIsOnBoard(pie);
+            CheckPieceIsOnBoard(piece);
 
-            var pos = pie.Position;
-            return new List<Position2D>
-                {
-                    new Position2D(pos.X - 1, pos.Y),
-                    new Position2D(pos.X + 1, pos.Y),
-                    new Position2D(pos.X, pos.Y - 1),
-                    new Position2D(pos.X, pos.Y + 1)
-                }.Where(p => IsPositionOnBoard(p)
-                             && _pieces[p.X, p.Y] == null)
-                 .ToList();
+            return piece.Position.Neighbours()
+                        .Where(p => IsPositionOnBoard(p) && _pieces[p.X, p.Y] == null);
         }
 
 
