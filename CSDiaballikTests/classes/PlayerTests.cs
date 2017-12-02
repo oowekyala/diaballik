@@ -11,7 +11,7 @@ namespace CSDiaballik.Tests
         public void TestPiecesHavePositions()
         {
             var positions = TestUtil.RandomPositions(15, 13).ToList();
-            var player = new NoobAiPlayer(Color.Aqua, "dummy", positions);
+            var player = TestUtil.DummyPlayer(positions);
 
             CollectionAssert.AreEquivalent(positions, player.Pieces.Select(p => p.Position));
         }
@@ -21,7 +21,7 @@ namespace CSDiaballik.Tests
         public void TestPiecesMetadata()
         {
             var positions = TestUtil.RandomPositions(15, 13).ToList();
-            var player = new NoobAiPlayer(Color.Aqua, "dummy", positions);
+            var player = TestUtil.DummyPlayer(positions);
 
             foreach (var piece in player.Pieces)
             {
@@ -37,7 +37,7 @@ namespace CSDiaballik.Tests
         public void TestIPlayerMembers()
         {
             // tests that the members of *IPlayer* are correctly set
-            IPlayer player = new NoobAiPlayer(Color.Aqua, "dummy", Enumerable.Empty<Position2D>());
+            IPlayer player = TestUtil.DummyPlayer(Color.Aqua, "dummy", Enumerable.Empty<Position2D>());
             Assert.AreEqual(player.Color, Color.Aqua);
             Assert.AreEqual(player.Name, "dummy");
         }
