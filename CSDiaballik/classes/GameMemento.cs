@@ -5,13 +5,14 @@ namespace CSDiaballik
     public abstract class GameMemento
     {
         /// <summary>
-        /// Gets the previous memento. Returns null if this is the root.
+        ///     Gets the previous memento. Returns null if this is the root.
         /// </summary>
         /// <returns>The parent memento</returns>
         public abstract GameMemento GetParent();
 
+
         /// <summary>
-        /// Gets a new memento based on this one.
+        ///     Gets a new memento based on this one.
         /// </summary>
         /// <param name="action">The transition from this memento to the result</param>
         /// <returns>A new memento</returns>
@@ -20,8 +21,9 @@ namespace CSDiaballik
             return new MementoNode(this, action);
         }
 
+
         /// <summary>
-        /// Turns this memento into a Game.
+        ///     Turns this memento into a Game.
         /// </summary>
         /// <returns>A game</returns>
         public abstract Game ToGame();
@@ -30,8 +32,8 @@ namespace CSDiaballik
 
     public class MementoNode : GameMemento
     {
-        private readonly GameMemento _previous;
         private readonly PlayerAction _action;
+        private readonly GameMemento _previous;
         private Game _gameInstance;
 
 
@@ -47,6 +49,7 @@ namespace CSDiaballik
             return _previous;
         }
 
+
         public override Game ToGame()
         {
             return _gameInstance ?? (_gameInstance = _previous.ToGame().Update(_action));
@@ -55,14 +58,14 @@ namespace CSDiaballik
 
 
     /// <summary>
-    /// Contains enough info to build the initial state of the game. Has no parent.
+    ///     Contains enough info to build the initial state of the game. Has no parent.
     /// </summary>
     public class RootMemento : GameMemento
     {
+        private readonly int _boardSize;
+        private readonly bool _isFirstPlayerPlaying;
         private readonly PlayerBuilder _p1Spec;
         private readonly PlayerBuilder _p2Spec;
-        private readonly bool _isFirstPlayerPlaying;
-        private readonly int _boardSize;
         private Game _gameInstance;
 
 
@@ -74,8 +77,9 @@ namespace CSDiaballik
             _boardSize = game.BoardSize;
         }
 
+
         /// <summary>
-        /// Destructures the player into a builder, which can be used to build an equivalent player.
+        ///     Destructures the player into a builder, which can be used to build an equivalent player.
         /// </summary>
         /// <param name="player">Player to destructure</param>
         /// <returns>A builder describing the player</returns>
@@ -105,6 +109,7 @@ namespace CSDiaballik
             return spec;
         }
 
+
         public override Game ToGame()
         {
             var p1 = _p1Spec.Build();
@@ -113,6 +118,7 @@ namespace CSDiaballik
             var board = new GameBoard(_boardSize, p1.Pieces, p2.Pieces);
             return _gameInstance ?? (_gameInstance = new Game(board, p1, p2, _isFirstPlayerPlaying));
         }
+
 
         public override GameMemento GetParent()
         {

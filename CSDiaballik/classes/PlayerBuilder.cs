@@ -5,7 +5,7 @@ using System.Drawing;
 namespace CSDiaballik
 {
     /// <summary>
-    /// Builds player instances.
+    ///     Builds player instances.
     /// </summary>
     public class PlayerBuilder
     {
@@ -13,11 +13,18 @@ namespace CSDiaballik
         private AiPlayer.AiLevel _aiLevel;
         private IEnumerable<Position2D> _piecesList;
 
+
         public PlayerBuilder()
         {
             _isFirstPlayer = !_isFirstPlayer;
             Color = _isFirstPlayer ? Color.Blue : Color.Red;
         }
+
+
+        public Color Color { set; get; }
+
+        public string Name { set; get; }
+
 
         public PlayerBuilder SetIsAi(AiPlayer.AiLevel level)
         {
@@ -25,18 +32,16 @@ namespace CSDiaballik
             return this;
         }
 
+
         public PlayerBuilder Pieces(IEnumerable<Position2D> pos)
         {
             _piecesList = pos;
             return this;
         }
 
-        public Color Color { set; get; }
-
-        public string Name { set; get; }
 
         /// <summary>
-        /// Builds a player with the specified configuration.
+        ///     Builds a player with the specified configuration.
         /// </summary>
         /// <returns>A new player</returns>
         public IPlayer Build()

@@ -27,10 +27,7 @@ namespace CSDiaballik.Tests
 
 
         // Implicitly uses the board size as the number of pieces
-        public static IEnumerable<Position2D> RandomPositions(int n)
-        {
-            return RandomPositions(n, n);
-        }
+        public static IEnumerable<Position2D> RandomPositions(int n) => RandomPositions(n, n);
 
 
         internal static IEnumerable<Position2D> OrderedPositionsPool(int boardSize)
@@ -49,11 +46,8 @@ namespace CSDiaballik.Tests
         }
 
 
-        public static ValueTuple<IEnumerable<Position2D>, IEnumerable<Position2D>>
-            RandomPositionsPair(int n)
-        {
-            return RandomPositionsPair(n, n);
-        }
+        public static ValueTuple<IEnumerable<Position2D>, IEnumerable<Position2D>> RandomPositionsPair(int n)
+            => RandomPositionsPair(n, n);
 
 
         private static IEnumerable<T> Shuffle<T>(this IList<T> list)
@@ -77,16 +71,11 @@ namespace CSDiaballik.Tests
         }
 
 
-        public static Color RandomColor()
-        {
-            return Color.FromArgb(rng.Next(256), rng.Next(256), rng.Next(256));
-        }
+        public static Color RandomColor() => Color.FromArgb(rng.Next(256), rng.Next(256), rng.Next(256));
 
 
         public static IPlayer DummyPlayer(int boardSize)
-        {
-            return new NoobAiPlayer(RandomColor(), "dummy" + rng.Next(100), RandomPositions(boardSize, boardSize));
-        }
+            => new NoobAiPlayer(RandomColor(), "dummy" + rng.Next(100), RandomPositions(boardSize, boardSize));
 
 
         public static GameBoard DummyBoard()
@@ -106,20 +95,13 @@ namespace CSDiaballik.Tests
 
 
         public static IPlayer DummyPlayer(Color color, string name, IEnumerable<Position2D> positions)
-        {
-            return new NoobAiPlayer(color, name, positions);
-        }
+            => new NoobAiPlayer(color, name, positions);
 
 
         public static IPlayer DummyPlayer(IEnumerable<Position2D> positions)
-        {
-            return new NoobAiPlayer(RandomColor(), "dummy" + rng.Next(100), positions);
-        }
+            => new NoobAiPlayer(RandomColor(), "dummy" + rng.Next(100), positions);
 
 
-        public static List<A> ToList<A>(this ValueTuple<A, A> tuple)
-        {
-            return new List<A> {tuple.Item1, tuple.Item2};
-        }
+        public static List<A> ToList<A>(this ValueTuple<A, A> tuple) => new List<A> {tuple.Item1, tuple.Item2};
     }
 }

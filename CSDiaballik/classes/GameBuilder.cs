@@ -5,10 +5,15 @@ using System.Linq;
 namespace CSDiaballik
 {
     /// <summary>
-    /// Builds a game, enforcing the correctness of its arguments throughout the process.
+    ///     Builds a game, enforcing the correctness of its arguments throughout the process.
     /// </summary>
     public class GameBuilder
     {
+        private readonly PlayerBuilder _playerBuilder1 = new PlayerBuilder();
+        private readonly PlayerBuilder _playerBuilder2 = new PlayerBuilder();
+        private int _size;
+
+
         public IInitStrategy InitStrategy { get; set; }
 
         public int Size
@@ -17,15 +22,6 @@ namespace CSDiaballik
             set => _size = value % 2 == 1 && value > 1
                                ? value
                                : throw new ArgumentException("The size of the board must be odd and > 1");
-        }
-
-        private readonly PlayerBuilder _playerBuilder1 = new PlayerBuilder();
-        private readonly PlayerBuilder _playerBuilder2 = new PlayerBuilder();
-        private int _size;
-
-
-        public GameBuilder()
-        {
         }
 
 

@@ -8,17 +8,6 @@ namespace CSDiaballik
 {
     public abstract class AbstractPlayer : IPlayer
     {
-        public Color Color { get; }
-
-        public string Name { get; }
-
-        public Piece BallBearer { get; set; }
-
-        public ReadOnlyCollection<Piece> Pieces { get; }
-
-        public abstract PlayerAction GetNextMove();
-
-
         protected AbstractPlayer(Color color, string name, IEnumerable<Position2D> pieces)
         {
             Color = color;
@@ -32,5 +21,18 @@ namespace CSDiaballik
                 throw new ArgumentException("Duplicate positions, check calling code");
             }
         }
+
+
+        public Color Color { get; }
+
+        public string Name { get; }
+
+        public Piece BallBearer { get; set; }
+
+        public ReadOnlyCollection<Piece> Pieces { get; }
+
+        public abstract bool IsAi();
+        
+        public abstract PlayerAction GetNextMove();
     }
 }

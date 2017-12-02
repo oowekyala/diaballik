@@ -5,26 +5,21 @@ using System.Linq;
 namespace CSDiaballik
 {
     /// <summary>
-    /// Represents the game board and manages the moving of pieces. 
-    /// 
-    /// By convention, if n is the value of Size, the four corners
-    /// of the board have the positions:
-    /// <pre>
-    /// (0, 0) --- (0, n-1)
-    ///   |            |
-    ///   |            |
-    /// (n-1, 0) --- (n-1, n-1)
-    /// </pre>
-    /// 
-    /// By convention, the first player owns the row n-1 (the bottom 
-    /// one), and the second player owns the row 0 (the top one).
-    /// 
+    ///     Represents the game board and manages the moving of pieces.
+    ///     By convention, if n is the value of Size, the four corners
+    ///     of the board have the positions:
+    ///     <pre>
+    ///         (0, 0) --- (0, n-1)
+    ///         |            |
+    ///         |            |
+    ///         (n-1, 0) --- (n-1, n-1)
+    ///     </pre>
+    ///     By convention, the first player owns the row n-1 (the bottom
+    ///     one), and the second player owns the row 0 (the top one).
     /// </summary>
     public class GameBoard
     {
         private readonly Piece[,] _pieces;
-
-        public int Size { get; }
 
 
         public GameBoard(int size, IEnumerable<Piece> p1Pieces, IEnumerable<Piece> p2Pieces)
@@ -43,6 +38,9 @@ namespace CSDiaballik
             PutPiecesOnBoard(p1PiecesList);
             PutPiecesOnBoard(p2PiecesList);
         }
+
+
+        public int Size { get; }
 
 
         private void PutPiecesOnBoard(IEnumerable<Piece> ps)
@@ -66,7 +64,7 @@ namespace CSDiaballik
 
 
         /// <summary>
-        /// Gets the positions to which this piece can legally be moved.
+        ///     Gets the positions to which this piece can legally be moved.
         /// </summary>
         /// <param name="pie">The piece</param>
         /// <exception cref="ArgumentException">If the piece is invalid</exception>
@@ -88,7 +86,7 @@ namespace CSDiaballik
 
 
         /// <summary>
-        /// Moves a piece to a new location. Does not check whether the move satisfies the rules of the game.
+        ///     Moves a piece to a new location. Does not check whether the move satisfies the rules of the game.
         /// </summary>
         /// <param name="p">Piece to move</param>
         /// <param name="dst">New position</param>
