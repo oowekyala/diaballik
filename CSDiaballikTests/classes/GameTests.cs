@@ -1,23 +1,19 @@
 ﻿using NUnit.Framework;
 
-namespace CSDiaballik.Tests
-{
+namespace CSDiaballik.Tests {
     [TestFixture]
-    public class GameTests
-    {
+    public class GameTests {
+
         [Test]
-        public void GameTest()
-        {
+        public void TestPlayerIdentity() {
             const int size = 7;
-            var pos = TestUtil.RandomPositionsPair(size, size);
-            var p1 = TestUtil.DummyPlayer(pos.Item1);
-            var p2 = TestUtil.DummyPlayer(pos.Item2);
+            var (spec1, spec2) = TestUtil.DummyPlayerSpecPair(size);
+            var gb = GameBoard.New(7, spec1, spec2);
 
-            var gb = new GameBoard(7, p1.Pieces, p2.Pieces);
-
-            var g = new Game(gb, p1, p2);
-            Assert.AreSame(p1, g.Player1);
-            Assert.AreSame(p2, g.Player2);
+            var g = Game.New(gb);
+            Assert.AreSame(spec1.Player, g.Player1);
+            Assert.AreSame(spec2.Player, g.Player2);
         }
+
     }
 }

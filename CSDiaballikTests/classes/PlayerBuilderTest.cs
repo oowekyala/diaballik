@@ -1,7 +1,5 @@
-﻿namespace CSDiaballik.Tests
-{
-    public class PlayerBuilderTest
-    {
-        
+﻿namespace CSDiaballik.Tests {
+    public class PlayerBuilderTest {
+
     }
 }
