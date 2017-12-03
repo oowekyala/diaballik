@@ -3,14 +3,12 @@ using System.Drawing;
 using System.Linq;
 using NUnit.Framework;
 
-namespace CSDiaballik.Tests
-{
+namespace CSDiaballik.Tests {
     [TestFixture]
-    public class PlayerTests
-    {
+    public class PlayerTests {
+
         [Test]
-        public void TestAiLevel()
-        {
+        public void TestAiLevel() {
             AiPlayer noob = new NoobAiPlayer(Color.AliceBlue, "dummy");
             Assert.AreEqual(AiPlayer.AiLevel.Noob, noob.Level);
 
@@ -23,12 +21,12 @@ namespace CSDiaballik.Tests
 
 
         [Test]
-        public void TestIPlayerMembers()
-        {
+        public void TestIPlayerMembers() {
             // tests that the members of *IPlayer* are correctly set
             var player = TestUtil.DummyPlayer(Color.Aqua, "dummy");
             Assert.AreEqual(player.Color, Color.Aqua);
             Assert.AreEqual(player.Name, "dummy");
         }
+
     }
 }

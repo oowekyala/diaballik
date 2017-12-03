@@ -1,24 +1,21 @@
 ﻿using System;
 
-namespace CSDiaballik
-{
+namespace CSDiaballik {
     /// <summary>
     ///     Represents the game. This class appears mutable to clients.
     /// </summary>
-    public class Game
-    {
+    public class Game {
+
         private readonly GameBoard _board;
         private GameMemento _lastMemento;
 
 
         public Game(GameBoard board, IPlayer player1, IPlayer player2)
-            : this(board, player1, player2, new Random().Next(0, 1) == 1)
-        {
+            : this(board, player1, player2, new Random().Next(0, 1) == 1) {
         }
 
 
-        public Game(GameBoard board, IPlayer player1, IPlayer player2, bool isFirstPlayerPlaying)
-        {
+        public Game(GameBoard board, IPlayer player1, IPlayer player2, bool isFirstPlayerPlaying) {
             _board = board;
             Player1 = player1;
             Player2 = player2;
@@ -40,9 +37,9 @@ namespace CSDiaballik
         /// </summary>
         /// <param name="playerAction">The action to be played by the current player</param>
         /// <returns>This game</returns>
-        public Game Update(PlayerAction playerAction)
-        {
+        public Game Update(PlayerAction playerAction) {
             return this;
         }
+
     }
 }

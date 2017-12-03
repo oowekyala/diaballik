@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace CSDiaballik
-{
+namespace CSDiaballik {
     /// <summary>
     ///     Summarises the initial config of the pieces of a player.
     /// </summary>
-    public class PlayerBoardSpec
-    {
+    public class PlayerBoardSpec {
+
         private readonly List<Position2D> _positions;
 
 
@@ -15,11 +14,10 @@ namespace CSDiaballik
         ///     Create a new spec.
         /// </summary>
         /// <param name="positions">The positions of all the pieces</param>
-        /// <param name="ball">The index of the ball bearer piece in the positions</param>
-        public PlayerBoardSpec(IEnumerable<Position2D> positions, int ball)
-        {
+        /// <param name="ballIndex">The index of the ball bearer piece in the positions</param>
+        public PlayerBoardSpec(IEnumerable<Position2D> positions, int ballIndex) {
             _positions = positions.ToList();
-            Ball = ball;
+            BallIndex = ballIndex;
         }
 
 
@@ -31,23 +29,25 @@ namespace CSDiaballik
         /// <summary>
         ///     The index of the ball bearer piece in the positions
         /// </summary>
-        public int Ball { get; }
+        public int BallIndex { get; }
+
     }
 
 
+    /// <inheritdoc />
     /// <summary>
     ///     A board spec bound to its player.
     /// </summary>
-    public class FullPlayerBoardSpec : PlayerBoardSpec
-    {
-        public FullPlayerBoardSpec(IPlayer player, IEnumerable<Position2D> positions, int ball) : base(positions, ball)
-        {
+    public class FullPlayerBoardSpec : PlayerBoardSpec {
+
+        public FullPlayerBoardSpec(IPlayer player, IEnumerable<Position2D> positions, int ballIndex) :
+            base(positions, ballIndex) {
             Player = player;
         }
 
 
-        public FullPlayerBoardSpec(IPlayer player, PlayerBoardSpec spec) : this(player, spec.Positions, spec.Ball)
-        {
+        public FullPlayerBoardSpec(IPlayer player, PlayerBoardSpec spec) :
+            this(player, spec.Positions, spec.BallIndex) {
         }
 
 
@@ -55,5 +55,6 @@ namespace CSDiaballik
         ///     The player.
         /// </summary>
         public IPlayer Player { get; }
+
     }
 }

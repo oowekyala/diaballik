@@ -1,13 +1,11 @@
 ﻿using NUnit.Framework;
 
-namespace CSDiaballik.Tests
-{
+namespace CSDiaballik.Tests {
     [TestFixture]
-    public class GameTests
-    {
+    public class GameTests {
+
         [Test]
-        public void TestPlayerIdentity()
-        {
+        public void TestPlayerIdentity() {
             const int size = 7;
             var specs = TestUtil.DummyPlayerSpecPair(size);
             var gb = GameBoard.New(7, specs.Item1, specs.Item2);
@@ -16,5 +14,6 @@ namespace CSDiaballik.Tests
             Assert.AreSame(specs.Item1.Player, g.Player1);
             Assert.AreSame(specs.Item1.Player, g.Player2);
         }
+
     }
 }

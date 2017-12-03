@@ -2,18 +2,15 @@
 using NUnit.Framework;
 using static CSDiaballik.Tests.TestUtil;
 
-namespace CSDiaballik.Tests
-{
+namespace CSDiaballik.Tests {
     // Not intended as extensive tests, mainly for debugging
     [TestFixture]
-    public class TestUtilTest
-    {
+    public class TestUtilTest {
+
         [Test]
-        public void TestOrderedPositions()
-        {
+        public void TestOrderedPositions() {
             var testCases = RandomInts(10, 50);
-            foreach (var i in testCases)
-            {
+            foreach (var i in testCases) {
                 var pool = OrderedPositionsPool(i).ToList();
                 Assert.AreEqual(i * i, pool.Count);
                 Assert.AreEqual(pool.Count, pool.Distinct().Count());
@@ -22,14 +19,13 @@ namespace CSDiaballik.Tests
 
 
         [Test]
-        public void TestRandomPositionsNotOutOfRange()
-        {
+        public void TestRandomPositionsNotOutOfRange() {
             var testCases = RandomInts(10, 50);
-            foreach (var i in testCases)
-            {
+            foreach (var i in testCases) {
                 var pool = RandomPositions(i * i, i); // expect no exception
                 // pool.ToList().Select(p => p.ToString()).ToList().ForEach(Console.WriteLine); // debug output
             }
         }
+
     }
 }

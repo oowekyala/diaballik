@@ -1,12 +1,11 @@
 ﻿using System.Drawing;
 
-namespace CSDiaballik
-{
+namespace CSDiaballik {
     /// <summary>
     ///     Immutable player.
     /// </summary>
-    public interface IPlayer
-    {
+    public interface IPlayer {
+
         Color Color { get; }
         string Name { get; }
 
@@ -26,5 +25,6 @@ namespace CSDiaballik
         /// <param name="board">The board of the game</param>
         /// <returns>The next move of this player</returns>
         PlayerAction GetNextMove(GameBoard board);
+
     }
 }

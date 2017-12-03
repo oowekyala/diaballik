@@ -1,11 +1,9 @@
 ﻿using System.Drawing;
 
-namespace CSDiaballik
-{
-    public abstract class AbstractPlayer : IPlayer
-    {
-        protected AbstractPlayer(Color color, string name)
-        {
+namespace CSDiaballik {
+    public abstract class AbstractPlayer : IPlayer {
+
+        protected AbstractPlayer(Color color, string name) {
             Color = color;
             Name = name;
         }
@@ -18,5 +16,6 @@ namespace CSDiaballik
         public abstract bool IsAi();
 
         public abstract PlayerAction GetNextMove(GameBoard board);
+
     }
 }
