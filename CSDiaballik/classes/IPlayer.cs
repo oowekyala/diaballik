@@ -3,7 +3,7 @@
 namespace CSDiaballik
 {
     /// <summary>
-    /// Immutable player.
+    ///     Immutable player.
     /// </summary>
     public interface IPlayer
     {
@@ -20,7 +20,7 @@ namespace CSDiaballik
 
 
         /// <summary>
-        ///     Gets the next move of this player. If the player is human, 
+        ///     Gets the next move of this player. If the player is human,
         ///     may block until the player has committed their action.
         /// </summary>
         /// <param name="board">The board of the game</param>

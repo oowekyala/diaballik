@@ -55,12 +55,12 @@
     <Compile Include="classes\GameMemento.cs" />
     <Compile Include="classes\HumanPlayer.cs" />
     <Compile Include="classes\InitStrategy.cs" />
-    <Compile Include="classes\Piece.cs" />
     <Compile Include="classes\IPlayer.cs" />
     <Compile Include="classes\PlayerAction.cs" />
     <Compile Include="classes\PlayerBoardSpec.cs" />
     <Compile Include="classes\PlayerBuilder.cs" />
     <Compile Include="classes\Position2D.cs" />
+    <Compile Include="classes\Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 
 namespace CSDiaballik
@@ -14,20 +13,23 @@ namespace CSDiaballik
         }
 
 
-        public sealed override bool IsAi() => true;
-
-
-        protected AiPlayer(Color color, string name, IEnumerable<Position2D> pieces) : base(color, name, pieces)
+        protected AiPlayer(Color color, string name) : base(color, name)
         {
         }
 
 
         public abstract AiLevel Level { get; }
+
+
+        public sealed override bool IsAi()
+        {
+            return true;
+        }
     }
 
     public class NoobAiPlayer : AiPlayer
     {
-        public NoobAiPlayer(Color color, string name, IEnumerable<Position2D> pieces) : base(color, name, pieces)
+        public NoobAiPlayer(Color color, string name) : base(color, name)
         {
         }
 
@@ -43,7 +45,7 @@ namespace CSDiaballik
 
     public class StartingAiPlayer : AiPlayer
     {
-        public StartingAiPlayer(Color color, string name, IEnumerable<Position2D> pieces) : base(color, name, pieces)
+        public StartingAiPlayer(Color color, string name) : base(color, name)
         {
         }
 
@@ -59,7 +61,7 @@ namespace CSDiaballik
 
     public class ProgressiveAiPlayer : AiPlayer
     {
-        public ProgressiveAiPlayer(Color color, string name, IEnumerable<Position2D> pieces) : base(color, name, pieces)
+        public ProgressiveAiPlayer(Color color, string name) : base(color, name)
         {
         }
 

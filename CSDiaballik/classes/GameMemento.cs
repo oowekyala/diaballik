@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace CSDiaballik
+﻿namespace CSDiaballik
 {
     /// <summary>
     ///     Represents one state in the history of the game.
@@ -47,11 +45,17 @@ namespace CSDiaballik
         }
 
 
-        public override GameMemento GetParent() => _previous;
+        public override GameMemento GetParent()
+        {
+            return _previous;
+        }
 
 
         // Only works with immutable games
-        public override Game ToGame() => _gameInstance ?? (_gameInstance = _previous.ToGame().Update(_action));
+        public override Game ToGame()
+        {
+            return _gameInstance ?? (_gameInstance = _previous.ToGame().Update(_action));
+        }
     }
 
 
@@ -65,6 +69,8 @@ namespace CSDiaballik
         private readonly bool _isFirstPlayerPlaying;
         private readonly PlayerBuilder _p1Spec;
         private readonly PlayerBuilder _p2Spec;
+        private PlayerBoardSpec _boardSpec1;
+        private PlayerBoardSpec _boardSpec2;
         private Game _gameInstance;
 
 
@@ -74,6 +80,13 @@ namespace CSDiaballik
             _p1Spec = PlayerToSpec(game.Player1);
             _p2Spec = PlayerToSpec(game.Player2);
             _boardSize = game.BoardSize;
+        }
+
+
+        public void SetBoardSpecs(PlayerBoardSpec spec1, PlayerBoardSpec spec2)
+        {
+            _boardSpec1 = spec1;
+            _boardSpec2 = spec2;
         }
 
 
@@ -90,7 +103,6 @@ namespace CSDiaballik
                 Name = player.Name
             };
 
-            spec.Pieces(player.Pieces.Select(p => p.Position));
 
             switch (player)
             {
@@ -117,11 +129,16 @@ namespace CSDiaballik
             var p1 = _p1Spec.Build();
             var p2 = _p2Spec.Build();
 
-            var board = new GameBoard(_boardSize, p1.Pieces, p2.Pieces);
+            var board = GameBoard.NewGameBoard(_boardSize, new FullPlayerBoardSpec(p1, _boardSpec1),
+                                               new FullPlayerBoardSpec(p2, _boardSpec2));
+
             return _gameInstance ?? (_gameInstance = new Game(board, p1, p2, _isFirstPlayerPlaying));
         }
 
 
-        public override GameMemento GetParent() => null;
+        public override GameMemento GetParent()
+        {
+            return null;
+        }
     }
 }

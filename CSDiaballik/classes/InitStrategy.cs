@@ -10,16 +10,14 @@ namespace CSDiaballik
         ///     Gets the positions of the pieces of each player.
         /// </summary>
         /// <param name="size">Size of the board (square)</param>
-        /// <param name="p1">First player</param>
-        /// <param name="p2">Second player</param>
         /// <returns>A tuple containing the positions of the pieces of each player </returns>
-        ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size, PlayerBuilder p1, PlayerBuilder p2);
+        ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size);
     }
 
 
     public class StandardInitStrategy : IInitStrategy
     {
-        public ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size, PlayerBuilder p1, PlayerBuilder p2)
+        public ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size)
         {
             var pos1 = Enumerable.Range(0, size).Select(i => new Position2D(size - 1, i));
             var pos2 = Enumerable.Range(0, size).Select(i => new Position2D(0, i));
@@ -31,7 +29,7 @@ namespace CSDiaballik
 
     public class BallRandomStrategy : IInitStrategy
     {
-        public ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size, PlayerBuilder p1, PlayerBuilder p2)
+        public ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size)
         {
             var pos1 = Enumerable.Range(0, size).Select(i => new Position2D(size - 1, i));
             var pos2 = Enumerable.Range(0, size).Select(i => new Position2D(0, i));
@@ -43,7 +41,7 @@ namespace CSDiaballik
 
     public class EnemyAmongUsStrategy : IInitStrategy
     {
-        public ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size, PlayerBuilder p1, PlayerBuilder p2)
+        public ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size)
         {
             var pos1 = Enumerable.Range(0, size).Select(i => new Position2D(size - 1, i)).ToList();
             var pos2 = Enumerable.Range(0, size).Select(i => new Position2D(0, i)).ToList();

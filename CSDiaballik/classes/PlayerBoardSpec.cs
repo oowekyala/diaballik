@@ -10,19 +10,9 @@ namespace CSDiaballik
     {
         private readonly List<Position2D> _positions;
 
-        /// <summary>
-        /// The positions of all the pieces
-        /// </summary>
-        public IEnumerable<Position2D> Positions => _positions;
 
         /// <summary>
-        /// The index of the ball bearer piece in the positions
-        /// </summary>
-        public int Ball { get; }
-
-
-        /// <summary>
-        /// Create a new spec.
+        ///     Create a new spec.
         /// </summary>
         /// <param name="positions">The positions of all the pieces</param>
         /// <param name="ball">The index of the ball bearer piece in the positions</param>
@@ -31,20 +21,25 @@ namespace CSDiaballik
             _positions = positions.ToList();
             Ball = ball;
         }
+
+
+        /// <summary>
+        ///     The positions of all the pieces
+        /// </summary>
+        public IEnumerable<Position2D> Positions => _positions;
+
+        /// <summary>
+        ///     The index of the ball bearer piece in the positions
+        /// </summary>
+        public int Ball { get; }
     }
 
 
     /// <summary>
-    /// A board spec bound to its player.
+    ///     A board spec bound to its player.
     /// </summary>
     public class FullPlayerBoardSpec : PlayerBoardSpec
     {
-        /// <summary>
-        /// The player.
-        /// </summary>
-        public IPlayer Player { get; }
-
-
         public FullPlayerBoardSpec(IPlayer player, IEnumerable<Position2D> positions, int ball) : base(positions, ball)
         {
             Player = player;
@@ -54,5 +49,11 @@ namespace CSDiaballik
         public FullPlayerBoardSpec(IPlayer player, PlayerBoardSpec spec) : this(player, spec.Positions, spec.Ball)
         {
         }
+
+
+        /// <summary>
+        ///     The player.
+        /// </summary>
+        public IPlayer Player { get; }
     }
 }

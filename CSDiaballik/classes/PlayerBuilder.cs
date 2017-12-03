@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 
 namespace CSDiaballik
@@ -11,7 +10,6 @@ namespace CSDiaballik
     {
         private static bool _isFirstPlayer;
         private AiPlayer.AiLevel _aiLevel;
-        private IEnumerable<Position2D> _piecesList;
         private bool _isHuman;
 
 
@@ -47,13 +45,6 @@ namespace CSDiaballik
         }
 
 
-        public PlayerBuilder Pieces(IEnumerable<Position2D> pos)
-        {
-            _piecesList = pos;
-            return this;
-        }
-
-
         /// <summary>
         ///     Builds a player with the specified configuration.
         /// </summary>
@@ -62,17 +53,17 @@ namespace CSDiaballik
         {
             if (_isHuman)
             {
-                return new HumanPlayer(Color, Name, _piecesList);
+                return new HumanPlayer(Color, Name);
             }
 
             switch (_aiLevel)
             {
                 case AiPlayer.AiLevel.Noob:
-                    return new NoobAiPlayer(Color, Name, _piecesList);
+                    return new NoobAiPlayer(Color, Name);
                 case AiPlayer.AiLevel.Starting:
-                    return new StartingAiPlayer(Color, Name, _piecesList);
+                    return new StartingAiPlayer(Color, Name);
                 case AiPlayer.AiLevel.Progressive:
-                    return new ProgressiveAiPlayer(Color, Name, _piecesList);
+                    return new ProgressiveAiPlayer(Color, Name);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Linq;
 
 namespace CSDiaballik
 {
@@ -33,22 +32,15 @@ namespace CSDiaballik
         }
 
 
-        private static IPlayer CreatePlayer(PlayerBoardSpec spec, PlayerBuilder builder)
-        {
-            var player = builder.Pieces(spec.Positions).Build();
-            player.BallBearer = player.Pieces.First(p => p.Position.Y == spec.Ball);
-            return player;
-        }
-
-
         public Game Build()
         {
-            var specs = InitStrategy.InitPositions(Size, _playerBuilder1, _playerBuilder2);
+            var player1 = _playerBuilder1.Build();
+            var player2 = _playerBuilder2.Build();
 
-            var player1 = CreatePlayer(specs.Item1, _playerBuilder1);
-            var player2 = CreatePlayer(specs.Item2, _playerBuilder2);
+            var specs = InitStrategy.InitPositions(Size);
 
-            var board = new GameBoard(Size, player1.Pieces, player2.Pieces);
+            var board = GameBoard.NewGameBoard(Size, new FullPlayerBoardSpec(player1, specs.Item1),
+                                               new FullPlayerBoardSpec(player2, specs.Item2));
 
             return new Game(board, player1, player2);
         }

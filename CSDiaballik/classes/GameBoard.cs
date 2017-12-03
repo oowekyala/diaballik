@@ -24,30 +24,11 @@ namespace CSDiaballik
         private readonly IPlayer _p1;
         private readonly IPlayer _p2;
 
-        public int Size { get; }
-
         private readonly HashSet<Position2D> _player1;
         private readonly HashSet<Position2D> _player2;
 
         private Position2D _ballBearer1;
         private Position2D _ballBearer2;
-
-
-        /// <summary>
-        ///     Creates a new gameboard.
-        /// </summary>
-        /// <param name="size">Size of the board</param>
-        /// <param name="p1Spec">Spec of player 2</param>
-        /// <param name="p2Spec">Spec of player 2</param>
-        /// <returns>A new gameboard</returns>
-        /// <exception cref="ArgumentException">
-        ///     If the players have an incorrect number of pieces, 
-        ///     or there are duplicate pieces
-        /// </exception>
-        public static GameBoard NewGameBoard(int size, FullPlayerBoardSpec p1Spec, FullPlayerBoardSpec p2Spec)
-        {
-            return new GameBoard(size, p1Spec, p2Spec);
-        }
 
 
         // Performs full consistency checks
@@ -58,8 +39,8 @@ namespace CSDiaballik
             _p1 = p1Spec.Player;
             _p2 = p2Spec.Player;
 
-            var p1List = p1Spec.Positions as List<Position2D> ?? p2Spec.Positions.ToList();
-            var p2List = p2Spec.Positions as List<Position2D> ?? p2Spec.Positions.ToList();
+            var p1List = p2Spec.Positions.ToList();
+            var p2List = p2Spec.Positions.ToList();
 
             CheckPieces(size, p1List, p2List);
 
@@ -73,6 +54,26 @@ namespace CSDiaballik
 
             _player1 = new HashSet<Position2D>(p1List);
             _player2 = new HashSet<Position2D>(p2List);
+        }
+
+
+        public int Size { get; }
+
+
+        /// <summary>
+        ///     Creates a new gameboard.
+        /// </summary>
+        /// <param name="size">Size of the board</param>
+        /// <param name="p1Spec">Spec of player 2</param>
+        /// <param name="p2Spec">Spec of player 2</param>
+        /// <returns>A new gameboard</returns>
+        /// <exception cref="ArgumentException">
+        ///     If the players have an incorrect number of pieces,
+        ///     or there are duplicate pieces
+        /// </exception>
+        public static GameBoard NewGameBoard(int size, FullPlayerBoardSpec p1Spec, FullPlayerBoardSpec p2Spec)
+        {
+            return new GameBoard(size, p1Spec, p2Spec);
         }
 
 
@@ -121,7 +122,10 @@ namespace CSDiaballik
         }
 
 
-        public bool IsFree(Position2D pos) => _board[pos.X, pos.Y] == null;
+        public bool IsFree(Position2D pos)
+        {
+            return _board[pos.X, pos.Y] == null;
+        }
 
 
         /// <summary>
@@ -153,19 +157,28 @@ namespace CSDiaballik
         }
 
 
-        private HashSet<Position2D> _PositionsForPlayer(IPlayer player) => player == _p1 ? _player1
-                                                                           : player == _p2 ? _player2 : null;
+        private HashSet<Position2D> _PositionsForPlayer(IPlayer player)
+        {
+            return player == _p1 ? _player1
+                   : player == _p2 ? _player2 : null;
+        }
 
 
         /// <summary>
-        /// Gets the positions of the pieces of a player, or null if the player is not recognised.
+        ///     Gets the positions of the pieces of a player, or null if the player is not recognised.
         /// </summary>
         /// <param name="player">The player</param>
         /// <returns>The positions</returns>
-        public IEnumerable<Position2D> PositionsForPlayer(IPlayer player) => _PositionsForPlayer(player);
+        public IEnumerable<Position2D> PositionsForPlayer(IPlayer player)
+        {
+            return _PositionsForPlayer(player);
+        }
 
 
-        private IPlayer GetPiece(Position2D pos) => _board[pos.X, pos.Y];
+        private IPlayer GetPiece(Position2D pos)
+        {
+            return _board[pos.X, pos.Y];
+        }
 
 
         private void SetPiece(Position2D pos, IPlayer player)

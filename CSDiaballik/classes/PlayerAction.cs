@@ -1,11 +1,9 @@
 ﻿namespace CSDiaballik
 {
-
     public interface BoardAction
     {
-        
     }
-    
+
     /// <summary>
     ///     Represents an action the player can carry out during their turn.
     /// </summary>
@@ -18,16 +16,15 @@
         {
         }
 
-        
-        
+
         /// <summary>
         ///     Move the ball to another piece.
         /// </summary>
         public class MoveBall : PlayerAction, BoardAction
         {
-            public MoveBall(Piece src, Position2D dst)
+            public MoveBall(Position2D src, Position2D dst)
             {
-                Src = src.Position;
+                Src = src;
                 Dst = dst;
             }
 
@@ -41,9 +38,9 @@
         /// </summary>
         public class MovePiece : PlayerAction, BoardAction
         {
-            public MovePiece(Piece p, Position2D dst)
+            public MovePiece(Position2D p, Position2D dst)
             {
-                Piece = p.Position;
+                Piece = p;
                 Dst = dst;
             }
 
