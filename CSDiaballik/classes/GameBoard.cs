@@ -20,22 +20,25 @@ namespace CSDiaballik {
 
         private readonly IPlayer[,] _board;
 
-        private readonly IPlayer _p1;
-        private readonly IPlayer _p2;
+        public IPlayer Player1 { get; }
+        public IPlayer Player2 { get; }
 
         private readonly HashSet<Position2D> _player1Positions;
         private readonly HashSet<Position2D> _player2Positions;
 
-        public Position2D BallBearer1 { get; }
-        public Position2D BallBearer2 { get; }
+        public Position2D BallBearer1 { get; private set; }
+        public Position2D BallBearer2 { get; private set; }
+
+        public IEnumerable<Position2D> Player1Positions => _player1Positions;
+        public IEnumerable<Position2D> Player2Positions => _player2Positions;
 
 
         // Performs full consistency checks
         private GameBoard(int size, FullPlayerBoardSpec p1Spec, FullPlayerBoardSpec p2Spec) {
             Size = size;
 
-            _p1 = p1Spec.Player;
-            _p2 = p2Spec.Player;
+            Player1 = p1Spec.Player;
+            Player2 = p2Spec.Player;
 
             var p1List = p1Spec.Positions.ToList();
             var p2List = p2Spec.Positions.ToList();
@@ -47,8 +50,8 @@ namespace CSDiaballik {
 
             _board = new IPlayer[Size, Size];
 
-            p1List.ForEach(p => _board[p.X, p.Y] = _p1);
-            p2List.ForEach(p => _board[p.X, p.Y] = _p2);
+            p1List.ForEach(p => _board[p.X, p.Y] = Player1);
+            p2List.ForEach(p => _board[p.X, p.Y] = Player2);
 
             _player1Positions = new HashSet<Position2D>(p1List);
             _player2Positions = new HashSet<Position2D>(p2List);
@@ -56,6 +59,10 @@ namespace CSDiaballik {
 
 
         public int Size { get; }
+
+
+        public bool IsVictoriousPlayer(IPlayer player)
+            => PositionsForPlayer(player).Select(p => p.X).Any(i => Size - 1 - GetRowIndexOfInitialLine(player) == i);
 
 
         /// <summary>
@@ -101,16 +108,6 @@ namespace CSDiaballik {
         }
 
 
-        public IEnumerable<Position2D> getPlayer1Pieces() {
-            return _player1Positions;
-        }
-
-
-        public IEnumerable<Position2D> getPlayer2Pieces() {
-            return _player2Positions;
-        }
-
-
         /// <summary>
         ///     Gets the positions to which this piece can legally be moved.
         /// </summary>
@@ -131,27 +128,28 @@ namespace CSDiaballik {
 
 
         /// <summary>
-        ///     Moves a piece to a new location. Does not check whether the move satisfies the rules of the game.
+        ///     Moves a piece to a new location. 
+        ///     This method cannot move the piece which carries the ball.
         /// </summary>
         /// <param name="src">Piece to move</param>
         /// <param name="dst">New position</param>
         /// <exception cref="ArgumentException">If the piece or destination position is invalid</exception>
         public void MovePiece(Position2D src, Position2D dst) {
-            CheckPositionIsValid(dst);
+            if (Equals(src, BallBearer1) || Equals(src, BallBearer2)) {
+                throw new ArgumentException("Illegal: cannot move the piece which carries the ball");
+            }
+
+            CheckPositionIsValid(src);
             if (IsFree(src)) {
                 throw new ArgumentException("Illegal: no piece to move");
             }
 
-            CheckPositionIsValid(src);
+            CheckPositionIsValid(dst);
             if (!IsFree(dst)) {
                 throw new ArgumentException("Illegal: destination is not free");
             }
 
-            if (Equals(src, BallBearer1) || Equals(src, BallBearer2)) {
-                throw new ArgumentException("Illegal: Cannot move the piece which carries the ball");
-            }
-
-            var player = GetPiece(src);
+            var player = PlayerOn(src);
             SetPiece(src, null);
             SetPiece(dst, player);
             var positions = _PositionsForPlayer(player);
@@ -160,14 +158,43 @@ namespace CSDiaballik {
         }
 
 
-        public void MoveBall(IPlayer player, Position2D dst) {
+        /// <summary>
+        ///     Moves the piece which carries the ball to a new location.
+        /// </summary>
+        /// <param name="src">Piece to move</param>
+        /// <param name="dst">New position</param>
+        /// <exception cref="ArgumentException">If the piece or destination position is invalid</exception>
+        public void MoveBall(Position2D src, Position2D dst) {
+            CheckPositionIsValid(src);
+            if (IsFree(src) || !Equals(src, BallBearer1) && !Equals(src, BallBearer2)) {
+                throw new ArgumentException("Illegal: no ball to move on position " + src);
+            }
+
+            CheckPositionIsValid(dst);
+            if (IsFree(dst) || PlayerOn(dst) != PlayerOn(src)) {
+                throw new ArgumentException("Illegal: no friendly piece on position " + dst);
+            }
+
+            if (PlayerOn(src) == Player1) {
+                BallBearer1 = dst;
+            }
+            else {
+                BallBearer2 = dst;
+            }
         }
 
 
-        private HashSet<Position2D> _PositionsForPlayer(IPlayer player) {
-            return player == _p1 ? _player1Positions
-                   : player == _p2 ? _player2Positions : throw new ArgumentException("Unknown player");
-        }
+        private HashSet<Position2D> _PositionsForPlayer(IPlayer player)
+            => player == Player1 ? _player1Positions
+               : player == Player2 ? _player2Positions
+               : throw new ArgumentException("Unknown player");
+
+
+        // Gets the index of the starting row of a player. Used to check for victory
+        private int GetRowIndexOfInitialLine(IPlayer player)
+            => player == Player1 ? 0
+               : player == Player2 ? Size - 1
+               : throw new ArgumentException("Unknown player");
 
 
         /// <summary>
@@ -188,12 +215,12 @@ namespace CSDiaballik {
         /// <returns>The position</returns>
         /// <exception cref="ArgumentException">If the player is not recognised</exception>
         public Position2D BallBearerForPlayer(IPlayer player) {
-            return player == _p1 ? BallBearer1 :
-                   player == _p2 ? BallBearer2 : throw new ArgumentException("Unknown player");
+            return player == Player1 ? BallBearer1 :
+                   player == Player2 ? BallBearer2 : throw new ArgumentException("Unknown player");
         }
 
 
-        private IPlayer GetPiece(Position2D pos) {
+        private IPlayer PlayerOn(Position2D pos) {
             return _board[pos.X, pos.Y];
         }
 

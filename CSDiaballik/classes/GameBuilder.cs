@@ -30,15 +30,14 @@ namespace CSDiaballik {
 
 
         public Game Build() {
-            var player1 = _playerBuilder1.Build();
-            var player2 = _playerBuilder2.Build();
-
+            var players = (_playerBuilder1.Build(), _playerBuilder2.Build());
             var specs = InitStrategy.InitPositions(Size);
 
-            var board = GameBoard.New(Size, new FullPlayerBoardSpec(player1, specs.Item1),
-                                      new FullPlayerBoardSpec(player2, specs.Item2));
+            var fullSpecs = specs.Merge(players, (spec, player) => new FullPlayerBoardSpec(player, spec));
 
-            return new Game(board, player1, player2);
+            var game = Game.New(GameBoard.New(Size, fullSpecs));
+            (game.Memento as RootMemento)?.SetBoardSpecs(specs);
+            return game;
         }
 
     }

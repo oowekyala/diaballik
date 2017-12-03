@@ -7,29 +7,31 @@ namespace CSDiaballik {
     public class Game {
 
         private readonly GameBoard _board;
-        private GameMemento _lastMemento;
+        private readonly GameMemento _lastMemento;
+
+        public GameMemento Memento => _lastMemento;
+        public IPlayer Player1 => _board.Player1;
+        public IPlayer Player2 => _board.Player2;
+        public int BoardSize => _board.Size;
+
+        public IPlayer CurrentPlayer { get; }
 
 
-        public Game(GameBoard board, IPlayer player1, IPlayer player2)
-            : this(board, player1, player2, new Random().Next(0, 1) == 1) {
-        }
-
-
-        public Game(GameBoard board, IPlayer player1, IPlayer player2, bool isFirstPlayerPlaying) {
+        private Game(GameBoard board, bool isFirstPlayerPlaying) {
             _board = board;
-            Player1 = player1;
-            Player2 = player2;
-
-            CurrentPlayer = isFirstPlayerPlaying ? player1 : player2;
-
+            CurrentPlayer = isFirstPlayerPlaying ? Player1 : Player2;
             _lastMemento = new RootMemento(this);
         }
 
 
-        public IPlayer Player1 { get; }
-        public IPlayer Player2 { get; }
-        public IPlayer CurrentPlayer { get; }
-        public int BoardSize => _board.Size;
+        public static Game New(GameBoard board, bool isFirstPlayerPlaying) {
+            return new Game(board, isFirstPlayerPlaying);
+        }
+
+
+        public static Game New(GameBoard board) {
+            return New(board, new Random().Next(0, 1) == 1);
+        }
 
 
         /// <summary>
@@ -37,7 +39,7 @@ namespace CSDiaballik {
         /// </summary>
         /// <param name="playerAction">The action to be played by the current player</param>
         /// <returns>This game</returns>
-        public Game Update(PlayerAction playerAction) {
+        public Game Update(IPlayerAction playerAction) {
             return this;
         }
 

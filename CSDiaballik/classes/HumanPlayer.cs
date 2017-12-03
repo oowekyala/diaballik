@@ -8,12 +8,12 @@ namespace CSDiaballik {
         }
 
 
-        public override bool IsAi() {
+        public sealed override bool IsAi() {
             return false;
         }
 
 
-        public override PlayerAction GetNextMove(GameBoard board) {
+        public override IPlayerAction GetNextMove(GameBoard board) {
             throw new NotImplementedException();
         }
 

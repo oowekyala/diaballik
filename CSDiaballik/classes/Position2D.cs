@@ -27,7 +27,7 @@ namespace CSDiaballik {
 
 
         public override string ToString() {
-            return "Position2D(" + X + ", " + Y + ")";
+            return "(" + X + ", " + Y + ")";
         }
 
     }

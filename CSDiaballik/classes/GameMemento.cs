@@ -1,4 +1,7 @@
 ﻿namespace CSDiaballik {
+    // TODO this needs to be reworked
+
+
     /// <summary>
     ///     Represents one state in the history of the game.
     /// </summary>
@@ -16,7 +19,7 @@
         /// </summary>
         /// <param name="action">The transition from this memento to the result</param>
         /// <returns>A new memento</returns>
-        public MementoNode CreateNext(PlayerAction action) {
+        public MementoNode CreateNext(IPlayerAction action) {
             return new MementoNode(this, action);
         }
 
@@ -32,12 +35,12 @@
 
     public class MementoNode : GameMemento {
 
-        private readonly PlayerAction _action;
+        private readonly IPlayerAction _action;
         private readonly GameMemento _previous;
         private Game _gameInstance;
 
 
-        public MementoNode(GameMemento previous, PlayerAction action) {
+        public MementoNode(GameMemento previous, IPlayerAction action) {
             _previous = previous;
             _action = action;
         }
@@ -56,6 +59,7 @@
     }
 
 
+    /// <inheritdoc />
     /// <summary>
     ///     Contains enough info to build the initial state of the game. Has no parent.
     ///     Can be serialized on disk and rebuilt.
@@ -79,9 +83,9 @@
         }
 
 
-        public void SetBoardSpecs(PlayerBoardSpec spec1, PlayerBoardSpec spec2) {
-            _boardSpec1 = spec1;
-            _boardSpec2 = spec2;
+        public void SetBoardSpecs((PlayerBoardSpec, PlayerBoardSpec) specs) {
+            _boardSpec1 = specs.Item1;
+            _boardSpec2 = specs.Item2;
         }
 
 
@@ -117,13 +121,12 @@
 
 
         public override Game ToGame() {
-            var p1 = _p1Spec.Build();
-            var p2 = _p2Spec.Build();
+            var players = (_p1Spec.Build(), _p2Spec.Build());
+            var specs = players.Merge((_boardSpec1, _boardSpec2),
+                                      (player, spec) => new FullPlayerBoardSpec(player, spec));
 
-            var board = GameBoard.New(_boardSize, new FullPlayerBoardSpec(p1, _boardSpec1),
-                                      new FullPlayerBoardSpec(p2, _boardSpec2));
-
-            return _gameInstance ?? (_gameInstance = new Game(board, p1, p2, _isFirstPlayerPlaying));
+            var board = GameBoard.New(_boardSize, specs);
+            return _gameInstance ?? (_gameInstance = Game.New(board, _isFirstPlayerPlaying));
         }
 
 

@@ -40,6 +40,11 @@ namespace CSDiaballik.Tests {
         }
 
 
+        public void TestMoveBall() {
+            
+        }
+
+
         [Test]
         public void TestPlayersHaveNotSizePieces() {
             const int size = 7;
@@ -92,15 +97,15 @@ namespace CSDiaballik.Tests {
         [Test]
         public void TestBallPosition() {
             const int size = 7;
-            var specs = DummyPlayerSpecPair(size);
-            var ball1 = specs.Item1.Positions.ToList()[specs.Item1.BallIndex];
-            var ball2 = specs.Item2.Positions.ToList()[specs.Item2.BallIndex];
+            var specs = RandomPositionsPair(size).Select(p => DummyPlayerSpec(p, 0));
+            var (ball1, ball2) = specs.Select(p => p.Positions.First());
 
             var gb = GameBoard.New(size, specs);
 
             Assert.AreEqual(ball1, gb.BallBearer1);
             Assert.AreEqual(ball2, gb.BallBearer2);
         }
+
 
     }
 }

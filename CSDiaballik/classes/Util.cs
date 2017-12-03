@@ -16,5 +16,9 @@ namespace CSDiaballik {
             f(tuple.Item2);
         }
 
+
+        public static (C, C) Merge<A, B, C>(this (A, A) t1, (B, B) t2, Func<A, B, C> f)
+            => (f(t1.Item1, t2.Item1), f(t1.Item2, t2.Item2));
+
     }
 }
