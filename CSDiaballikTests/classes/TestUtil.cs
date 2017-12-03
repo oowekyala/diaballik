@@ -38,15 +38,14 @@ namespace CSDiaballik.Tests
         }
 
 
-        public static ValueTuple<IEnumerable<Position2D>, IEnumerable<Position2D>>
-            RandomPositionsPair(int n, int boardSize)
+        public static (IEnumerable<Position2D>, IEnumerable<Position2D>) RandomPositionsPair(int n, int boardSize)
         {
             var pool = RandomPositions(2 * n, boardSize).ToList();
             return (pool.GetRange(0, n), pool.GetRange(n, n));
         }
 
 
-        public static ValueTuple<IEnumerable<Position2D>, IEnumerable<Position2D>> RandomPositionsPair(int n)
+        public static (IEnumerable<Position2D>, IEnumerable<Position2D>) RandomPositionsPair(int n)
             => RandomPositionsPair(n, n);
 
 
@@ -74,34 +73,30 @@ namespace CSDiaballik.Tests
         public static Color RandomColor() => Color.FromArgb(rng.Next(256), rng.Next(256), rng.Next(256));
 
 
-        public static IPlayer DummyPlayer(int boardSize)
-            => new NoobAiPlayer(RandomColor(), "dummy" + rng.Next(100), RandomPositions(boardSize, boardSize));
+        public static IPlayer DummyPlayer(Color c, string name) => new NoobAiPlayer(c, name);
 
 
-        public static GameBoard DummyBoard()
+        public static (FullPlayerBoardSpec, FullPlayerBoardSpec) DummyPlayerSpecPair(int boardSize)
         {
-            var size = rng.Next(100);
-            if (size % 2 == 0)
-            {
-                size++;
-            }
+            var positions = RandomPositionsPair(boardSize);
 
-            var positions = RandomPositionsPair(size, size);
-            var p1 = DummyPlayer(positions.Item1);
-            var p2 = DummyPlayer(positions.Item2);
+            var sp1 = new FullPlayerBoardSpec(DummyPlayer(), positions.Item1, boardSize / 2);
+            var sp2 = new FullPlayerBoardSpec(DummyPlayer(), positions.Item2, boardSize / 2);
 
-            return new GameBoard(size, p1.Pieces, p2.Pieces);
+            return (sp1, sp2);
         }
 
 
-        public static IPlayer DummyPlayer(Color color, string name, IEnumerable<Position2D> positions)
-            => new NoobAiPlayer(color, name, positions);
+        public static FullPlayerBoardSpec DummyPlayerSpec(int boardSize)
+            => new FullPlayerBoardSpec(DummyPlayer(), RandomPositions(boardSize), boardSize / 2);
 
 
-        public static IPlayer DummyPlayer(IEnumerable<Position2D> positions)
-            => new NoobAiPlayer(RandomColor(), "dummy" + rng.Next(100), positions);
+        public static FullPlayerBoardSpec DummyPlayerSpec(int boardSize, IEnumerable<Position2D> positions)
+            => new FullPlayerBoardSpec(DummyPlayer(), positions, boardSize / 2);
 
 
-        public static List<T> ToList<T>(this ValueTuple<T, T> tuple) => new List<T> {tuple.Item1, tuple.Item2};
+        public static IPlayer DummyPlayer() => new NoobAiPlayer(RandomColor(), "dummy" + rng.Next(100));
+
+
     }
 }

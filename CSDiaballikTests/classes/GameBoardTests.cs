@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using static CSDiaballik.Tests.TestUtil;
 
@@ -11,16 +12,16 @@ namespace CSDiaballik.Tests
         public void TestMovePiece()
         {
             const int size = 7;
-            var positions = RandomPositionsPair(size + 1, size).ToList().Select(e => e.ToList()).ToList();
-            var empty = positions[0][0];
-            positions.ForEach(e => e.RemoveAt(0));
-            var pieces = positions.Select(DummyPlayer).Select(p => p.Pieces).ToList();
+            var positions = RandomPositionsPair(size + 1, size).Select(e => e.ToList());
+            var empty = positions.Item1[0];
+            positions.Foreach(e => e.RemoveAt(0));
+            var specs = positions.Select(p => DummyPlayerSpec(size, p));
+            
+            var board = GameBoard.New(size, specs.Item1, specs.Item2);
 
-            var board = new GameBoard(size, pieces[0], pieces[1]);
-
-            Assert.IsFalse(board.PositionHasPiece(empty));
-            board.MovePiece(pieces[0][0], empty);
-            Assert.IsTrue(board.PositionHasPiece(empty));
+            Assert.IsTrue(board.IsFree(empty));
+            board.MovePiece(positions.Item1[0], empty);
+            Assert.IsFalse(board.IsFree(empty));
         }
 
 
@@ -28,12 +29,9 @@ namespace CSDiaballik.Tests
         public void TestPlayersHaveNotSizePieces()
         {
             const int size = 7;
-            var positions = RandomPositionsPair(size - 1);
-            var dummy = DummyPlayer(positions.Item1);
-            var dummy2 = DummyPlayer(positions.Item2);
+            var specs = DummyPlayerSpecPair(size - 1);
 
-            Assert.AreNotSame(dummy, dummy2);
-            Assert.That(() => new GameBoard(size, dummy.Pieces, dummy2.Pieces), Throws.ArgumentException);
+            Assert.That(() => GameBoard.New(size, specs.Item1, specs.Item2), Throws.ArgumentException);
         }
 
 
@@ -41,20 +39,18 @@ namespace CSDiaballik.Tests
         public void TestPositionHasPiece()
         {
             const int size = 7;
-            var positions = RandomPositionsPair(size, size);
+            var specs = DummyPlayerSpecPair(size);
 
-            var dummy = DummyPlayer(positions.Item1);
-            var dummy2 = DummyPlayer(positions.Item2);
-            var gb = new GameBoard(size, dummy.Pieces, dummy2.Pieces);
+            var gb = GameBoard.New(size, specs.Item1, specs.Item2);
 
-            foreach (var p in dummy.Pieces)
+            foreach (var p in specs.Item1.Positions)
             {
-                Assert.IsTrue(gb.PositionHasPiece(p.Position));
+                Assert.IsFalse(gb.IsFree(p));
             }
 
-            foreach (var p in dummy2.Pieces)
+            foreach (var p in specs.Item1.Positions)
             {
-                Assert.IsTrue(gb.PositionHasPiece(p.Position));
+                Assert.IsFalse(gb.IsFree(p));
             }
         }
 
@@ -64,11 +60,11 @@ namespace CSDiaballik.Tests
         {
             const int size = 7;
             var position = RandomPositions(size).ToList();
-            var dummy = DummyPlayer(position);
-            var dummy2 = DummyPlayer(position);
+            var dummy = DummyPlayerSpec(size, position);
+            var dummy2 = DummyPlayerSpec(size, position);
 
             Assert.AreNotSame(dummy, dummy2);
-            Assert.That(() => new GameBoard(size, dummy.Pieces, dummy2.Pieces), Throws.ArgumentException);
+            Assert.That(() => GameBoard.New(size, dummy, dummy2), Throws.ArgumentException);
         }
 
 
@@ -76,11 +72,11 @@ namespace CSDiaballik.Tests
         public void TestUnequalNumPieces()
         {
             const int size = 7;
-            var dummy = DummyPlayer(RandomPositions(size - 1, size));
-            var dummy2 = DummyPlayer(RandomPositions(size).ToList());
+            var dummy = DummyPlayerSpec(size, RandomPositions(size - 1, size));
+            var dummy2 = DummyPlayerSpec(size, RandomPositions(size).ToList());
 
             Assert.AreNotSame(dummy, dummy2);
-            Assert.That(() => new GameBoard(size, dummy.Pieces, dummy2.Pieces), Throws.ArgumentException);
+            Assert.That(() => GameBoard.New(size, dummy, dummy2), Throws.ArgumentException);
         }
     }
 }

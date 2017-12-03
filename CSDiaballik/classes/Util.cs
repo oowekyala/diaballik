@@ -5,15 +5,17 @@ namespace CSDiaballik
 {
     public static class Util
     {
-        public static List<T> ToList<T>(this ValueTuple<T, T> tuple)
-        {
-            return new List<T> {tuple.Item1, tuple.Item2};
-        }
+        public static List<T> ToList<T>(this ValueTuple<T, T> tuple) => new List<T> {tuple.Item1, tuple.Item2};
 
 
-        public static ValueTuple<B, B> Map<A, B>(this ValueTuple<A, A> tuple, Func<A, B> f)
+        public static ValueTuple<B, B> Select<A, B>(this ValueTuple<A, A> tuple, Func<A, B> f)
+            => (f(tuple.Item1), f(tuple.Item2));
+
+
+        public static void Foreach<A>(this ValueTuple<A, A> tuple, Action<A> f)
         {
-            return (f(tuple.Item1), f(tuple.Item2));
+            f(tuple.Item1);
+            f(tuple.Item2);
         }
     }
 }

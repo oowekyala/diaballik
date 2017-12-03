@@ -39,7 +39,7 @@ namespace CSDiaballik
 
             var specs = InitStrategy.InitPositions(Size);
 
-            var board = GameBoard.NewGameBoard(Size, new FullPlayerBoardSpec(player1, specs.Item1),
+            var board = GameBoard.New(Size, new FullPlayerBoardSpec(player1, specs.Item1),
                                                new FullPlayerBoardSpec(player2, specs.Item2));
 
             return new Game(board, player1, player2);

@@ -129,7 +129,7 @@
             var p1 = _p1Spec.Build();
             var p2 = _p2Spec.Build();
 
-            var board = GameBoard.NewGameBoard(_boardSize, new FullPlayerBoardSpec(p1, _boardSpec1),
+            var board = GameBoard.New(_boardSize, new FullPlayerBoardSpec(p1, _boardSpec1),
                                                new FullPlayerBoardSpec(p2, _boardSpec2));
 
             return _gameInstance ?? (_gameInstance = new Game(board, p1, p2, _isFirstPlayerPlaying));

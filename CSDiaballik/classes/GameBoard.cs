@@ -39,13 +39,13 @@ namespace CSDiaballik
             _p1 = p1Spec.Player;
             _p2 = p2Spec.Player;
 
-            var p1List = p2Spec.Positions.ToList();
+            var p1List = p1Spec.Positions.ToList();
             var p2List = p2Spec.Positions.ToList();
 
             CheckPieces(size, p1List, p2List);
 
             _ballBearer1 = p1List[p1Spec.Ball];
-            _ballBearer2 = p1List[p2Spec.Ball];
+            _ballBearer2 = p2List[p2Spec.Ball];
 
             _board = new IPlayer[Size, Size];
 
@@ -71,7 +71,7 @@ namespace CSDiaballik
         ///     If the players have an incorrect number of pieces,
         ///     or there are duplicate pieces
         /// </exception>
-        public static GameBoard NewGameBoard(int size, FullPlayerBoardSpec p1Spec, FullPlayerBoardSpec p2Spec)
+        public static GameBoard New(int size, FullPlayerBoardSpec p1Spec, FullPlayerBoardSpec p2Spec)
         {
             return new GameBoard(size, p1Spec, p2Spec);
         }
@@ -137,7 +137,7 @@ namespace CSDiaballik
         public void MovePiece(Position2D src, Position2D dst)
         {
             CheckPositionIsValid(dst);
-            if (IsFree(dst))
+            if (IsFree(src))
             {
                 throw new ArgumentException("Illegal: no piece to move");
             }
