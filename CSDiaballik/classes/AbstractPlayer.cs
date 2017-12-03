@@ -33,6 +33,6 @@ namespace CSDiaballik
 
         public abstract bool IsAi();
         
-        public abstract PlayerAction GetNextMove();
+        public abstract PlayerAction GetNextMove(GameBoard board);
     }
 }

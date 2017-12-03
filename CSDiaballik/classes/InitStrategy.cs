@@ -16,22 +16,6 @@ namespace CSDiaballik
         ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size, PlayerBuilder p1, PlayerBuilder p2);
     }
 
-    /// <summary>
-    ///     Summarises the initial config of the pieces of a player.
-    /// </summary>
-    public struct PlayerBoardSpec
-    {
-        public IEnumerable<Position2D> Positions { get; }
-        public int Ball { get; }
-
-
-        public PlayerBoardSpec(IEnumerable<Position2D> positions, int ball)
-        {
-            Positions = positions;
-            Ball = ball;
-        }
-    }
-
 
     public class StandardInitStrategy : IInitStrategy
     {
