@@ -83,5 +83,13 @@ namespace CSDiaballik.Tests {
 
         public static IPlayer DummyPlayer() => new NoobAiPlayer(RandomColor(), "dummy" + rng.Next(100));
 
+
+        public static (IEnumerable<Position2D>, IEnumerable<Position2D>) PositionsTuple(this GameBoard board)
+            => (board.Player1Positions, board.Player2Positions);
+
+
+        public static (Position2D, Position2D) BallBearerTuple(this GameBoard board)
+            => (board.BallBearer1, board.BallBearer2);
+
     }
 }

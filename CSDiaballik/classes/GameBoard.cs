@@ -33,6 +33,8 @@ namespace CSDiaballik {
         public IEnumerable<Position2D> Player2Positions => _player2Positions;
 
 
+
+
         // Performs full consistency checks
         private GameBoard(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
             Size = size;

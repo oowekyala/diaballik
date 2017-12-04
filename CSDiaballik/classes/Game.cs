@@ -6,22 +6,20 @@ namespace CSDiaballik {
     /// </summary>
     public class Game {
 
-        private readonly GameBoard _board;
-        private readonly GameMemento _lastMemento;
+        public GameMemento Memento { get; }
 
-        public GameMemento Memento => _lastMemento;
-        public IPlayer Player1 => _board.Player1;
-        public IPlayer Player2 => _board.Player2;
-        public int BoardSize => _board.Size;
-        public GameBoard Board => _board;
+        public IPlayer Player1 => Board.Player1;
+        public IPlayer Player2 => Board.Player2;
+        public int BoardSize => Board.Size;
+        public GameBoard Board { get; }
 
         public IPlayer CurrentPlayer { get; }
 
 
         private Game(GameBoard board, bool isFirstPlayerPlaying) {
-            _board = board;
+            Board = board;
             CurrentPlayer = isFirstPlayerPlaying ? Player1 : Player2;
-            _lastMemento = new RootMemento(this);
+            Memento = new RootMemento(this);
         }
 
 
