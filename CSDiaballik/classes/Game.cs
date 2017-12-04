@@ -1,4 +1,5 @@
 ﻿using System;
+using static CSDiaballik.Game.Action;
 
 namespace CSDiaballik {
     /// <summary>
@@ -40,8 +41,16 @@ namespace CSDiaballik {
         /// <returns>This game</returns>
         public Game Update(Action action) {
             //TODO
-
-
+            switch (action) {
+                case MoveBall moveBall:
+                    break;
+                case MovePiece movePiece:
+                    break;
+                case Pass pass:
+                    break;
+                case Undo undo:
+                    break;
+            }
             return this;
         }
 
@@ -51,9 +60,6 @@ namespace CSDiaballik {
         /// </summary>
         public abstract class Action {
 
-            public abstract void Execute(Game game);
-
-
             /// <summary>
             ///     Move the ball to another piece.
             /// </summary>
@@ -62,11 +68,6 @@ namespace CSDiaballik {
                 public MoveBall(Position2D src, Position2D dst) {
                     Src = src;
                     Dst = dst;
-                }
-
-
-                public override void Execute(Game game) {
-                    game.Board.MoveBall(Src, Dst);
                 }
 
 
@@ -87,11 +88,6 @@ namespace CSDiaballik {
                 }
 
 
-                public override void Execute(Game game) {
-                    //TODO   
-                }
-
-
                 public Position2D Piece { get; }
                 public Position2D Dst { get; }
 
@@ -103,10 +99,6 @@ namespace CSDiaballik {
             /// </summary>
             public class Undo : Action {
 
-                public override void Execute(Game game) {
-                    //TODO   
-                }
-
             }
 
 
@@ -114,10 +106,6 @@ namespace CSDiaballik {
             ///     End the turn and give initiative to the other player prematurely.
             /// </summary>
             public class Pass : Action {
-
-                public override void Execute(Game game) {
-                    //TODO   
-                }
 
             }
 
