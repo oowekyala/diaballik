@@ -19,7 +19,7 @@
         /// </summary>
         /// <param name="action">The transition from this memento to the result</param>
         /// <returns>A new memento</returns>
-        public MementoNode CreateNext(IPlayerAction action) {
+        public MementoNode CreateNext(Game.Action action) {
             return new MementoNode(this, action);
         }
 
@@ -35,12 +35,12 @@
 
     public class MementoNode : GameMemento {
 
-        private readonly IPlayerAction _action;
+        private readonly Game.Action _action;
         private readonly GameMemento _previous;
         private Game _gameInstance;
 
 
-        public MementoNode(GameMemento previous, IPlayerAction action) {
+        public MementoNode(GameMemento previous, Game.Action action) {
             _previous = previous;
             _action = action;
         }

@@ -15,7 +15,7 @@ namespace CSDiaballik {
 
         public abstract bool IsAi();
 
-        public abstract IPlayerAction GetNextMove(GameBoard board);
+        public abstract Game.Action GetNextMove(GameBoard board);
 
     }
 }

@@ -13,7 +13,7 @@ namespace CSDiaballik {
         }
 
 
-        public override IPlayerAction GetNextMove(GameBoard board) {
+        public override Game.Action GetNextMove(GameBoard board) {
             throw new NotImplementedException();
         }
 

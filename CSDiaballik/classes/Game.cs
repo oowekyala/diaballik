@@ -13,7 +13,7 @@ namespace CSDiaballik {
         public int BoardSize => Board.Size;
         public GameBoard Board { get; }
 
-        public IPlayer CurrentPlayer { get; }
+        public IPlayer CurrentPlayer { get; private set; }
 
 
         private Game(GameBoard board, bool isFirstPlayerPlaying) {
@@ -36,10 +36,91 @@ namespace CSDiaballik {
         /// <summary>
         ///     Updates this game with the given player action. May change the current player as well.
         /// </summary>
-        /// <param name="playerAction">The action to be played by the current player</param>
+        /// <param name="action">The action to be played by the current player</param>
         /// <returns>This game</returns>
-        public Game Update(IPlayerAction playerAction) {
+        public Game Update(Action action) {
+            //TODO
+
+
             return this;
+        }
+
+
+        /// <summary>
+        ///     Represents an action the player can carry out during their turn.
+        /// </summary>
+        public abstract class Action {
+
+            public abstract void Execute(Game game);
+
+
+            /// <summary>
+            ///     Move the ball to another piece.
+            /// </summary>
+            public class MoveBall : Action {
+
+                public MoveBall(Position2D src, Position2D dst) {
+                    Src = src;
+                    Dst = dst;
+                }
+
+
+                public override void Execute(Game game) {
+                    game.Board.MoveBall(Src, Dst);
+                }
+
+
+                public Position2D Src { get; }
+                public Position2D Dst { get; }
+
+            }
+
+
+            /// <summary>
+            ///     Move a piece to a new location.
+            /// </summary>
+            public class MovePiece : Action {
+
+                public MovePiece(Position2D p, Position2D dst) {
+                    Piece = p;
+                    Dst = dst;
+                }
+
+
+                public override void Execute(Game game) {
+                    //TODO   
+                }
+
+
+                public Position2D Piece { get; }
+                public Position2D Dst { get; }
+
+            }
+
+
+            /// <summary>
+            ///     Undo the last action of the player.
+            /// </summary>
+            public class Undo : Action {
+
+                public override void Execute(Game game) {
+                    //TODO   
+                }
+
+            }
+
+
+            /// <summary>
+            ///     End the turn and give initiative to the other player prematurely.
+            /// </summary>
+            public class Pass : Action {
+
+                public override void Execute(Game game) {
+                    //TODO   
+                }
+
+            }
+
         }
 
     }
