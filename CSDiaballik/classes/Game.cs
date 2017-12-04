@@ -13,6 +13,7 @@ namespace CSDiaballik {
         public IPlayer Player1 => _board.Player1;
         public IPlayer Player2 => _board.Player2;
         public int BoardSize => _board.Size;
+        public GameBoard Board => _board;
 
         public IPlayer CurrentPlayer { get; }
 

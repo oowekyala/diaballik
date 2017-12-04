@@ -34,27 +34,22 @@ namespace CSDiaballik {
 
 
         // Performs full consistency checks
-        private GameBoard(int size, FullPlayerBoardSpec p1Spec, FullPlayerBoardSpec p2Spec) {
+        private GameBoard(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
             Size = size;
 
-            Player1 = p1Spec.Player;
-            Player2 = p2Spec.Player;
+            (Player1, Player2) = specs.Map(x => x.Player);
+            var (p1List, p2List) = specs.Map(x => x.Positions.ToList());
 
-            var p1List = p1Spec.Positions.ToList();
-            var p2List = p2Spec.Positions.ToList();
 
             CheckPieces(size, p1List, p2List);
 
-            BallBearer1 = p1List[p1Spec.BallIndex];
-            BallBearer2 = p2List[p2Spec.BallIndex];
+            (BallBearer1, BallBearer2) = (p1List, p2List).Merge(specs, (l, spec) => l[spec.BallIndex]);
 
             _board = new IPlayer[Size, Size];
-
             p1List.ForEach(p => _board[p.X, p.Y] = Player1);
             p2List.ForEach(p => _board[p.X, p.Y] = Player2);
 
-            _player1Positions = new HashSet<Position2D>(p1List);
-            _player2Positions = new HashSet<Position2D>(p2List);
+            (_player1Positions, _player2Positions) = (p1List, p2List).Map(l => new HashSet<Position2D>(l));
         }
 
 
@@ -77,7 +72,7 @@ namespace CSDiaballik {
         ///     or there are duplicate pieces
         /// </exception>
         public static GameBoard New(int size, FullPlayerBoardSpec p1Spec, FullPlayerBoardSpec p2Spec)
-            => new GameBoard(size, p1Spec, p2Spec);
+            => new GameBoard(size, (p1Spec, p2Spec));
 
 
         /// <summary>
@@ -91,7 +86,7 @@ namespace CSDiaballik {
         ///     or there are duplicate pieces
         /// </exception>
         public static GameBoard New(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs)
-            => New(size, specs.Item1, specs.Item2);
+            => new GameBoard(size, specs);
 
 
         private static void CheckPieces(int size, List<Position2D> p1List, List<Position2D> p2List) {

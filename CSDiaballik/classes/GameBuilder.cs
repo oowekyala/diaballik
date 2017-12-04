@@ -9,10 +9,10 @@ namespace CSDiaballik {
 
         private readonly PlayerBuilder _playerBuilder1 = new PlayerBuilder();
         private readonly PlayerBuilder _playerBuilder2 = new PlayerBuilder();
-        private int _size;
+        private int _size = 7;
 
 
-        public IInitStrategy InitStrategy { get; set; }
+        public IInitStrategy InitStrategy { get; set; } = new StandardInitStrategy();
 
         public int Size {
             get => _size;
@@ -30,7 +30,7 @@ namespace CSDiaballik {
 
 
         public Game Build() {
-            var players = (_playerBuilder1.Build(), _playerBuilder2.Build());
+            var players = (_playerBuilder1, _playerBuilder2).Map(x => x.Build());
             var specs = InitStrategy.InitPositions(Size);
 
             var fullSpecs = specs.Merge(players, (spec, player) => new FullPlayerBoardSpec(player, spec));

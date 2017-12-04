@@ -8,23 +8,17 @@ namespace CSDiaballik.Tests {
     public class TestUtilTest {
 
         [Test]
-        public void TestOrderedPositions() {
-            var testCases = RandomInts(10, 50);
-            foreach (var i in testCases) {
-                var pool = OrderedPositionsPool(i).ToList();
-                Assert.AreEqual(i * i, pool.Count);
-                Assert.AreEqual(pool.Count, pool.Distinct().Count());
-            }
+        public void TestOrderedPositions([Random(1, 50, 10)] int i) {
+            var pool = OrderedPositionsPool(i).ToList();
+            Assert.AreEqual(i * i, pool.Count);
+            Assert.AreEqual(pool.Count, pool.Distinct().Count());
         }
 
 
         [Test]
-        public void TestRandomPositionsNotOutOfRange() {
-            var testCases = RandomInts(10, 50);
-            foreach (var i in testCases) {
-                var pool = RandomPositions(i * i, i); // expect no exception
-                // pool.ToList().Select(p => p.ToString()).ToList().ForEach(Console.WriteLine); // debug output
-            }
+        public void TestRandomPositionsNotOutOfRange([Random(1, 50, 10)] int i) {
+            var pool = RandomPositions(i * i, i); // expect no exception
+            // pool.ToList().Select(p => p.ToString()).ToList().ForEach(Console.WriteLine); // debug output
         }
 
     }

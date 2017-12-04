@@ -46,6 +46,7 @@ namespace CSDiaballik {
         /// </summary>
         /// <returns>A new player</returns>
         public IPlayer Build() {
+            
             if (_isHuman) {
                 return new HumanPlayer(Color, Name);
             }

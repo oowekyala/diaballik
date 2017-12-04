@@ -69,7 +69,7 @@ namespace CSDiaballik.Tests {
 
         public static (FullPlayerBoardSpec, FullPlayerBoardSpec) DummyPlayerSpecPair(int boardSize) {
             var positions = RandomPositionsPair(boardSize);
-            return positions.Select(p => new FullPlayerBoardSpec(DummyPlayer(), p, boardSize / 2));
+            return positions.Map(p => new FullPlayerBoardSpec(DummyPlayer(), p, boardSize / 2));
         }
 
 

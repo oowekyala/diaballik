@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using static CSDiaballik.Tests.TestUtil;
 
 namespace CSDiaballik.Tests {
@@ -7,12 +8,11 @@ namespace CSDiaballik.Tests {
     public class GameBoardTests {
 
         [Test]
-        public void TestMovePiece() {
-            const int size = 7;
-            var positions = RandomPositionsPair(size + 1, size).Select(e => e.ToList());
+        public void TestMovePiece([Range(3, 13)] int size) {
+            var positions = RandomPositionsPair(size + 1, size).Map(e => e.ToList());
             var empty = positions.Item1[0];
             positions.Foreach(e => e.RemoveAt(0));
-            var specs = positions.Select(p => DummyPlayerSpec(size, p));
+            var specs = positions.Map(p => DummyPlayerSpec(size, p));
 
             var board = GameBoard.New(size, specs);
 
@@ -23,14 +23,13 @@ namespace CSDiaballik.Tests {
 
 
         [Test]
-        public void TestMovePieceWithBall() {
-            const int size = 7;
+        public void TestMovePieceWithBall([Range(3, 13)] int size) {
             const int ballIndex = 1;
-            var positions = RandomPositionsPair(size + 1, size).Select(e => e.ToList());
+            var positions = RandomPositionsPair(size + 1, size).Map(e => e.ToList());
             var empty = positions.Item1[0];
             positions.Foreach(e => e.RemoveAt(0));
             var ballBearer = positions.Item1[ballIndex];
-            var specs = positions.Select(p => DummyPlayerSpec(p, ballIndex));
+            var specs = positions.Map(p => DummyPlayerSpec(p, ballIndex));
 
             var board = GameBoard.New(size, specs);
 
@@ -40,14 +39,12 @@ namespace CSDiaballik.Tests {
         }
 
 
-        public void TestMoveBall() {
-            
+        public void TestMoveBall([Range(3, 13)] int size) {
         }
 
 
         [Test]
-        public void TestPlayersHaveNotSizePieces() {
-            const int size = 7;
+        public void TestPlayersHaveNotSizePieces([Range(3, 13)] int size) {
             var specs = DummyPlayerSpecPair(size - 1);
 
             Assert.That(() => GameBoard.New(size, specs), Throws.ArgumentException);
@@ -55,10 +52,8 @@ namespace CSDiaballik.Tests {
 
 
         [Test]
-        public void TestPositionHasPiece() {
-            const int size = 7;
+        public void TestPositionHasPiece([Range(3, 13)] int size) {
             var specs = DummyPlayerSpecPair(size);
-
             var gb = GameBoard.New(size, specs);
 
             foreach (var p in specs.Item1.Positions) {
@@ -72,8 +67,7 @@ namespace CSDiaballik.Tests {
 
 
         [Test]
-        public void TestStackPieces() {
-            const int size = 7;
+        public void TestStackPieces([Range(3, 13)] int size) {
             var position = RandomPositions(size).ToList();
             var dummy = DummyPlayerSpec(size, position);
             var dummy2 = DummyPlayerSpec(size, position);
@@ -84,8 +78,7 @@ namespace CSDiaballik.Tests {
 
 
         [Test]
-        public void TestUnequalNumPieces() {
-            const int size = 7;
+        public void TestUnequalNumPieces([Range(3, 13)] int size) {
             var dummy = DummyPlayerSpec(size, RandomPositions(size - 1, size));
             var dummy2 = DummyPlayerSpec(size, RandomPositions(size).ToList());
 
@@ -95,17 +88,15 @@ namespace CSDiaballik.Tests {
 
 
         [Test]
-        public void TestBallPosition() {
-            const int size = 7;
-            var specs = RandomPositionsPair(size).Select(p => DummyPlayerSpec(p, 0));
-            var (ball1, ball2) = specs.Select(p => p.Positions.First());
+        public void TestBallPosition([Range(3, 13)] int size) {
+            var specs = RandomPositionsPair(size).Map(p => DummyPlayerSpec(p, 0));
+            var (ball1, ball2) = specs.Map(p => p.Positions.First());
 
             var gb = GameBoard.New(size, specs);
 
             Assert.AreEqual(ball1, gb.BallBearer1);
             Assert.AreEqual(ball2, gb.BallBearer2);
         }
-
 
     }
 }
