@@ -19,7 +19,7 @@
         /// </summary>
         /// <param name="action">The transition from this memento to the result</param>
         /// <returns>A new memento</returns>
-        public MementoNode CreateNext(Game.Action action) {
+        public MementoNode CreateNext(PlayerAction action) {
             return new MementoNode(this, action);
         }
 
@@ -35,12 +35,12 @@
 
     public class MementoNode : GameMemento {
 
-        private readonly Game.Action _action;
+        private readonly PlayerAction _action;
         private readonly GameMemento _previous;
         private Game _gameInstance;
 
 
-        public MementoNode(GameMemento previous, Game.Action action) {
+        public MementoNode(GameMemento previous, PlayerAction action) {
             _previous = previous;
             _action = action;
         }
@@ -122,7 +122,7 @@
 
         public override Game ToGame() {
             var players = (_p1Spec.Build(), _p2Spec.Build());
-            var specs = players.Merge((_boardSpec1, _boardSpec2),
+            var specs = players.Zip((_boardSpec1, _boardSpec2),
                                       (player, spec) => new FullPlayerBoardSpec(player, spec));
 
             var board = GameBoard.New(_boardSize, specs);

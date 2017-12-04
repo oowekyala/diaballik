@@ -43,7 +43,7 @@ namespace CSDiaballik {
 
             CheckPieces(size, p1List, p2List);
 
-            (BallBearer1, BallBearer2) = (p1List, p2List).Merge(specs, (l, spec) => l[spec.BallIndex]);
+            (BallBearer1, BallBearer2) = (p1List, p2List).Zip(specs, (l, spec) => l[spec.BallIndex]);
 
             _board = new IPlayer[Size, Size];
             p1List.ForEach(p => _board[p.X, p.Y] = Player1);
@@ -210,7 +210,7 @@ namespace CSDiaballik {
                                                                  throw new ArgumentException("Unknown player");
 
 
-        private IPlayer PlayerOn(Position2D pos) => _board[pos.X, pos.Y];
+        public IPlayer PlayerOn(Position2D pos) => _board[pos.X, pos.Y];
 
 
         private void SetPiece(Position2D pos, IPlayer player) {
@@ -229,7 +229,48 @@ namespace CSDiaballik {
         }
 
 
-        public static (int, int) BaseRowIndexOfPlayers(int size) => (size - 1, 0);
+        /// <summary>
+        /// Returns true if there is a piece-free vertical, horizontal, or diagonal line 
+        /// between the two positions on the board.
+        /// </summary>
+        /// <param name="p1">Position</param>
+        /// <param name="p2">Position</param>
+        /// <returns>True if there is a free line between the specified positions</returns>
+        /// <exception cref="ArgumentException">If the positions are identical</exception>
+        public bool IsLineFreeBetween(Position2D p1, Position2D p2) {
+            var deltaX = Math.Abs(p2.X - p1.X);
+            var deltaY = Math.Abs(p2.Y - p1.Y);
+
+            if (deltaX == 0 && deltaY == 0) {
+                throw new ArgumentException("Illegal: cannot move to the same piece");
+            }
+
+            if (deltaX <= 1 && deltaY <= 1) {
+                return true; // pieces are side by side
+            }
+
+            var ys = Enumerable.Range(Math.Min(p1.Y, p2.Y) + 1, deltaY - 2);
+            var xs = Enumerable.Range(Math.Min(p1.X, p2.X) + 1, deltaX - 2);
+
+            if (deltaX == 0) {
+                // same row
+                return ys.Select(y => new Position2D(p1.X, y)).All(IsFree);
+            }
+
+            if (deltaY == 0) {
+                // same column
+                return xs.Select(x => new Position2D(x, p1.Y)).All(IsFree);
+            }
+
+            return deltaX == deltaY && xs.Zip(ys, Position2D.New).All(IsFree);
+        }
+
+
+        public (IEnumerable<Position2D>, IEnumerable<Position2D>) PositionsPair()
+            => (Player1Positions, Player2Positions);
+
+
+        public (Position2D, Position2D) BallBearerPair() => (BallBearer1, BallBearer2);
 
     }
 }

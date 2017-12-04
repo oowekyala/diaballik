@@ -26,8 +26,8 @@ namespace CSDiaballik.Tests {
                 Size = size,
                 InitStrategy = new StandardInitStrategy()
             };
-            var board = builder.Build().Board;
-            var (p1Pos, p2Pos) = board.PositionsTuple().Map(x => x.ToList());
+            var game = builder.Build();
+            var (p1Pos, p2Pos) = game.PositionsPair.Map(x => x.ToList());
 
             Assert.AreEqual(size, p1Pos.Count);
             Assert.AreEqual(size, p2Pos.Count);
@@ -36,7 +36,7 @@ namespace CSDiaballik.Tests {
             p2Pos.ForEach(x => Assert.AreEqual(0, x.X)); // top row
 
             // ball bearers are middle pieces
-            board.BallBearerTuple().Foreach(x => Assert.AreEqual(size / 2, x.Y));
+            game.BallBearerPair.Foreach(x => Assert.AreEqual(size / 2, x.Y));
         }
 
 
@@ -46,10 +46,10 @@ namespace CSDiaballik.Tests {
                 Size = size,
                 InitStrategy = new BallRandomStrategy()
             };
-            var board = builder.Build().Board;
-            var (p1Pos, p2Pos) = board.PositionsTuple().Map(x => x.ToList());
+            var game = builder.Build();
+            var (p1Pos, p2Pos) = game.PositionsPair.Map(x => x.ToList());
 
-            board.PositionsTuple().Foreach(ps => Assert.AreEqual(size, ps.Count()));
+            game.PositionsPair.Foreach(ps => Assert.AreEqual(size, ps.Count()));
 
             p1Pos.ForEach(x => Assert.AreEqual(size - 1, x.X)); // bottom row
             p2Pos.ForEach(x => Assert.AreEqual(0, x.X)); // top row
@@ -64,11 +64,11 @@ namespace CSDiaballik.Tests {
                 Size = size,
                 InitStrategy = new EnemyAmongUsStrategy()
             };
-            var board = builder.Build().Board;
-            var positionsTuple = board.PositionsTuple().Map(x => x.ToList());
+            var game = builder.Build();
+            var positionsTuple = game.PositionsPair.Map(x => x.ToList());
 
             positionsTuple.Foreach(ps => Assert.AreEqual(size, ps.Count));
-            
+
             positionsTuple.Zip((size - 1, 0))
                           .Foreach(t => {
                               var (ps, row) = t;
@@ -77,13 +77,13 @@ namespace CSDiaballik.Tests {
                           });
 
             // ball bearers are middle pieces, in friend row
-            board.BallBearerTuple()
-                 .Zip((size - 1, 0))
-                 .Foreach(t => {
-                     var (ball, row) = t;
-                     Assert.AreEqual(size / 2, ball.Y);
-                     Assert.AreEqual(row, ball.X);
-                 });
+            game.BallBearerPair
+                .Zip((size - 1, 0))
+                .Foreach(t => {
+                    var (ball, row) = t;
+                    Assert.AreEqual(size / 2, ball.Y);
+                    Assert.AreEqual(row, ball.X);
+                });
         }
 
     }

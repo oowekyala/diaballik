@@ -56,5 +56,8 @@ namespace CSDiaballik {
             return "(" + X + ", " + Y + ")";
         }
 
+
+        public static Position2D New(int x, int y) => new Position2D(x, y);
+
     }
 }

@@ -25,7 +25,7 @@ namespace CSDiaballik {
         /// </summary>
         /// <param name="board">The board of the game</param>
         /// <returns>The next move of this player</returns>
-        Game.Action GetNextMove(GameBoard board);
+        PlayerAction GetNextMove(GameBoard board);
 
     }
 }

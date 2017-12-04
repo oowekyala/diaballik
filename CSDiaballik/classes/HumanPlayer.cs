@@ -13,7 +13,7 @@ namespace CSDiaballik {
         }
 
 
-        public override Game.Action GetNextMove(GameBoard board) {
+        public override PlayerAction GetNextMove(GameBoard board) {
             throw new NotImplementedException();
         }
 

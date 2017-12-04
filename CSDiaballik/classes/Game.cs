@@ -1,5 +1,6 @@
 ﻿using System;
-using static CSDiaballik.Game.Action;
+using System.Collections.Generic;
+using static CSDiaballik.PlayerAction;
 
 namespace CSDiaballik {
     /// <summary>
@@ -12,9 +13,12 @@ namespace CSDiaballik {
         public IPlayer Player1 => Board.Player1;
         public IPlayer Player2 => Board.Player2;
         public int BoardSize => Board.Size;
-        public GameBoard Board { get; }
+        private GameBoard Board { get; }
 
-        public IPlayer CurrentPlayer { get; private set; }
+        public (IEnumerable<Position2D>, IEnumerable<Position2D>) PositionsPair => Board.PositionsPair();
+        public (Position2D, Position2D) BallBearerPair => Board.BallBearerPair();
+
+        public IPlayer CurrentPlayer { get; }
 
 
         private Game(GameBoard board, bool isFirstPlayerPlaying) {
@@ -39,10 +43,11 @@ namespace CSDiaballik {
         /// </summary>
         /// <param name="action">The action to be played by the current player</param>
         /// <returns>This game</returns>
-        public Game Update(Action action) {
+        public Game Update(PlayerAction action) {
             //TODO
             switch (action) {
                 case MoveBall moveBall:
+
                     break;
                 case MovePiece movePiece:
                     break;
@@ -52,63 +57,6 @@ namespace CSDiaballik {
                     break;
             }
             return this;
-        }
-
-
-        /// <summary>
-        ///     Represents an action the player can carry out during their turn.
-        /// </summary>
-        public abstract class Action {
-
-            /// <summary>
-            ///     Move the ball to another piece.
-            /// </summary>
-            public class MoveBall : Action {
-
-                public MoveBall(Position2D src, Position2D dst) {
-                    Src = src;
-                    Dst = dst;
-                }
-
-
-                public Position2D Src { get; }
-                public Position2D Dst { get; }
-
-            }
-
-
-            /// <summary>
-            ///     Move a piece to a new location.
-            /// </summary>
-            public class MovePiece : Action {
-
-                public MovePiece(Position2D p, Position2D dst) {
-                    Piece = p;
-                    Dst = dst;
-                }
-
-
-                public Position2D Piece { get; }
-                public Position2D Dst { get; }
-
-            }
-
-
-            /// <summary>
-            ///     Undo the last action of the player.
-            /// </summary>
-            public class Undo : Action {
-
-            }
-
-
-            /// <summary>
-            ///     End the turn and give initiative to the other player prematurely.
-            /// </summary>
-            public class Pass : Action {
-
-            }
-
         }
 
     }

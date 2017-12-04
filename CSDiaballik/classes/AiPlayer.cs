@@ -36,7 +36,7 @@ namespace CSDiaballik {
         public override AiLevel Level => AiLevel.Noob;
 
 
-        public override Game.Action GetNextMove(GameBoard board) {
+        public override PlayerAction GetNextMove(GameBoard board) {
             throw new NotImplementedException();
         }
 
@@ -52,7 +52,7 @@ namespace CSDiaballik {
         public override AiLevel Level => AiLevel.Starting;
 
 
-        public override Game.Action GetNextMove(GameBoard board) {
+        public override PlayerAction GetNextMove(GameBoard board) {
             throw new NotImplementedException();
         }
 
@@ -68,7 +68,7 @@ namespace CSDiaballik {
         public override AiLevel Level => AiLevel.Progressive;
 
 
-        public override Game.Action GetNextMove(GameBoard board) {
+        public override PlayerAction GetNextMove(GameBoard board) {
             throw new NotImplementedException();
         }
 

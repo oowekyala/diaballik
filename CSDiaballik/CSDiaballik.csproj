@@ -56,6 +56,7 @@
     <Compile Include="classes\HumanPlayer.cs" />
     <Compile Include="classes\InitStrategy.cs" />
     <Compile Include="classes\IPlayer.cs" />
+    <Compile Include="classes\PlayerAction.cs" />
     <Compile Include="classes\PlayerBoardSpec.cs" />
     <Compile Include="classes\PlayerBuilder.cs" />
     <Compile Include="classes\Position2D.cs" />
