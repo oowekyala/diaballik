@@ -17,9 +17,12 @@ namespace CSDiaballik.Tests {
 
             var board = GameBoard.New(size, specs);
 
+            var src = positions.Item1[0];
             Assert.IsTrue(board.IsFree(empty));
-            board.MovePiece(positions.Item1[0], empty);
+            Assert.IsFalse(board.IsFree(src));
+            board.MovePiece(src, empty);
             Assert.IsFalse(board.IsFree(empty));
+            Assert.IsTrue(board.IsFree(src));
         }
 
 
@@ -102,19 +105,10 @@ namespace CSDiaballik.Tests {
 
         [Test]
         public void TestVictory([Range(3, 13)] int size) {
+            var specs = (size - 1, 0).Map(row => Enumerable.Range(0, size).Select(y => new Position2D(row, y)))
+                                     .Map(ps => DummyPlayerSpec(size, ps));
 
-            var p1Positions = new List<Position2D>();
-            var p2Positions = new List<Position2D>();
-
-            for (var i = 0; i < size; i++) {
-                p1Positions.Add(new Position2D(0, i));
-                p2Positions.Add(new Position2D(size - 1, i));
-            }
-
-            var p1Spec = DummyPlayerSpec(size, p1Positions);
-            var p2Spec = DummyPlayerSpec(size, p2Positions);
-
-            var board = GameBoard.New(size, p1Spec, p2Spec);
+            var board = GameBoard.New(size, specs);
 
             Assert.IsFalse(board.IsVictoriousPlayer(board.Player2));
             board.MovePiece(new Position2D(0, 0), new Position2D(1, 0));

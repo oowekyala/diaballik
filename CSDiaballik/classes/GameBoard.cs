@@ -33,8 +33,6 @@ namespace CSDiaballik {
         public IEnumerable<Position2D> Player2Positions => _player2Positions;
 
 
-
-
         // Performs full consistency checks
         private GameBoard(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
             Size = size;
@@ -60,6 +58,13 @@ namespace CSDiaballik {
 
         public bool IsVictoriousPlayer(IPlayer player)
             => PositionsForPlayer(player).Select(p => p.X).Any(i => Size - 1 - GetRowIndexOfInitialLine(player) == i);
+
+
+        // Gets the index of the starting row of a player. Used to check for victory
+        private int GetRowIndexOfInitialLine(IPlayer player)
+            => player == Player1 ? Size - 1
+               : player == Player2 ? 0
+               : throw new ArgumentException("Unknown player");
 
 
         /// <summary>
@@ -119,9 +124,7 @@ namespace CSDiaballik {
         }
 
 
-        public bool IsFree(Position2D pos) {
-            return _board[pos.X, pos.Y] == null;
-        }
+        public bool IsFree(Position2D pos) => _board[pos.X, pos.Y] == null;
 
 
         /// <summary>
@@ -187,22 +190,13 @@ namespace CSDiaballik {
                : throw new ArgumentException("Unknown player");
 
 
-        // Gets the index of the starting row of a player. Used to check for victory
-        private int GetRowIndexOfInitialLine(IPlayer player)
-            => player == Player1 ? 0
-               : player == Player2 ? Size - 1
-               : throw new ArgumentException("Unknown player");
-
-
         /// <summary>
         ///     Gets the positions of the pieces of a player.
         /// </summary>
         /// <param name="player">The player</param>
         /// <returns>The positions</returns>
         /// <exception cref="ArgumentException">If the player is not recognised</exception>
-        public IEnumerable<Position2D> PositionsForPlayer(IPlayer player) {
-            return _PositionsForPlayer(player);
-        }
+        public IEnumerable<Position2D> PositionsForPlayer(IPlayer player) => _PositionsForPlayer(player);
 
 
         /// <summary>
@@ -211,15 +205,12 @@ namespace CSDiaballik {
         /// <param name="player">The player</param>
         /// <returns>The position</returns>
         /// <exception cref="ArgumentException">If the player is not recognised</exception>
-        public Position2D BallBearerForPlayer(IPlayer player) {
-            return player == Player1 ? BallBearer1 :
-                   player == Player2 ? BallBearer2 : throw new ArgumentException("Unknown player");
-        }
+        public Position2D BallBearerForPlayer(IPlayer player) => player == Player1 ? BallBearer1 :
+                                                                 player == Player2 ? BallBearer2 :
+                                                                 throw new ArgumentException("Unknown player");
 
 
-        private IPlayer PlayerOn(Position2D pos) {
-            return _board[pos.X, pos.Y];
-        }
+        private IPlayer PlayerOn(Position2D pos) => _board[pos.X, pos.Y];
 
 
         private void SetPiece(Position2D pos, IPlayer player) {
@@ -227,10 +218,8 @@ namespace CSDiaballik {
         }
 
 
-        private bool IsPositionOnBoard(Position2D p) {
-            return p.X >= 0 && p.X < Size
-                   && p.Y >= 0 && p.Y < Size;
-        }
+        private bool IsPositionOnBoard(Position2D p) => p.X >= 0 && p.X < Size
+                                                        && p.Y >= 0 && p.Y < Size;
 
 
         private void CheckPositionIsValid(Position2D p) {
@@ -238,6 +227,9 @@ namespace CSDiaballik {
                 throw new ArgumentException("Illegal: position is out of the board " + p);
             }
         }
+
+
+        public static (int, int) BaseRowIndexOfPlayers(int size) => (size - 1, 0);
 
     }
 }

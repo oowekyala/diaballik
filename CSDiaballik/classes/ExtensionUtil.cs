@@ -17,13 +17,12 @@ namespace CSDiaballik {
             => (f(tuple.Item1, z), f(tuple.Item2, z));
 
 
-        public static (A, A) Pair<A>(A a) => (a, a);
+        public static (A, A) Pair<A>(Func<A> a) => (a.Invoke(), a.Invoke());
 
 
-        public static (A, A) Foreach<A>(this (A, A) tuple, Action<A> f) {
+        public static void Foreach<A>(this(A, A) tuple, Action<A> f) {
             f(tuple.Item1);
             f(tuple.Item2);
-            return tuple;
         }
 
 

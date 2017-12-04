@@ -9,7 +9,7 @@ namespace CSDiaballik.Tests {
     /// </summary>
     public static class TestUtil {
 
-        private static readonly Random rng = new Random();
+        private static readonly Random Rng = new Random();
 
 
         public static IEnumerable<Position2D> RandomPositions(int n, int boardSize) {
@@ -27,11 +27,10 @@ namespace CSDiaballik.Tests {
         public static IEnumerable<Position2D> RandomPositions(int n) => RandomPositions(n, n);
 
 
-        internal static IEnumerable<Position2D> OrderedPositionsPool(int boardSize) {
-            return from col in Enumerable.Range(0, boardSize)
-                   from row in Enumerable.Range(0, boardSize)
-                   select new Position2D(col, row);
-        }
+        internal static IEnumerable<Position2D> OrderedPositionsPool(int boardSize)
+            => from col in Enumerable.Range(0, boardSize)
+               from row in Enumerable.Range(0, boardSize)
+               select new Position2D(col, row);
 
 
         public static (IEnumerable<Position2D>, IEnumerable<Position2D>) RandomPositionsPair(int n, int boardSize) {
@@ -46,7 +45,7 @@ namespace CSDiaballik.Tests {
 
         private static IEnumerable<T> Shuffle<T>(this IList<T> list) {
             for (var i = 0; i < list.Count; i++) {
-                var j = rng.Next(i, list.Count);
+                var j = Rng.Next(i, list.Count);
                 yield return list[j];
 
                 list[j] = list[i];
@@ -54,23 +53,14 @@ namespace CSDiaballik.Tests {
         }
 
 
-        public static IEnumerable<int> RandomInts(int size, int bound) {
-            if (size-- > 0) {
-                yield return rng.Next(bound);
-            }
-        }
-
-
-        public static Color RandomColor() => Color.FromArgb(rng.Next(256), rng.Next(256), rng.Next(256));
+        public static Color RandomColor() => Color.FromArgb(Rng.Next(256), Rng.Next(256), Rng.Next(256));
 
 
         public static IPlayer DummyPlayer(Color c, string name) => new NoobAiPlayer(c, name);
 
 
-        public static (FullPlayerBoardSpec, FullPlayerBoardSpec) DummyPlayerSpecPair(int boardSize) {
-            var positions = RandomPositionsPair(boardSize);
-            return positions.Map(p => new FullPlayerBoardSpec(DummyPlayer(), p, boardSize / 2));
-        }
+        public static (FullPlayerBoardSpec, FullPlayerBoardSpec) DummyPlayerSpecPair(int boardSize)
+            => RandomPositionsPair(boardSize).Map(p => new FullPlayerBoardSpec(DummyPlayer(), p, boardSize / 2));
 
 
         public static FullPlayerBoardSpec DummyPlayerSpec(IEnumerable<Position2D> positions, int ballIndex)
@@ -81,7 +71,7 @@ namespace CSDiaballik.Tests {
             => new FullPlayerBoardSpec(DummyPlayer(), positions, boardSize / 2);
 
 
-        public static IPlayer DummyPlayer() => new NoobAiPlayer(RandomColor(), "dummy" + rng.Next(100));
+        public static IPlayer DummyPlayer() => new NoobAiPlayer(RandomColor(), "dummy" + Rng.Next(100));
 
 
         public static (IEnumerable<Position2D>, IEnumerable<Position2D>) PositionsTuple(this GameBoard board)

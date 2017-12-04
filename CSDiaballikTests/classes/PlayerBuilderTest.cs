@@ -2,6 +2,7 @@
 using System.Drawing;
 using NUnit.Framework;
 using static System.Drawing.KnownColor;
+using static CSDiaballik.AiPlayer;
 
 namespace CSDiaballik.Tests {
     [TestFixture]
@@ -22,7 +23,7 @@ namespace CSDiaballik.Tests {
 
 
         [Test]
-        public void TestBuildAi([Values] AiPlayer.AiLevel level) {
+        public void TestBuildAi([Values] AiLevel level) {
             var builder = new PlayerBuilder {
                 Color = Color.DeepPink,
                 Name = "dummy"
@@ -31,13 +32,13 @@ namespace CSDiaballik.Tests {
             var player = builder.SetIsAi(level).Build();
 
             switch (level) {
-                case AiPlayer.AiLevel.Noob:
+                case AiLevel.Noob:
                     Assert.AreEqual(player.GetType(), typeof(NoobAiPlayer));
                     break;
-                case AiPlayer.AiLevel.Starting:
+                case AiLevel.Starting:
                     Assert.AreEqual(player.GetType(), typeof(StartingAiPlayer));
                     break;
-                case AiPlayer.AiLevel.Progressive:
+                case AiLevel.Progressive:
                     Assert.AreEqual(player.GetType(), typeof(ProgressiveAiPlayer));
                     break;
                 default:
