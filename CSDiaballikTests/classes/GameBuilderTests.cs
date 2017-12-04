@@ -41,6 +41,24 @@ namespace CSDiaballik.Tests {
 
 
         [Test]
+        public void TestBallRandomInitStrategy([Range(3, 15, 2)] int size) {
+            var builder = new GameBuilder {
+                Size = size,
+                InitStrategy = new BallRandomStrategy()
+            };
+            var board = builder.Build().Board;
+            var (p1Pos, p2Pos) = board.PositionsTuple().Map(x => x.ToList());
+
+            board.PositionsTuple().Foreach(ps => Assert.AreEqual(size, ps.Count()));
+            
+            p1Pos.ForEach(x => Assert.AreEqual(size - 1, x.X)); // bottom row
+            p2Pos.ForEach(x => Assert.AreEqual(0, x.X)); // top row
+
+            // ball bearers can be any piece in the line
+        }
+
+
+        [Test]
         public void TestEnemyAmongUsInitStrategy([Range(3, 15, 2)] int size) {
             var builder = new GameBuilder {
                 Size = size,

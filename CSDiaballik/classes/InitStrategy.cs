@@ -10,72 +10,73 @@ namespace CSDiaballik {
         /// </summary>
         /// <param name="size">Size of the board (square)</param>
         /// <returns>A tuple containing the positions of the pieces of each player </returns>
-        ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size);
+        (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size);
 
     }
+
+
+    public abstract class AbstractInitStrategy : IInitStrategy {
+
+        protected static readonly Random Rand = new Random();
+
+
+        public abstract (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size);
+
+
+        /// <summary>
+        /// Gets a tuple of positions corresponding to the default positions of each player,
+        /// that is, that is, each player has the top or bottom row, according to the convention
+        /// defined in <see cref="GameBoard"/>.
+        /// </summary>
+        /// <param name="size">The size of the board</param>
+        /// <returns></returns>
+        protected static (IEnumerable<Position2D>, IEnumerable<Position2D>) InitialPositions(int size)
+            => (size - 1, 0).Map(Enumerable.Range(0, size), (x, ys) => ys.Select(y => new Position2D(x, y)));
+
+    }
+
 
     // We assume that the board's size is odd
 
-    public class StandardInitStrategy : IInitStrategy {
 
-        public ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size) {
-            var pos1 = Enumerable.Range(0, size).Select(i => new Position2D(size - 1, i));
-            var pos2 = Enumerable.Range(0, size).Select(i => new Position2D(0, i));
+    public class StandardInitStrategy : AbstractInitStrategy {
 
-            return (new PlayerBoardSpec(pos1, size / 2), new PlayerBoardSpec(pos2, size / 2));
-        }
+        public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size)
+            => InitialPositions(size).Map(ps => new PlayerBoardSpec(ps, size / 2));
 
     }
 
 
-    public class BallRandomStrategy : IInitStrategy {
+    public class BallRandomStrategy : AbstractInitStrategy {
 
-        public ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size) {
-            var pos1 = Enumerable.Range(0, size).Select(i => new Position2D(size - 1, i));
-            var pos2 = Enumerable.Range(0, size).Select(i => new Position2D(0, i));
-            var rand = new Random();
-
-            return (new PlayerBoardSpec(pos1, rand.Next(size)), new PlayerBoardSpec(pos2, rand.Next(size)));
-        }
+        public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size) =>
+            InitialPositions(size).Map(ps => new PlayerBoardSpec(ps, Rand.Next(size)));
 
     }
 
 
-    public class EnemyAmongUsStrategy : IInitStrategy {
+    public class EnemyAmongUsStrategy : AbstractInitStrategy {
 
-        private readonly Random rand = new Random();
-
-
-        public ValueTuple<PlayerBoardSpec, PlayerBoardSpec> InitPositions(int size) {
-            var pos1 = Enumerable.Range(0, size).Select(i => new Position2D(size - 1, i)).ToList();
-            var pos2 = Enumerable.Range(0, size).Select(i => new Position2D(0, i)).ToList();
+        public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size) {
+            var (pos1, pos2) = InitialPositions(size).Map(ps => ps.ToList());
 
             if (size == 1) {
                 throw new ArgumentException("Size is 1"); // infinite loop otherwise
             }
 
-            var n = SwapRandom(size, pos1, pos2);
-            SwapRandom(size, pos1, pos2, n);
+            // swap two positions randomly twice
+            SwapRandom(0, size / 2, pos1, pos2);
+            SwapRandom(1 + size / 2, size, pos1, pos2);
 
-
-            return (new PlayerBoardSpec(pos1, size / 2), new PlayerBoardSpec(pos2, size / 2));
+            return (pos1, pos2).Map(ps => new PlayerBoardSpec(ps, size / 2));
         }
 
 
-        private int SwapRandom(int size, List<Position2D> pos1, List<Position2D> pos2)
-            => SwapRandom(size, pos1, pos2, -1);
-
-
-        private int SwapRandom(int size, List<Position2D> pos1, List<Position2D> pos2, int except) {
-            var num = rand.Next(size);
-            while (num == size / 2 || num == except) {
-                num = rand.Next(size);
-            }
-
+        private static void SwapRandom(int start, int end, IList<Position2D> pos1, IList<Position2D> pos2) {
+            var num = Rand.Next(start, end);
             var tmp = pos1[num];
             pos1[num] = pos2[num];
             pos2[num] = tmp;
-            return num;
         }
 
     }

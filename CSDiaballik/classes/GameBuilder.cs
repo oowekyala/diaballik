@@ -32,7 +32,6 @@ namespace CSDiaballik {
         public Game Build() {
             var players = (_playerBuilder1, _playerBuilder2).Map(x => x.Build());
             var specs = InitStrategy.InitPositions(Size);
-
             var fullSpecs = specs.Merge(players, (spec, player) => new FullPlayerBoardSpec(player, spec));
 
             var game = Game.New(GameBoard.New(Size, fullSpecs));

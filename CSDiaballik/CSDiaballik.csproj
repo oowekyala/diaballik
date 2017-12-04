@@ -59,7 +59,7 @@
     <Compile Include="classes\PlayerBoardSpec.cs" />
     <Compile Include="classes\PlayerBuilder.cs" />
     <Compile Include="classes\Position2D.cs" />
-    <Compile Include="classes\Util.cs" />
+    <Compile Include="classes\ExtensionUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
