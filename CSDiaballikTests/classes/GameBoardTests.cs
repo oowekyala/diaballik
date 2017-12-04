@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using static CSDiaballik.Tests.TestUtil;
+using System.Collections.Generic;
 
 namespace CSDiaballik.Tests {
     [TestFixture]
@@ -96,6 +97,31 @@ namespace CSDiaballik.Tests {
 
             Assert.AreEqual(ball1, gb.BallBearer1);
             Assert.AreEqual(ball2, gb.BallBearer2);
+        }
+
+        [Test]
+        public void TestVictory()
+        {
+            const int size = 7;
+
+            List<Position2D> p1Positions = new List<Position2D>();
+            List<Position2D> p2Positions = new List<Position2D>();
+
+            for (int i=0; i<size; i++)
+            {
+                p1Positions.Add(new Position2D(0, i));
+                p2Positions.Add(new Position2D(size-1, i));
+            }
+
+            FullPlayerBoardSpec p1spec = DummyPlayerSpec(size, p1Positions);
+            FullPlayerBoardSpec p2spec = DummyPlayerSpec(size, p2Positions);
+
+            var board = GameBoard.New(size, p1spec, p2spec);
+            
+            board.MovePiece(new Position2D(0,0), new Position2D(1, 0));
+            board.MovePiece(new Position2D(size-1, size-1), new Position2D(0, 0));
+            board.MoveBall(board.BallBearer2, new Position2D(0, 0));
+            Assert.IsTrue(board.IsVictoriousPlayer(board.Player2));
         }
 
     }
