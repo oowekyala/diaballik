@@ -19,8 +19,13 @@ namespace CSDiaballik {
 
 
         /* Core state of the game */
+        /// Underlying gameboard
         private GameBoard Board { get; }
+
+        /// Number of moves left to the current layer before automatic player change.
         public int NumMovesLeft { get; } = Game.MaxMovesPerTurn;
+
+        /// Current player of the game
         public IPlayer CurrentPlayer { get; }
 
 
@@ -31,6 +36,7 @@ namespace CSDiaballik {
         }
 
 
+        // Called when updating an existing game
         private GameState(GameBoard board, IPlayer currentPlayer, int numMoves) {
             Board = board;
             CurrentPlayer = currentPlayer;
@@ -68,6 +74,12 @@ namespace CSDiaballik {
         }
 
 
+        /// <summary>
+        ///     Returns true is the given player action is valid in the 
+        ///     context of this game state.
+        /// </summary>
+        /// <param name="action">The action to check</param>
+        /// <returns>True if the action can be performed on this state</returns>
         public bool IsMoveValid(IPlayerAction action) {
             return action.IsMoveValid(CurrentPlayer, Board, NumMovesLeft);
         }

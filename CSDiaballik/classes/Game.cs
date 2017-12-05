@@ -34,12 +34,26 @@ namespace CSDiaballik {
         }
 
 
+        /// <summary>
+        ///     Creates a new game, initialised with the given player specs. 
+        /// </summary>
+        /// <param name="size">Size of the board</param>
+        /// <param name="specs">Board configurations for each player</param>
+        /// <param name="isFirstPlayerPlaying">Whether player 1 is the first to start playing or not</param>
+        /// <returns>A new game</returns>
         public static Game Init(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs,
                                 bool isFirstPlayerPlaying) {
             return new Game(size, specs, isFirstPlayerPlaying);
         }
 
 
+        /// <summary>
+        ///     Creates a new game, initialised with the given player specs. 
+        ///     The first player to play is chosen randomly.
+        /// </summary>
+        /// <param name="size">Size of the board</param>
+        /// <param name="specs">Board configuration for each player</param>
+        /// <returns>A new game</returns>
         public static Game Init(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
             return new Game(size, specs, new Random().Next(0, 1) == 1);
         }
@@ -52,36 +66,30 @@ namespace CSDiaballik {
         /// <exception cref="ArgumentException">
         ///     If the move is invalid. The action's validity should be verified upstream.
         /// </exception>
-        public void Update(IUpdateAction action) {
+        public void Update(IPlayerAction action) {
             if (!State.IsMoveValid(action)) {
                 throw new ArgumentException("Invalid move: " + action);
             }
 
             switch (action) {
-                case MoveBall moveBall:
+                case MoveBallAction moveBall:
                     State = State.MoveBall(moveBall.Src, moveBall.Dst);
                     Memento = Memento.Append(State, moveBall);
                     break;
-                case MovePiece movePiece:
+                case MovePieceAction movePiece:
                     State = State.MovePiece(movePiece.Src, movePiece.Dst);
                     Memento = Memento.Append(State, movePiece);
                     break;
-                case Pass pass:
+                case PassAction pass:
                     State = State.Pass();
                     Memento = Memento.Append(State, pass);
                     break;
-                case Undo undo:
+                case UndoAction undo:
                     var previousState = Memento.GetParent().ToGame();
                     Memento = Memento.Undo(undo);
                     State = previousState;
                     break;
             }
-        }
-
-
-        public void Undo() {
-            var previousState = Memento.GetParent().ToGame();
-            State = previousState;
         }
 
     }

@@ -20,25 +20,29 @@
         ///     Gets a new memento based on this one.
         /// </summary>
         /// <param name="action">The transition from this memento to the result</param>
-        /// <returns>A new memento</returns>
+        /// <returns>A new memento with this as its parent</returns>
         public GameMemento Append(IUpdateAction action) {
             return new MementoNode(this, action);
         }
 
 
         /// <summary>
-        ///     Gets a new memento based on this one.
+        ///     Creates a new memento based on this one.
         /// </summary>
-        /// <param name="state">The state </param>
+        /// <param name="state">The state obtained after the transition</param>
         /// <param name="action">The transition from this memento to the result</param>
-        /// <returns>A new memento</returns>
+        /// <returns>A new memento with this as its parent</returns>
         public GameMemento Append(GameState state, IUpdateAction action) {
             return new MementoNode(state, this, action);
         }
-
-
-        public GameMemento Undo(Undo undo) {
-            return new UndoMementoNode(this, undo);
+        
+        /// <summary>
+        ///     Creates a new memento based on this one, adding an undo action.
+        /// </summary>
+        /// <param name="undoAction">Undo action</param>
+        /// <returns>A new memento with this as its parent</returns>
+        public GameMemento Undo(UndoAction undoAction) {
+            return new UndoMementoNode(this, undoAction);
         }
 
 
@@ -109,11 +113,11 @@
     /// </summary>
     public class UndoMementoNode : AbstractMementoNode {
 
-        private readonly Undo _undo; // may be useful for eg timestamps
+        private readonly UndoAction _undoAction; // may be useful for eg timestamps
 
 
-        public UndoMementoNode(GameMemento memento, Undo undo) : base(memento) {
-            _undo = undo;
+        public UndoMementoNode(GameMemento memento, UndoAction undoAction) : base(memento) {
+            _undoAction = undoAction;
         }
 
 

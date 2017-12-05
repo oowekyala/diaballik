@@ -16,7 +16,6 @@ namespace CSDiaballik {
     ///     </pre>
     ///     By convention, the first player owns the row n-1 (the bottom
     ///     one), and the second player owns the row 0 (the top one).
-    /// 
     ///     This class is immutable.
     /// </summary>
     public class GameBoard {
@@ -26,11 +25,11 @@ namespace CSDiaballik {
 
         private readonly ImmutableDictionary<Position2D, IPlayer> _boardLookup;
 
-        public IPlayer Player1 { get; }
-        public IPlayer Player2 { get; }
-
         private readonly ImmutableHashSet<Position2D> _player1Positions;
         private readonly ImmutableHashSet<Position2D> _player2Positions;
+
+        public IPlayer Player1 { get; }
+        public IPlayer Player2 { get; }
 
         public Position2D BallBearer1 { get; }
         public Position2D BallBearer2 { get; }
@@ -39,28 +38,24 @@ namespace CSDiaballik {
         public IEnumerable<Position2D> Player2Positions => _player2Positions;
 
 
+        public int Size { get; }
+        
         // Performs full consistency checks, only the first time
         private GameBoard(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
             Size = size;
-
             (Player1, Player2) = specs.Map(x => x.Player);
-            var (p1List, p2List) = specs.Map(x => x.Positions.ToList());
 
+            var positions = specs.Map(x => x.Positions.ToList());
+            CheckPieces(size, positions);
 
-            CheckPieces(size, p1List, p2List);
-
-            (BallBearer1, BallBearer2) = (p1List, p2List).Zip(specs, (l, spec) => l[spec.BallIndex]);
+            (BallBearer1, BallBearer2) = positions.Zip(specs, (l, spec) => l[spec.BallIndex]);
+            (_player1Positions, _player2Positions) = positions.Map(ImmutableHashSet.CreateRange);
 
             var lookupBuilder = ImmutableDictionary.CreateBuilder<Position2D, IPlayer>();
             specs.Map(spec => spec.Positions.Select(p => new KeyValuePair<Position2D, IPlayer>(p, spec.Player)))
                  .Foreach(lookupBuilder.AddRange);
             _boardLookup = lookupBuilder.ToImmutable();
-
-            (_player1Positions, _player2Positions) = (p1List, p2List).Map(ImmutableHashSet.CreateRange);
         }
-
-
-        public int Size { get; }
 
 
         // used internally, for MovePiece updates
@@ -87,15 +82,20 @@ namespace CSDiaballik {
         }
 
 
-        public bool IsVictoriousPlayer(IPlayer player)
-            => PositionsForPlayer(player).Select(p => p.X).Any(i => Size - 1 - GetRowIndexOfInitialLine(player) == i);
+
+        public bool IsVictoriousPlayer(IPlayer player) {
+            return PositionsForPlayer(player)
+                .Select(p => p.X)
+                .Any(i => Size - 1 - GetRowIndexOfInitialLine(player) == i);
+        }
 
 
         // Gets the index of the starting row of a player. Used to check for victory
-        private int GetRowIndexOfInitialLine(IPlayer player)
-            => player == Player1 ? Size - 1
-               : player == Player2 ? 0
-               : throw new ArgumentException("Unknown player");
+        private int GetRowIndexOfInitialLine(IPlayer player) {
+            return player == Player1 ? Size - 1
+                   : player == Player2 ? 0
+                   : throw new ArgumentException("Unknown player");
+        }
 
 
         /// <summary>
@@ -109,8 +109,9 @@ namespace CSDiaballik {
         ///     If the players have an incorrect number of pieces,
         ///     or there are duplicate pieces
         /// </exception>
-        public static GameBoard Create(int size, FullPlayerBoardSpec p1Spec, FullPlayerBoardSpec p2Spec)
-            => new GameBoard(size, (p1Spec, p2Spec));
+        public static GameBoard Create(int size, FullPlayerBoardSpec p1Spec, FullPlayerBoardSpec p2Spec) {
+            return new GameBoard(size, (p1Spec, p2Spec));
+        }
 
 
         /// <summary>
@@ -123,19 +124,21 @@ namespace CSDiaballik {
         ///     If the players have an incorrect number of pieces,
         ///     or there are duplicate pieces
         /// </exception>
-        public static GameBoard Create(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs)
-            => new GameBoard(size, specs);
+        public static GameBoard Create(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
+            return new GameBoard(size, specs);
+        }
 
 
-        private static void CheckPieces(int size, List<Position2D> p1List, List<Position2D> p2List) {
-            if (p1List.Count != p2List.Count || p1List.Count != size) {
+        private static void CheckPieces(int size, (List<Position2D>, List<Position2D>) positions) {
+            if (!positions.Map(l => l.Count).Forall(i => i == size)) {
                 throw new ArgumentException("One or more players have an incorrect number of pieces");
             }
 
+            var (p1List, p2List) = positions;
 
             if (p1List.Distinct().Count() != p1List.Count
                 || p2List.Distinct().Count() != p2List.Count
-                || p1List.Intersect(p2List).Count() != 0) {
+                || p1List.Intersect(p2List).Any()) {
                 throw new ArgumentException("One or more players have duplicate pieces");
             }
         }
@@ -151,11 +154,19 @@ namespace CSDiaballik {
                 throw new ArgumentException("Illegal: no piece to move");
             }
 
-            return pos.Neighbours().Where(p => IsPositionOnBoard(p) && IsFree(p));
+            return pos.Neighbours().Where(IsPositionOnBoard).Where(IsFree);
         }
 
 
-        public bool IsFree(Position2D pos) => !_boardLookup.ContainsKey(pos);
+        /// <summary>
+        ///     Returns true if the position has no piece on it.
+        ///     Doesn't check for validity of the position.
+        /// </summary>
+        /// <param name="pos">Position to check</param>
+        /// <returns>True if the position is free</returns>
+        public bool IsFree(Position2D pos) {
+            return !_boardLookup.ContainsKey(pos);
+        }
 
 
         /// <summary>
@@ -196,7 +207,7 @@ namespace CSDiaballik {
 
 
         /// <summary>
-        ///     Moves the piece which carries the ball to a new location.
+        ///     Moves the ball from one piece to another friendly piece.
         /// </summary>
         /// <param name="src">Piece to move</param>
         /// <param name="dst">New position</param>
@@ -219,10 +230,11 @@ namespace CSDiaballik {
         }
 
 
-        private ImmutableHashSet<Position2D> _PositionsForPlayer(IPlayer player)
-            => player == Player1 ? _player1Positions
-               : player == Player2 ? _player2Positions
-               : throw new ArgumentException("Unknown player");
+        private ImmutableHashSet<Position2D> _PositionsForPlayer(IPlayer player) {
+            return player == Player1 ? _player1Positions
+                   : player == Player2 ? _player2Positions
+                   : throw new ArgumentException("Unknown player");
+        }
 
 
         /// <summary>
@@ -231,7 +243,9 @@ namespace CSDiaballik {
         /// <param name="player">The player</param>
         /// <returns>The positions</returns>
         /// <exception cref="ArgumentException">If the player is not recognised</exception>
-        public IEnumerable<Position2D> PositionsForPlayer(IPlayer player) => _PositionsForPlayer(player);
+        public IEnumerable<Position2D> PositionsForPlayer(IPlayer player) {
+            return _PositionsForPlayer(player);
+        }
 
 
         /// <summary>
@@ -240,16 +254,22 @@ namespace CSDiaballik {
         /// <param name="player">The player</param>
         /// <returns>The position</returns>
         /// <exception cref="ArgumentException">If the player is not recognised</exception>
-        public Position2D BallBearerForPlayer(IPlayer player) => player == Player1 ? BallBearer1 :
-                                                                 player == Player2 ? BallBearer2 :
-                                                                 throw new ArgumentException("Unknown player");
+        public Position2D BallBearerForPlayer(IPlayer player) {
+            return player == Player1 ? BallBearer1 :
+                   player == Player2 ? BallBearer2 :
+                   throw new ArgumentException("Unknown player");
+        }
 
 
-        public IPlayer PlayerOn(Position2D pos) => _boardLookup[pos];
+        public IPlayer PlayerOn(Position2D pos) {
+            return _boardLookup[pos];
+        }
 
 
-        public bool IsPositionOnBoard(Position2D p) => p.X >= 0 && p.X < Size
-                                                       && p.Y >= 0 && p.Y < Size;
+        public bool IsPositionOnBoard(Position2D p) {
+            return p.X >= 0 && p.X < Size
+                   && p.Y >= 0 && p.Y < Size;
+        }
 
 
         private void CheckPositionIsValid(Position2D p) {
@@ -261,8 +281,8 @@ namespace CSDiaballik {
 
         // TODO this could be moved out
         /// <summary>
-        /// Returns true if there is a piece-free vertical, horizontal, or diagonal line 
-        /// between the two positions on the board.
+        ///     Returns true if there is a piece-free vertical, horizontal, or diagonal line
+        ///     between the two positions on the board.
         /// </summary>
         /// <param name="p1">Position</param>
         /// <param name="p2">Position</param>
@@ -297,11 +317,14 @@ namespace CSDiaballik {
         }
 
 
-        public (IEnumerable<Position2D>, IEnumerable<Position2D>) PositionsPair()
-            => (Player1Positions, Player2Positions);
+        public (IEnumerable<Position2D>, IEnumerable<Position2D>) PositionsPair() {
+            return (Player1Positions, Player2Positions);
+        }
 
 
-        public (Position2D, Position2D) BallBearerPair() => (BallBearer1, BallBearer2);
+        public (Position2D, Position2D) BallBearerPair() {
+            return (BallBearer1, BallBearer2);
+        }
 
     }
 }

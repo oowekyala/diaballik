@@ -11,7 +11,7 @@ namespace CSDiaballik {
         private readonly PlayerBuilder _playerBuilder2 = new PlayerBuilder();
         private int _size = 7;
 
-
+        /// Determines where the pieces of each player will be initialised.
         public IInitStrategy InitStrategy { get; set; } = new StandardInitStrategy();
 
         public int Size {
@@ -29,6 +29,10 @@ namespace CSDiaballik {
         }
 
 
+        /// <summary>
+        ///     Builds and returns the game specified by this builder.
+        /// </summary>
+        /// <returns>A new game</returns>
         public Game Build() {
             var players = (_playerBuilder1, _playerBuilder2).Map(x => x.Build());
             var specs = InitStrategy.InitPositions(Size)

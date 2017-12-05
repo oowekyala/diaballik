@@ -19,6 +19,7 @@ namespace CSDiaballik {
     }
 
 
+    /// <inheritdoc />
     /// <summary>
     ///     Action that can update the game's state. Undo is excluded from this
     ///     category, as it's implemented by state switch in Game.
@@ -46,33 +47,31 @@ namespace CSDiaballik {
 
 
         protected MoveAction(Position2D src, Position2D dst) {
+            if (src == dst) throw new ArgumentException("Illegal: cannot move to the same piece");
             Src = src;
             Dst = dst;
         }
 
 
-        // partial implementation
-        public virtual bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft)
-            => Src != Dst ? true : throw new ArgumentException("Illegal: cannot move to the same piece");
-
-
         public abstract GameState UpdateState(GameState state);
+
+        public abstract bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft);
 
     }
 
 
+    /// <inheritdoc />
     /// <summary>
     ///     Move the ball to another piece.
     /// </summary>
-    public class MoveBall : MoveAction {
+    public class MoveBallAction : MoveAction {
 
-        public MoveBall(Position2D src, Position2D dst) : base(src, dst) {
+        public MoveBallAction(Position2D src, Position2D dst) : base(src, dst) {
         }
 
 
         public override bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft) {
-            return base.IsMoveValid(actor, board, movesLeft)
-                   && movesLeft > 0
+            return movesLeft > 0
                    && board.PlayerOn(Src) == board.PlayerOn(Dst)
                    && board.PlayerOn(Src) == actor
                    && board.IsLineFreeBetween(Src, Dst);
@@ -86,18 +85,18 @@ namespace CSDiaballik {
     }
 
 
+    /// <inheritdoc />
     /// <summary>
     ///     Move a piece to a new location.
     /// </summary>
-    public class MovePiece : MoveAction {
+    public class MovePieceAction : MoveAction {
 
-        public MovePiece(Position2D src, Position2D dst) : base(src, dst) {
+        public MovePieceAction(Position2D src, Position2D dst) : base(src, dst) {
         }
 
 
         public override bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft) {
-            return base.IsMoveValid(actor, board, movesLeft)
-                   && movesLeft > 0
+            return movesLeft > 0
                    && Math.Abs(Src.X - Dst.X) <= 1
                    && Math.Abs(Src.Y - Dst.Y) <= 1
                    && board.IsFree(Dst)
@@ -113,10 +112,11 @@ namespace CSDiaballik {
     }
 
 
+    /// <inheritdoc />
     /// <summary>
     ///     Undo the last action of the player.
     /// </summary>
-    public class Undo : IPlayerAction {
+    public class UndoAction : IPlayerAction {
 
         public bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft) {
             return movesLeft < Game.MaxMovesPerTurn; // can only undo actions the player has played himself
@@ -125,10 +125,11 @@ namespace CSDiaballik {
     }
 
 
+    /// <inheritdoc />
     /// <summary>
     ///     End the turn and give initiative to the other player prematurely.
     /// </summary>
-    public class Pass : IUpdateAction {
+    public class PassAction : IUpdateAction {
 
         public bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft) {
             return movesLeft < Game.MaxMovesPerTurn; // at least one move has been played

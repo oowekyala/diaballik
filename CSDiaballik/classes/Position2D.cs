@@ -2,7 +2,7 @@
 
 namespace CSDiaballik {
     /// <summary>
-    ///     Utility value to store a position.
+    ///     Utility datatype to store a position.
     /// </summary>
     public struct Position2D {
 
@@ -44,7 +44,9 @@ namespace CSDiaballik {
         }
 
 
-        public static bool operator ==(Position2D a, Position2D b) => a.Equals(b);
+        public static bool operator ==(Position2D a, Position2D b) {
+            return a.Equals(b);
+        }
 
 
         public static bool operator !=(Position2D a, Position2D b) {
@@ -57,7 +59,9 @@ namespace CSDiaballik {
         }
 
 
-        public static Position2D New(int x, int y) => new Position2D(x, y);
+        public static Position2D New(int x, int y) {
+            return new Position2D(x, y);
+        }
 
     }
 }

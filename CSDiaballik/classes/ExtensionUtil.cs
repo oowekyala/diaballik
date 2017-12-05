@@ -27,6 +27,10 @@ namespace CSDiaballik {
         }
 
 
+        public static bool Forall<A>(this(A, A) tuple, Func<A, bool> pred)
+            => pred(tuple.Item1) && pred(tuple.Item2);
+
+
         public static (C, C) Zip<A, B, C>(this (A, A) t1, (B, B) t2, Func<A, B, C> f)
             => (f(t1.Item1, t2.Item1), f(t1.Item2, t2.Item2));
 

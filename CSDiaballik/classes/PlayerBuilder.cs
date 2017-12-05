@@ -13,7 +13,7 @@ namespace CSDiaballik {
 
 
         public PlayerBuilder() {
-            _isFirstPlayer = !_isFirstPlayer;
+            _isFirstPlayer = !_isFirstPlayer; // true for the first instantiation, false for the second. Quite shitty tbh
             Color = _isFirstPlayer ? Color.Blue : Color.Red;
         }
 
@@ -25,9 +25,11 @@ namespace CSDiaballik {
 
         /// <summary>
         ///     Specify that the current player is an Ai.
+        ///     This overrides previous calls to setIsAi
+        ///     and setIsHuman.
         /// </summary>
-        /// <param name="level"></param>
-        /// <returns></returns>
+        /// <param name="level">The difficulty level of the AI</param>
+        /// <returns>The same builder</returns>
         public PlayerBuilder SetIsAi(AiPlayer.AiLevel level) {
             _aiLevel = level;
             _isHuman = false;
@@ -35,6 +37,11 @@ namespace CSDiaballik {
         }
 
 
+        /// <summary>
+        ///     Specify that the current player is a human.
+        ///     This overrides previous calls to setIsAi.
+        /// </summary>
+        /// <returns>The same builder</returns>
         public PlayerBuilder SetIsHuman() {
             _isHuman = true;
             return this;
@@ -46,7 +53,6 @@ namespace CSDiaballik {
         /// </summary>
         /// <returns>A new player</returns>
         public IPlayer Build() {
-            
             if (_isHuman) {
                 return new HumanPlayer(Color, Name);
             }
