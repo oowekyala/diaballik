@@ -31,12 +31,12 @@ namespace CSDiaballik {
         /// <param name="size">The size of the board</param>
         /// <returns></returns>
         protected static (IEnumerable<Position2D>, IEnumerable<Position2D>) InitialPositions(int size)
-            => (size - 1, 0).Map(Enumerable.Range(0, size), (x, ys) => ys.Select(y => new Position2D(x, y)));
+            => (size - 1, 0).ZipWithPair(Enumerable.Range(0, size), (x, ys) => ys.Select(y => new Position2D(x, y)));
 
     }
 
 
-    // We assume that the board's size is odd
+    // We assume that the board's size is odd and > 1
 
 
     public class StandardInitStrategy : AbstractInitStrategy {

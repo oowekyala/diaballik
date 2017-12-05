@@ -20,7 +20,7 @@ namespace CSDiaballik.Tests {
             var src = positions.Item1[0];
             Assert.IsTrue(board.IsFree(empty));
             Assert.IsFalse(board.IsFree(src));
-            board.MovePiece(src, empty);
+            board = board.MovePiece(src, empty);
             Assert.IsFalse(board.IsFree(empty));
             Assert.IsTrue(board.IsFree(src));
         }
@@ -110,11 +110,11 @@ namespace CSDiaballik.Tests {
 
             var board = GameBoard.New(size, specs);
 
-            Assert.IsFalse(board.IsVictoriousPlayer(board.Player2));
-            board.MovePiece(new Position2D(0, 0), new Position2D(1, 0));
-            board.MovePiece(new Position2D(size - 1, size - 1), new Position2D(0, 0));
-            board.MoveBall(board.BallBearer2, new Position2D(0, 0));
-            Assert.IsTrue(board.IsVictoriousPlayer(board.Player2));
+            Assert.IsFalse(board.IsVictoriousPlayer(board.Player1));
+            board = board.MovePiece(new Position2D(0, 0), new Position2D(1, 0));
+            board = board.MovePiece(new Position2D(size - 1, size - 1), new Position2D(0, 0));
+            board = board.MoveBall(board.BallBearer1, new Position2D(0, 0));
+            Assert.IsTrue(board.IsVictoriousPlayer(board.Player1));
         }
 
     }

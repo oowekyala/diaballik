@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace CSDiaballik {
@@ -15,25 +16,30 @@ namespace CSDiaballik {
     ///     </pre>
     ///     By convention, the first player owns the row n-1 (the bottom
     ///     one), and the second player owns the row 0 (the top one).
+    /// 
+    ///     This class is immutable.
     /// </summary>
     public class GameBoard {
 
-        private readonly IPlayer[,] _board;
+        // we could also delegate everything to the previous board
+        // taking care to avoid delegation chains.
+
+        private readonly ImmutableDictionary<Position2D, IPlayer> _boardLookup;
 
         public IPlayer Player1 { get; }
         public IPlayer Player2 { get; }
 
-        private readonly HashSet<Position2D> _player1Positions;
-        private readonly HashSet<Position2D> _player2Positions;
+        private readonly ImmutableHashSet<Position2D> _player1Positions;
+        private readonly ImmutableHashSet<Position2D> _player2Positions;
 
-        public Position2D BallBearer1 { get; private set; }
-        public Position2D BallBearer2 { get; private set; }
+        public Position2D BallBearer1 { get; }
+        public Position2D BallBearer2 { get; }
 
         public IEnumerable<Position2D> Player1Positions => _player1Positions;
         public IEnumerable<Position2D> Player2Positions => _player2Positions;
 
 
-        // Performs full consistency checks
+        // Performs full consistency checks, only the first time
         private GameBoard(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
             Size = size;
 
@@ -45,15 +51,41 @@ namespace CSDiaballik {
 
             (BallBearer1, BallBearer2) = (p1List, p2List).Zip(specs, (l, spec) => l[spec.BallIndex]);
 
-            _board = new IPlayer[Size, Size];
-            p1List.ForEach(p => _board[p.X, p.Y] = Player1);
-            p2List.ForEach(p => _board[p.X, p.Y] = Player2);
+            var lookupBuilder = ImmutableDictionary.CreateBuilder<Position2D, IPlayer>();
+            specs.Map(spec => spec.Positions.Select(p => new KeyValuePair<Position2D, IPlayer>(p, spec.Player)))
+                 .Foreach(lookupBuilder.AddRange);
+            _boardLookup = lookupBuilder.ToImmutable();
 
-            (_player1Positions, _player2Positions) = (p1List, p2List).Map(l => new HashSet<Position2D>(l));
+            (_player1Positions, _player2Positions) = (p1List, p2List).Map(ImmutableHashSet.CreateRange);
         }
 
 
         public int Size { get; }
+
+
+        // for moving pieces
+        private GameBoard(GameBoard previous, ImmutableDictionary<Position2D, IPlayer> lookup,
+                          (ImmutableHashSet<Position2D>, ImmutableHashSet<Position2D>) positions) {
+            Size = previous.Size;
+            Player1 = previous.Player1;
+            Player2 = previous.Player2;
+            _boardLookup = lookup;
+            (BallBearer1, BallBearer2) = previous.BallBearerPair();
+            (_player1Positions, _player2Positions) = positions;
+        }
+
+
+        // For moving the ball
+        private GameBoard(GameBoard previous,
+                          (Position2D, Position2D) ballBearers) {
+            Size = previous.Size;
+            Player1 = previous.Player1;
+            Player2 = previous.Player2;
+            _boardLookup = previous._boardLookup;
+            (BallBearer1, BallBearer2) = ballBearers;
+            _player1Positions = previous._player1Positions;
+            _player2Positions = previous._player2Positions;
+        }
 
 
         public bool IsVictoriousPlayer(IPlayer player)
@@ -124,17 +156,17 @@ namespace CSDiaballik {
         }
 
 
-        public bool IsFree(Position2D pos) => _board[pos.X, pos.Y] == null;
+        public bool IsFree(Position2D pos) => !_boardLookup.ContainsKey(pos);
 
 
         /// <summary>
-        ///     Moves a piece to a new location. 
-        ///     This method cannot move the piece which carries the ball.
+        ///     Moves a piece to a new location. This method cannot move the piece which carries the ball.
         /// </summary>
         /// <param name="src">Piece to move</param>
         /// <param name="dst">New position</param>
+        /// <returns>The updated gameboard</returns>
         /// <exception cref="ArgumentException">If the piece or destination position is invalid</exception>
-        public void MovePiece(Position2D src, Position2D dst) {
+        public GameBoard MovePiece(Position2D src, Position2D dst) {
             if (Equals(src, BallBearer1) || Equals(src, BallBearer2)) {
                 throw new ArgumentException("Illegal: cannot move the piece which carries the ball");
             }
@@ -150,11 +182,17 @@ namespace CSDiaballik {
             }
 
             var player = PlayerOn(src);
-            SetPiece(src, null);
-            SetPiece(dst, player);
-            var positions = _PositionsForPlayer(player);
+            var lookup = _boardLookup.ToBuilder();
+            lookup.Remove(src);
+            lookup.Add(dst, player);
+
+            var positions = _PositionsForPlayer(player).ToBuilder();
             positions.Remove(src);
             positions.Add(dst);
+
+            return player == Player1
+                       ? new GameBoard(this, lookup.ToImmutable(), (positions.ToImmutable(), _player2Positions))
+                       : new GameBoard(this, lookup.ToImmutable(), (_player1Positions, positions.ToImmutable()));
         }
 
 
@@ -163,8 +201,9 @@ namespace CSDiaballik {
         /// </summary>
         /// <param name="src">Piece to move</param>
         /// <param name="dst">New position</param>
+        /// <returns>The updated game</returns>
         /// <exception cref="ArgumentException">If the piece or destination position is invalid</exception>
-        public void MoveBall(Position2D src, Position2D dst) {
+        public GameBoard MoveBall(Position2D src, Position2D dst) {
             CheckPositionIsValid(src);
             if (IsFree(src) || !Equals(src, BallBearer1) && !Equals(src, BallBearer2)) {
                 throw new ArgumentException("Illegal: no ball to move on position " + src);
@@ -175,16 +214,13 @@ namespace CSDiaballik {
                 throw new ArgumentException("Illegal: no friendly piece on position " + dst);
             }
 
-            if (PlayerOn(src) == Player1) {
-                BallBearer1 = dst;
-            }
-            else {
-                BallBearer2 = dst;
-            }
+            return PlayerOn(src) == Player1
+                       ? new GameBoard(this, (dst, BallBearer2))
+                       : new GameBoard(this, (BallBearer1, dst));
         }
 
 
-        private HashSet<Position2D> _PositionsForPlayer(IPlayer player)
+        private ImmutableHashSet<Position2D> _PositionsForPlayer(IPlayer player)
             => player == Player1 ? _player1Positions
                : player == Player2 ? _player2Positions
                : throw new ArgumentException("Unknown player");
@@ -210,16 +246,11 @@ namespace CSDiaballik {
                                                                  throw new ArgumentException("Unknown player");
 
 
-        public IPlayer PlayerOn(Position2D pos) => _board[pos.X, pos.Y];
+        public IPlayer PlayerOn(Position2D pos) => _boardLookup[pos];
 
 
-        private void SetPiece(Position2D pos, IPlayer player) {
-            _board[pos.X, pos.Y] = player;
-        }
-
-
-        private bool IsPositionOnBoard(Position2D p) => p.X >= 0 && p.X < Size
-                                                        && p.Y >= 0 && p.Y < Size;
+        public bool IsPositionOnBoard(Position2D p) => p.X >= 0 && p.X < Size
+                                                       && p.Y >= 0 && p.Y < Size;
 
 
         private void CheckPositionIsValid(Position2D p) {
@@ -262,7 +293,7 @@ namespace CSDiaballik {
                 return xs.Select(x => new Position2D(x, p1.Y)).All(IsFree);
             }
 
-            return deltaX == deltaY && xs.Zip(ys, Position2D.New).All(IsFree);
+            return deltaX == deltaY && xs.Zip(ys, Position2D.New).All(IsFree); // diagonal
         }
 
 

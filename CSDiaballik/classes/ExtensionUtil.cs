@@ -13,16 +13,17 @@ namespace CSDiaballik {
         public static (B, B) Map<A, B>(this (A, A) tuple, Func<A, B> f) => (f(tuple.Item1), f(tuple.Item2));
 
 
-        public static (B, B) Map<A, B, C>(this (A, A) tuple, C z, Func<A, C, B> f)
-            => (f(tuple.Item1, z), f(tuple.Item2, z));
+        public static (B, B) ZipWithPair<A, B, C>(this (A, A) tuple, C z, Func<A, C, B> f)
+            => tuple.Zip(Pair(z), f);
 
 
-        public static (A, A) Pair<A>(Func<A> a) => (a.Invoke(), a.Invoke());
+        public static (A, A) Pair<A>(A a) => (a, a);
 
 
-        public static void Foreach<A>(this(A, A) tuple, Action<A> f) {
+        public static (A,A) Foreach<A>(this(A, A) tuple, Action<A> f) {
             f(tuple.Item1);
             f(tuple.Item2);
+            return tuple;
         }
 
 

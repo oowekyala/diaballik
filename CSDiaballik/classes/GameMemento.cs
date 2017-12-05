@@ -28,7 +28,7 @@
         ///     Turns this memento into a Game.
         /// </summary>
         /// <returns>A game</returns>
-        public abstract Game ToGame();
+        public abstract GameState ToGame();
 
     }
 
@@ -37,7 +37,14 @@
 
         private readonly PlayerAction _action;
         private readonly GameMemento _previous;
-        private Game _gameInstance;
+        private GameState _gameStateInstance;
+
+
+        public MementoNode(GameState previous, PlayerAction action) {
+            _previous = previous.Memento;
+            _action = action;
+            _gameStateInstance = previous;
+        }
 
 
         public MementoNode(GameMemento previous, PlayerAction action) {
@@ -52,8 +59,8 @@
 
 
         // Only works with immutable games
-        public override Game ToGame() {
-            return _gameInstance ?? (_gameInstance = _previous.ToGame().Update(_action));
+        public override GameState ToGame() {
+            return _gameStateInstance ?? (_gameStateInstance = _previous.ToGame().Update(_action));
         }
 
     }
@@ -72,14 +79,14 @@
         private readonly PlayerBuilder _p2Spec;
         private PlayerBoardSpec _boardSpec1;
         private PlayerBoardSpec _boardSpec2;
-        private Game _gameInstance;
+        private GameState _gameStateInstance;
 
 
-        public RootMemento(Game game) {
-            _isFirstPlayerPlaying = game.CurrentPlayer == game.Player1;
-            _p1Spec = PlayerToSpec(game.Player1);
-            _p2Spec = PlayerToSpec(game.Player2);
-            _boardSize = game.BoardSize;
+        public RootMemento(GameState gameState) {
+            _isFirstPlayerPlaying = gameState.CurrentPlayer == gameState.Player1;
+            _p1Spec = PlayerToSpec(gameState.Player1);
+            _p2Spec = PlayerToSpec(gameState.Player2);
+            _boardSize = gameState.BoardSize;
         }
 
 
@@ -120,13 +127,13 @@
         }
 
 
-        public override Game ToGame() {
+        public override GameState ToGame() {
             var players = (_p1Spec.Build(), _p2Spec.Build());
             var specs = players.Zip((_boardSpec1, _boardSpec2),
-                                      (player, spec) => new FullPlayerBoardSpec(player, spec));
+                                    (player, spec) => new FullPlayerBoardSpec(player, spec));
 
             var board = GameBoard.New(_boardSize, specs);
-            return _gameInstance ?? (_gameInstance = Game.New(board, _isFirstPlayerPlaying));
+            return _gameStateInstance ?? (_gameStateInstance = GameState.New(board, _isFirstPlayerPlaying));
         }
 
 
