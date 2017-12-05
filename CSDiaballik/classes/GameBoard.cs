@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Runtime.InteropServices;
+
 using System.Linq;
 
 namespace CSDiaballik {
@@ -148,9 +150,13 @@ namespace CSDiaballik {
         /// <param name="pos">The position of the piece</param>
         /// <exception cref="ArgumentException">If the piece is invalid</exception>
         public IEnumerable<Position2D> GetValidMoves(Position2D pos) {
+            
             if (!IsPositionOnBoard(pos) || IsFree(pos)) {
                 throw new ArgumentException("Illegal: no piece to move");
             }
+            /*IntPtr nativeAlgo;
+            nativeAlgo = AlgoBoard_new();
+            AlgoBoard_fillMap(nativeAlgo, 5);*/
 
             return pos.Neighbours().Where(p => IsPositionOnBoard(p) && IsFree(p));
         }
@@ -303,5 +309,13 @@ namespace CSDiaballik {
 
         public (Position2D, Position2D) BallBearerPair() => (BallBearer1, BallBearer2);
 
+        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        extern static void AlgoBoard_fillMap(IntPtr algo, int nbTiles);
+
+        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        extern static IntPtr AlgoBoard_new();
+
+        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        extern static IntPtr AlgoBoard_delete(IntPtr algo);
     }
 }
