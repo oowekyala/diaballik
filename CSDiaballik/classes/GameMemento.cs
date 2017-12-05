@@ -4,11 +4,8 @@
     /// 
     ///     This recursive data structure stores the chain
     ///     of actions building up to a current game state.
-    ///     Each <see cref="GameState"/> stores the chain
-    ///     leading to its creation, and can thus be serialised
-    ///     painlessly.
-    /// 
-    ///     GameMementos can build the game they represent.
+    ///     They can build the game they represent, and reuse
+    ///     already built states.
     /// </summary>
     public abstract class GameMemento {
 
@@ -24,8 +21,24 @@
         /// </summary>
         /// <param name="action">The transition from this memento to the result</param>
         /// <returns>A new memento</returns>
-        public MementoNode CreateNext(PlayerAction action) {
+        public GameMemento Append(IUpdateAction action) {
             return new MementoNode(this, action);
+        }
+
+
+        /// <summary>
+        ///     Gets a new memento based on this one.
+        /// </summary>
+        /// <param name="state">The state </param>
+        /// <param name="action">The transition from this memento to the result</param>
+        /// <returns>A new memento</returns>
+        public GameMemento Append(GameState state, IUpdateAction action) {
+            return new MementoNode(state, this, action);
+        }
+
+
+        public GameMemento Undo(Undo undo) {
+            return new UndoMementoNode(this, undo);
         }
 
 
@@ -38,39 +51,74 @@
     }
 
 
-    public class MementoNode : GameMemento {
-
-        /// Action to perform on the previous state to get this state
-        private readonly PlayerAction _action;
+    /// <inheritdoc />
+    /// <summary>
+    ///     Abstract class for memento nodes that have a parent.
+    /// </summary>
+    public abstract class AbstractMementoNode : GameMemento {
 
         /// Previous memento in the chain
-        private readonly GameMemento _previous;
+        protected readonly GameMemento Previous;
+
+
+        protected AbstractMementoNode(GameMemento previous) {
+            Previous = previous;
+        }
+
+
+        public sealed override GameMemento GetParent() {
+            return Previous;
+        }
+
+    }
+
+
+    public class MementoNode : AbstractMementoNode {
+
+        /// Action to perform on the previous state to get this state
+        private readonly IUpdateAction _action;
 
         /// Cached game state
         private GameState _thisGameState;
 
 
-        public MementoNode(GameState previous, PlayerAction action) {
-            _previous = previous.Memento;
+        public MementoNode(GameState thisState, GameMemento previous, IUpdateAction action) : base(previous) {
             _action = action;
-            _thisGameState = previous;
+            _thisGameState = thisState;
         }
 
 
-        public MementoNode(GameMemento previous, PlayerAction action) {
-            _previous = previous;
+        public MementoNode(GameMemento previous, IUpdateAction action) : base(previous) {
             _action = action;
-        }
-
-
-        public override GameMemento GetParent() {
-            return _previous;
         }
 
 
         // Only works with immutable games
         public override GameState ToGame() {
-            return _thisGameState ?? (_thisGameState = _previous.ToGame().Update(_action));
+            return _thisGameState ?? (_thisGameState = _action.UpdateState(Previous.ToGame()));
+        }
+
+    }
+
+
+    /// <inheritdoc />
+    /// <summary>
+    ///     Represents an undo action in the update chain. Special 
+    ///     handling because we don't create a new state when undoing, 
+    ///     we delegate the call to ToGame to the previous nodes.
+    /// </summary>
+    public class UndoMementoNode : AbstractMementoNode {
+
+        private readonly Undo _undo; // may be useful for eg timestamps
+
+
+        public UndoMementoNode(GameMemento memento, Undo undo) : base(memento) {
+            _undo = undo;
+        }
+
+
+        public override GameState ToGame() {
+            return Previous.GetParent().ToGame();
         }
 
     }

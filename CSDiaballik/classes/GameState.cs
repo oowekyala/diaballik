@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using static CSDiaballik.PlayerAction;
+using static CSDiaballik.IPlayerAction;
 
 namespace CSDiaballik {
     /// <summary>
@@ -9,18 +9,18 @@ namespace CSDiaballik {
     /// </summary>
     public class GameState {
 
-        // Equals(Memento.ToGame(), this)
-        public GameMemento Memento { get; }
-
+        /* delegated properties */
         public IPlayer Player1 => Board.Player1;
+
         public IPlayer Player2 => Board.Player2;
         public int BoardSize => Board.Size;
-        private GameBoard Board { get; }
-        public int NumMovesLeft { get; } = 3;
-
         public (IEnumerable<Position2D>, IEnumerable<Position2D>) PositionsPair => Board.PositionsPair();
         public (Position2D, Position2D) BallBearerPair => Board.BallBearerPair();
 
+
+        /* Core state of the game */
+        private GameBoard Board { get; }
+        public int NumMovesLeft { get; } = Game.MaxMovesPerTurn;
         public IPlayer CurrentPlayer { get; }
 
 
@@ -28,64 +28,72 @@ namespace CSDiaballik {
         private GameState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs, bool isFirstPlayerPlaying) {
             Board = GameBoard.Create(size, specs);
             CurrentPlayer = isFirstPlayerPlaying ? Player1 : Player2;
-            Memento = new RootMemento(this, specs);
         }
 
 
-        private GameState(GameState state, PlayerAction action, GameBoard board,
-                          IPlayer currentPlayer, int numMoves) {
-            Memento = new MementoNode(state, action);
+        private GameState(GameBoard board, IPlayer currentPlayer, int numMoves) {
             Board = board;
             CurrentPlayer = currentPlayer;
             NumMovesLeft = numMoves;
         }
 
 
-        public static GameState InitialState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs, bool isFirstPlayerPlaying) {
+        public static GameState InitialState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs,
+                                             bool isFirstPlayerPlaying) {
             return new GameState(size, specs, isFirstPlayerPlaying);
         }
 
 
-        public static GameState InitialState(int size,  (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
-            return InitialState(size, specs, new Random().Next(0, 1) == 1);
+        private IPlayer GetOtherPlayer(IPlayer player) {
+            return player == Player1 ? Player2 :
+                   player == Player2 ? Player1 :
+                   throw new ArgumentException("Unknown player");
         }
 
 
-        private IPlayer GetOtherPlayer(IPlayer player) => player == Player1 ? Player2 :
-                                                          player == Player2 ? Player1 :
-                                                          throw new ArgumentException("Unknown player");
-
-
-        /// <summary>
-        ///     Returns a game state updated with the given player action. 
-        ///     May change the current player as well.
-        /// </summary>
-        /// <param name="action">The action to be played by the current player</param>
-        /// <returns>The updated game</returns>
-        /// <exception cref="ArgumentException">
-        ///     If the move is invalid. The action's validity should be 
-        ///     verified upstream.
-        /// </exception>
-        public GameState Update(PlayerAction action) {
-            if (!action.IsMoveValid(CurrentPlayer, Board, NumMovesLeft)) {
-                throw new ArgumentException("Invalid move: " + action);
-            }
-
+        public GameState MoveBall(Position2D src, Position2D dst) {
             var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
+            return new GameState(Board.MoveBall(src, dst), nextPlayer, NumMovesLeft - 1);
+        }
 
-            switch (action) {
-                case MoveBall moveBall:
-                    return new GameState(this, action, Board.MoveBall(moveBall.Src, moveBall.Dst),
-                                         nextPlayer, NumMovesLeft - 1);
-                case MovePiece movePiece:
-                    return new GameState(this, action, Board.MovePiece(movePiece.Src, movePiece.Dst),
-                                         nextPlayer, NumMovesLeft - 1);
-                case Pass pass:
-                    return new GameState(this, action, Board, GetOtherPlayer(CurrentPlayer), 3);
-                case Undo undo:
-                    return Memento.GetParent().ToGame();
+
+        public GameState MovePiece(Position2D src, Position2D dst) {
+            var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
+            return new GameState(Board.MovePiece(src, dst), nextPlayer, NumMovesLeft - 1);
+        }
+
+
+        public GameState Pass() {
+            return new GameState(Board, GetOtherPlayer(CurrentPlayer), 3);
+        }
+
+
+        public bool IsMoveValid(IPlayerAction action) {
+            return action.IsMoveValid(CurrentPlayer, Board, NumMovesLeft);
+        }
+
+
+        protected bool Equals(GameState other) {
+            return Equals(Board, other.Board)
+                   && NumMovesLeft == other.NumMovesLeft
+                   && Equals(CurrentPlayer, other.CurrentPlayer);
+        }
+
+
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((GameState) obj);
+        }
+
+
+        public override int GetHashCode() {
+            unchecked {
+                var hashCode = Board != null ? Board.GetHashCode() : 0;
+                hashCode = (hashCode * 397) ^ NumMovesLeft;
+                hashCode = (hashCode * 397) ^ (CurrentPlayer != null ? CurrentPlayer.GetHashCode() : 0);
+                return hashCode;
             }
-            return this;
         }
 
     }

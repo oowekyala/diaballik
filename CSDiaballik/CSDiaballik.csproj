@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="classes\AbstractPlayer.cs" />
+    <Compile Include="classes\Game.cs" />
     <Compile Include="classes\GameState.cs" />
     <Compile Include="classes\GameBoard.cs" />
     <Compile Include="classes\AiPlayer.cs" />
@@ -56,7 +57,7 @@
     <Compile Include="classes\HumanPlayer.cs" />
     <Compile Include="classes\InitStrategy.cs" />
     <Compile Include="classes\IPlayer.cs" />
-    <Compile Include="classes\PlayerAction.cs" />
+    <Compile Include="classes\IPlayerAction.cs" />
     <Compile Include="classes\PlayerBoardSpec.cs" />
     <Compile Include="classes\PlayerBuilder.cs" />
     <Compile Include="classes\Position2D.cs" />

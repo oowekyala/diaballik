@@ -29,12 +29,12 @@ namespace CSDiaballik {
         }
 
 
-        public GameState Build() {
+        public Game Build() {
             var players = (_playerBuilder1, _playerBuilder2).Map(x => x.Build());
             var specs = InitStrategy.InitPositions(Size)
                                     .Zip(players, (spec, player) => new FullPlayerBoardSpec(player, spec));
 
-            return GameState.InitialState(Size, specs);
+            return Game.Init(Size, specs);
         }
 
     }
