@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using static CSDiaballik.PlayerAction;
+using static CSDiaballik.IPlayerAction;
 
 namespace CSDiaballik {
     /// <summary>
@@ -9,77 +9,103 @@ namespace CSDiaballik {
     /// </summary>
     public class GameState {
 
-        public GameMemento Memento { get; }
-
+        /* delegated properties */
         public IPlayer Player1 => Board.Player1;
+
         public IPlayer Player2 => Board.Player2;
         public int BoardSize => Board.Size;
-        private GameBoard Board { get; }
-        public int NumMovesLeft { get; } = 3;
-
         public (IEnumerable<Position2D>, IEnumerable<Position2D>) PositionsPair => Board.PositionsPair();
         public (Position2D, Position2D) BallBearerPair => Board.BallBearerPair();
 
+
+        /* Core state of the game */
+        /// Underlying gameboard
+        private GameBoard Board { get; }
+
+        /// Number of moves left to the current layer before automatic player change.
+        public int NumMovesLeft { get; } = Game.MaxMovesPerTurn;
+
+        /// Current player of the game
         public IPlayer CurrentPlayer { get; }
 
 
-        private GameState(GameBoard board, bool isFirstPlayerPlaying) {
-            Board = board;
+        // Called to build an initial state
+        private GameState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs, bool isFirstPlayerPlaying) {
+            Board = GameBoard.Create(size, specs);
             CurrentPlayer = isFirstPlayerPlaying ? Player1 : Player2;
-            Memento = new RootMemento(this);
         }
 
 
-        private GameState(GameState state, PlayerAction action, GameBoard board,
-                          IPlayer currentPlayer, int numMoves) {
-            Memento = new MementoNode(state, action);
+        // Called when updating an existing game
+        private GameState(GameBoard board, IPlayer currentPlayer, int numMoves) {
             Board = board;
             CurrentPlayer = currentPlayer;
             NumMovesLeft = numMoves;
         }
 
 
-        public static GameState New(GameBoard board, bool isFirstPlayerPlaying) {
-            return new GameState(board, isFirstPlayerPlaying);
+        public static GameState InitialState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs,
+                                             bool isFirstPlayerPlaying) {
+            return new GameState(size, specs, isFirstPlayerPlaying);
         }
 
 
-        public static GameState New(GameBoard board) {
-            return New(board, new Random().Next(0, 1) == 1);
+        private IPlayer GetOtherPlayer(IPlayer player) {
+            return player == Player1 ? Player2 :
+                   player == Player2 ? Player1 :
+                   throw new ArgumentException("Unknown player");
         }
 
 
-        private IPlayer GetOtherPlayer(IPlayer player) => player == Player1 ? Player2 :
-                                                          player == Player2 ? Player1 :
-                                                          throw new ArgumentException("Unknown player");
+        public GameState MoveBall(Position2D src, Position2D dst) {
+            var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
+            return new GameState(Board.MoveBall(src, dst), nextPlayer, NumMovesLeft - 1);
+        }
+
+
+        public GameState MovePiece(Position2D src, Position2D dst) {
+            var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
+            return new GameState(Board.MovePiece(src, dst), nextPlayer, NumMovesLeft - 1);
+        }
+
+
+        public GameState Pass() {
+            return new GameState(Board, GetOtherPlayer(CurrentPlayer), 3);
+        }
 
 
         /// <summary>
-        ///     Returns a game state updated with the given player action. 
-        ///     May change the current player as well.
+        ///     Returns true is the given player action is valid in the 
+        ///     context of this game state.
         /// </summary>
-        /// <param name="action">The action to be played by the current player</param>
-        /// <returns>The updated game</returns>
-        public GameState Update(PlayerAction action) {
-            if (!action.IsMoveValid(CurrentPlayer, Board, NumMovesLeft)) {
-                throw new ArgumentException("Invalid move: " + action);
-            }
+        /// <param name="action">The action to check</param>
+        /// <returns>True if the action can be performed on this state</returns>
+        public bool IsMoveValid(IPlayerAction action) {
+            return action.IsMoveValid(CurrentPlayer, Board, NumMovesLeft);
+        }
 
-            var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
 
-            switch (action) {
-                case MoveBall moveBall:
-                    return new GameState(this, action, Board.MoveBall(moveBall.Src, moveBall.Dst),
-                                         nextPlayer, NumMovesLeft - 1);
-                case MovePiece movePiece:
-                    return new GameState(this, action, Board.MovePiece(movePiece.Src, movePiece.Dst),
-                                         nextPlayer, NumMovesLeft - 1);
-                case Pass pass:
-                    return new GameState(this, action, Board, GetOtherPlayer(CurrentPlayer), 3);
-                case Undo undo:
-                    return Memento.ToGame();
+        protected bool Equals(GameState other) {
+            return Equals(Board, other.Board)
+                   && NumMovesLeft == other.NumMovesLeft
+                   && Equals(CurrentPlayer, other.CurrentPlayer);
+        }
+
+
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((GameState) obj);
+        }
+
+
+        public override int GetHashCode() {
+            unchecked {
+                var hashCode = Board != null ? Board.GetHashCode() : 0;
+                hashCode = (hashCode * 397) ^ NumMovesLeft;
+                hashCode = (hashCode * 397) ^ (CurrentPlayer != null ? CurrentPlayer.GetHashCode() : 0);
+                return hashCode;
             }
-            return this;
         }
 
     }

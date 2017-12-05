@@ -41,16 +41,18 @@ namespace CSDiaballik {
 
     public class StandardInitStrategy : AbstractInitStrategy {
 
-        public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size)
-            => InitialPositions(size).Map(ps => new PlayerBoardSpec(ps, size / 2));
+        public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size) {
+            return InitialPositions(size).Map(ps => new PlayerBoardSpec(ps, size / 2));
+        }
 
     }
 
 
     public class BallRandomStrategy : AbstractInitStrategy {
 
-        public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size) =>
-            InitialPositions(size).Map(ps => new PlayerBoardSpec(ps, Rand.Next(size)));
+        public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size) {
+            return InitialPositions(size).Map(ps => new PlayerBoardSpec(ps, Rand.Next(size)));
+        }
 
     }
 
@@ -59,10 +61,6 @@ namespace CSDiaballik {
 
         public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size) {
             var (pos1, pos2) = InitialPositions(size).Map(ps => ps.ToList());
-
-            if (size == 1) {
-                throw new ArgumentException("Size is 1"); // infinite loop otherwise
-            }
 
             // swap two positions randomly twice
             SwapRandom(0, size / 2, pos1, pos2);

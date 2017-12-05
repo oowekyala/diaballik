@@ -62,7 +62,7 @@
     <Compile Include="classes\PlayerBuilderTest.cs" />
     <Compile Include="classes\PlayerTests.cs" />
     <Compile Include="classes\GameBoardTests.cs" />
-    <Compile Include="classes\GameTests.cs" />
+    <Compile Include="classes\GameStateTests.cs" />
     <Compile Include="classes\TestUtil.cs" />
     <Compile Include="classes\TestUtilTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -51,9 +51,7 @@ namespace CSDiaballik {
         }
 
 
-        /// <summary>
-        ///     The player.
-        /// </summary>
+        /// The player.
         public IPlayer Player { get; }
 
     }
