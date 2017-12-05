@@ -6,10 +6,9 @@ namespace CSDiaballik {
     ///    Represents a game. This class is mutable, and maintains a GameState 
     ///    instance and the memento instance. 
     /// 
-    ///    This class decouples GameStates
-    ///    from GameMementos, and allows to reuse the same GameState objects in
-    ///    case of Undo actions while preserving immutability of the states and
-    ///    mementos and allowing to put the register the Undo action in the memento.
+    ///    This class decouples GameStates from GameMementos, and allows to reuse 
+    ///    the same GameState objects in case of Undo actions while still registering
+    ///    these actions in the memento.
     /// </summary>
     public class Game {
 
