@@ -9,6 +9,7 @@ namespace CSDiaballik {
     /// </summary>
     public class GameState {
 
+        // Equals(Memento.ToGame(), this)
         public GameMemento Memento { get; }
 
         public IPlayer Player1 => Board.Player1;
@@ -23,10 +24,11 @@ namespace CSDiaballik {
         public IPlayer CurrentPlayer { get; }
 
 
-        private GameState(GameBoard board, bool isFirstPlayerPlaying) {
-            Board = board;
+        // Called to build an initial state
+        private GameState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs, bool isFirstPlayerPlaying) {
+            Board = GameBoard.Create(size, specs);
             CurrentPlayer = isFirstPlayerPlaying ? Player1 : Player2;
-            Memento = new RootMemento(this);
+            Memento = new RootMemento(this, specs);
         }
 
 
@@ -39,13 +41,13 @@ namespace CSDiaballik {
         }
 
 
-        public static GameState New(GameBoard board, bool isFirstPlayerPlaying) {
-            return new GameState(board, isFirstPlayerPlaying);
+        public static GameState InitialState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs, bool isFirstPlayerPlaying) {
+            return new GameState(size, specs, isFirstPlayerPlaying);
         }
 
 
-        public static GameState New(GameBoard board) {
-            return New(board, new Random().Next(0, 1) == 1);
+        public static GameState InitialState(int size,  (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
+            return InitialState(size, specs, new Random().Next(0, 1) == 1);
         }
 
 
@@ -60,6 +62,10 @@ namespace CSDiaballik {
         /// </summary>
         /// <param name="action">The action to be played by the current player</param>
         /// <returns>The updated game</returns>
+        /// <exception cref="ArgumentException">
+        ///     If the move is invalid. The action's validity should be 
+        ///     verified upstream.
+        /// </exception>
         public GameState Update(PlayerAction action) {
             if (!action.IsMoveValid(CurrentPlayer, Board, NumMovesLeft)) {
                 throw new ArgumentException("Invalid move: " + action);
@@ -77,7 +83,7 @@ namespace CSDiaballik {
                 case Pass pass:
                     return new GameState(this, action, Board, GetOtherPlayer(CurrentPlayer), 3);
                 case Undo undo:
-                    return Memento.ToGame();
+                    return Memento.GetParent().ToGame();
             }
             return this;
         }

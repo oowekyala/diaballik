@@ -1,9 +1,14 @@
 ﻿namespace CSDiaballik {
-    // TODO this needs to be reworked
-
-
     /// <summary>
-    ///     Represents one state in the history of the game.
+    ///     Represents a delta from a previous game state.
+    /// 
+    ///     This recursive data structure stores the chain
+    ///     of actions building up to a current game state.
+    ///     Each <see cref="GameState"/> stores the chain
+    ///     leading to its creation, and can thus be serialised
+    ///     painlessly.
+    /// 
+    ///     GameMementos can build the game they represent.
     /// </summary>
     public abstract class GameMemento {
 
@@ -35,15 +40,20 @@
 
     public class MementoNode : GameMemento {
 
+        /// Action to perform on the previous state to get this state
         private readonly PlayerAction _action;
+
+        /// Previous memento in the chain
         private readonly GameMemento _previous;
-        private GameState _gameStateInstance;
+
+        /// Cached game state
+        private GameState _thisGameState;
 
 
         public MementoNode(GameState previous, PlayerAction action) {
             _previous = previous.Memento;
             _action = action;
-            _gameStateInstance = previous;
+            _thisGameState = previous;
         }
 
 
@@ -60,7 +70,7 @@
 
         // Only works with immutable games
         public override GameState ToGame() {
-            return _gameStateInstance ?? (_gameStateInstance = _previous.ToGame().Update(_action));
+            return _thisGameState ?? (_thisGameState = _previous.ToGame().Update(_action));
         }
 
     }
@@ -69,7 +79,6 @@
     /// <inheritdoc />
     /// <summary>
     ///     Contains enough info to build the initial state of the game. Has no parent.
-    ///     Can be serialized on disk and rebuilt.
     /// </summary>
     public class RootMemento : GameMemento {
 
@@ -77,53 +86,21 @@
         private readonly bool _isFirstPlayerPlaying;
         private readonly PlayerBuilder _p1Spec;
         private readonly PlayerBuilder _p2Spec;
-        private PlayerBoardSpec _boardSpec1;
-        private PlayerBoardSpec _boardSpec2;
-        private GameState _gameStateInstance;
+        private readonly PlayerBoardSpec _boardSpec1;
+        private readonly PlayerBoardSpec _boardSpec2;
+        private GameState _initialState;
 
 
-        public RootMemento(GameState gameState) {
-            _isFirstPlayerPlaying = gameState.CurrentPlayer == gameState.Player1;
-            _p1Spec = PlayerToSpec(gameState.Player1);
-            _p2Spec = PlayerToSpec(gameState.Player2);
-            _boardSize = gameState.BoardSize;
-        }
+        public RootMemento(GameState initialState, (PlayerBoardSpec, PlayerBoardSpec) specs) {
+            _isFirstPlayerPlaying = initialState.CurrentPlayer == initialState.Player1;
+            _p1Spec = initialState.Player1.ToBuilder();
+            _p2Spec = initialState.Player2.ToBuilder();
 
+            _boardSize = initialState.BoardSize;
+            _initialState = initialState;
 
-        public void SetBoardSpecs((PlayerBoardSpec, PlayerBoardSpec) specs) {
             _boardSpec1 = specs.Item1;
             _boardSpec2 = specs.Item2;
-        }
-
-
-        /// <summary>
-        ///     Destructures the player into a builder, which can be used to build an equivalent player.
-        /// </summary>
-        /// <param name="player">Player to destructure</param>
-        /// <returns>A builder describing the player</returns>
-        private static PlayerBuilder PlayerToSpec(IPlayer player) {
-            var spec = new PlayerBuilder {
-                Color = player.Color,
-                Name = player.Name
-            };
-
-
-            switch (player) {
-                case NoobAiPlayer _:
-                    spec.SetIsAi(AiPlayer.AiLevel.Noob);
-                    break;
-                case StartingAiPlayer _:
-                    spec.SetIsAi(AiPlayer.AiLevel.Starting);
-                    break;
-                case ProgressiveAiPlayer _:
-                    spec.SetIsAi(AiPlayer.AiLevel.Progressive);
-                    break;
-                case HumanPlayer _:
-                    spec.SetIsHuman();
-                    break;
-            }
-
-            return spec;
         }
 
 
@@ -132,8 +109,7 @@
             var specs = players.Zip((_boardSpec1, _boardSpec2),
                                     (player, spec) => new FullPlayerBoardSpec(player, spec));
 
-            var board = GameBoard.New(_boardSize, specs);
-            return _gameStateInstance ?? (_gameStateInstance = GameState.New(board, _isFirstPlayerPlaying));
+            return _initialState ?? (_initialState = GameState.InitialState(_boardSize, specs, _isFirstPlayerPlaying));
         }
 
 

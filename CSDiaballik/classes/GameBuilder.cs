@@ -34,9 +34,7 @@ namespace CSDiaballik {
             var specs = InitStrategy.InitPositions(Size)
                                     .Zip(players, (spec, player) => new FullPlayerBoardSpec(player, spec));
 
-            var game = GameState.New(GameBoard.New(Size, specs));
-            (game.Memento as RootMemento)?.SetBoardSpecs(specs);
-            return game;
+            return GameState.InitialState(Size, specs);
         }
 
     }

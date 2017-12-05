@@ -63,7 +63,7 @@ namespace CSDiaballik {
         public int Size { get; }
 
 
-        // for moving pieces
+        // used internally, for MovePiece updates
         private GameBoard(GameBoard previous, ImmutableDictionary<Position2D, IPlayer> lookup,
                           (ImmutableHashSet<Position2D>, ImmutableHashSet<Position2D>) positions) {
             Size = previous.Size;
@@ -75,9 +75,8 @@ namespace CSDiaballik {
         }
 
 
-        // For moving the ball
-        private GameBoard(GameBoard previous,
-                          (Position2D, Position2D) ballBearers) {
+        // used internally, for MoveBall updates
+        private GameBoard(GameBoard previous, (Position2D, Position2D) ballBearers) {
             Size = previous.Size;
             Player1 = previous.Player1;
             Player2 = previous.Player2;
@@ -110,7 +109,7 @@ namespace CSDiaballik {
         ///     If the players have an incorrect number of pieces,
         ///     or there are duplicate pieces
         /// </exception>
-        public static GameBoard New(int size, FullPlayerBoardSpec p1Spec, FullPlayerBoardSpec p2Spec)
+        public static GameBoard Create(int size, FullPlayerBoardSpec p1Spec, FullPlayerBoardSpec p2Spec)
             => new GameBoard(size, (p1Spec, p2Spec));
 
 
@@ -124,7 +123,7 @@ namespace CSDiaballik {
         ///     If the players have an incorrect number of pieces,
         ///     or there are duplicate pieces
         /// </exception>
-        public static GameBoard New(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs)
+        public static GameBoard Create(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs)
             => new GameBoard(size, specs);
 
 
@@ -260,6 +259,7 @@ namespace CSDiaballik {
         }
 
 
+        // TODO this could be moved out
         /// <summary>
         /// Returns true if there is a piece-free vertical, horizontal, or diagonal line 
         /// between the two positions on the board.

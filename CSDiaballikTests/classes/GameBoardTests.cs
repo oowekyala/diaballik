@@ -15,7 +15,7 @@ namespace CSDiaballik.Tests {
             positions.Foreach(e => e.RemoveAt(0));
             var specs = positions.Map(p => DummyPlayerSpec(size, p));
 
-            var board = GameBoard.New(size, specs);
+            var board = GameBoard.Create(size, specs);
 
             var src = positions.Item1[0];
             Assert.IsTrue(board.IsFree(empty));
@@ -35,7 +35,7 @@ namespace CSDiaballik.Tests {
             var ballBearer = positions.Item1[ballIndex];
             var specs = positions.Map(p => DummyPlayerSpec(p, ballIndex));
 
-            var board = GameBoard.New(size, specs);
+            var board = GameBoard.Create(size, specs);
 
             Assert.AreEqual(ballBearer, board.BallBearer1);
             Assert.IsTrue(board.IsFree(empty));
@@ -51,14 +51,14 @@ namespace CSDiaballik.Tests {
         public void TestPlayersHaveNotSizePieces([Range(3, 13)] int size) {
             var specs = DummyPlayerSpecPair(size - 1);
 
-            Assert.That(() => GameBoard.New(size, specs), Throws.ArgumentException);
+            Assert.That(() => GameBoard.Create(size, specs), Throws.ArgumentException);
         }
 
 
         [Test]
         public void TestPositionHasPiece([Range(3, 13)] int size) {
             var specs = DummyPlayerSpecPair(size);
-            var gb = GameBoard.New(size, specs);
+            var gb = GameBoard.Create(size, specs);
 
             foreach (var p in specs.Item1.Positions) {
                 Assert.IsFalse(gb.IsFree(p));
@@ -77,7 +77,7 @@ namespace CSDiaballik.Tests {
             var dummy2 = DummyPlayerSpec(size, position);
 
             Assert.AreNotSame(dummy, dummy2);
-            Assert.That(() => GameBoard.New(size, dummy, dummy2), Throws.ArgumentException);
+            Assert.That(() => GameBoard.Create(size, dummy, dummy2), Throws.ArgumentException);
         }
 
 
@@ -87,7 +87,7 @@ namespace CSDiaballik.Tests {
             var dummy2 = DummyPlayerSpec(size, RandomPositions(size).ToList());
 
             Assert.AreNotSame(dummy, dummy2);
-            Assert.That(() => GameBoard.New(size, dummy, dummy2), Throws.ArgumentException);
+            Assert.That(() => GameBoard.Create(size, dummy, dummy2), Throws.ArgumentException);
         }
 
 
@@ -96,7 +96,7 @@ namespace CSDiaballik.Tests {
             var specs = RandomPositionsPair(size).Map(p => DummyPlayerSpec(p, 0));
             var (ball1, ball2) = specs.Map(p => p.Positions.First());
 
-            var gb = GameBoard.New(size, specs);
+            var gb = GameBoard.Create(size, specs);
 
             Assert.AreEqual(ball1, gb.BallBearer1);
             Assert.AreEqual(ball2, gb.BallBearer2);
@@ -108,7 +108,7 @@ namespace CSDiaballik.Tests {
             var specs = (size - 1, 0).Map(row => Enumerable.Range(0, size).Select(y => new Position2D(row, y)))
                                      .Map(ps => DummyPlayerSpec(size, ps));
 
-            var board = GameBoard.New(size, specs);
+            var board = GameBoard.Create(size, specs);
 
             Assert.IsFalse(board.IsVictoriousPlayer(board.Player1));
             board = board.MovePiece(new Position2D(0, 0), new Position2D(1, 0));

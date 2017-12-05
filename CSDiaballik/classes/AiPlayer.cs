@@ -20,9 +20,10 @@ namespace CSDiaballik {
         public abstract AiLevel Level { get; }
 
 
-        public sealed override bool IsAi() {
-            return true;
-        }
+        public sealed override bool IsAi() => true;
+
+
+        public sealed override PlayerBuilder ToBuilder() => base.ToBuilder().SetIsAi(Level);
 
     }
 

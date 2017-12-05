@@ -27,5 +27,13 @@ namespace CSDiaballik {
         /// <returns>The next move of this player</returns>
         PlayerAction GetNextMove(GameBoard board);
 
+
+        /// <summary>
+        ///     Destructures this player into a builder, which can be used to
+        ///     build an equivalent player.
+        /// </summary>
+        /// <returns>A builder describing this player</returns>
+        PlayerBuilder ToBuilder();
+
     }
 }
