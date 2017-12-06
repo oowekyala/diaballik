@@ -11,7 +11,6 @@ namespace CSDiaballik {
 
         /* delegated properties */
         public IPlayer Player1 => Board.Player1;
-
         public IPlayer Player2 => Board.Player2;
         public int BoardSize => Board.Size;
         public (IEnumerable<Position2D>, IEnumerable<Position2D>) PositionsPair => Board.PositionsPair();

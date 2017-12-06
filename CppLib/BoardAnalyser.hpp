@@ -28,9 +28,6 @@ public:
 	 * An empty tile is status 0, player 1 is status 1, player 2 is status 2.
 	 */
 	void set_status(int x, int y, int status) const;
-
-
-	void print_model() const;
 };
 
 
@@ -49,10 +46,5 @@ extern "C"
 	__declspec(dllexport) void ba_set_status(board_analyser* ba, int x, int y, int status)
 	{
 		ba->set_status(x, y, status);
-	}
-
-	__declspec(dllexport) void ba_print_model(board_analyser* ba)
-	{
-		ba->print_model();
 	}
 }

@@ -15,8 +15,6 @@ namespace CSDiaballik.Tests
 
             var board = GameBoard.Create(size, specs);
             var ba = BoardAnalyser.New(board);
-            ba.PrintModel();
-
         }
     }
 }
