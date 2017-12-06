@@ -30,9 +30,8 @@ public:
 	void set_status(int x, int y, int status) const;
 
 
-	void print_model() const;
-
 	int** get_possible_moves(int x, int y) const;
+
 };
 
 
@@ -51,10 +50,5 @@ extern "C"
 	__declspec(dllexport) void ba_set_status(board_analyser* ba, int x, int y, int status)
 	{
 		ba->set_status(x, y, status);
-	}
-
-	__declspec(dllexport) void ba_print_model(board_analyser* ba)
-	{
-		ba->print_model();
 	}
 }

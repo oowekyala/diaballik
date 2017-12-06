@@ -9,21 +9,22 @@ namespace CSDiaballik
     public class BoardAnalyser
     {
         private readonly IntPtr _underlying;
+        private bool disposed = false;
 
-        [DllImport("DllCpp.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr new_board_analyser(int size);
 
-        [DllImport("DllCpp.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void ba_set_status(IntPtr ba, int x, int y, int status);
 
 
-        [DllImport("DllCpp.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void ba_print_model(IntPtr ba);
+        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void del_board_analyser(IntPtr ba);
+
 
 
         private BoardAnalyser(GameBoard board)
         {
-
             _underlying = new_board_analyser(board.Size);
             foreach (var pos in board.Player1Positions)
             {
@@ -41,9 +42,29 @@ namespace CSDiaballik
             return new BoardAnalyser(board);
         }
 
-        public void PrintModel()
+
+        ~BoardAnalyser()
         {
-            ba_print_model(_underlying);
+            Dispose(false);
+            del_board_analyser(_underlying);
+        }
+
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+            if (disposing)
+            {
+                del_board_analyser(_underlying);
+            }
+            disposed = true;
         }
     }
 }

@@ -126,11 +126,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Algo.h" />
     <ClInclude Include="BoardAnalyser.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Algo.cpp" />
     <ClCompile Include="BoardAnalyser.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
