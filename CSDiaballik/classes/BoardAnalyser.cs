@@ -10,14 +10,14 @@ namespace CSDiaballik
     {
         private readonly IntPtr _underlying;
 
-        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("DllCpp.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr new_board_analyser(int size);
 
-        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("DllCpp.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void ba_set_status(IntPtr ba, int x, int y, int status);
 
 
-        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("DllCpp.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void ba_print_model(IntPtr ba);
 
 

@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="classes\BoardAnalyser.cs" />
     <Compile Include="classes\AbstractPlayer.cs" />
     <Compile Include="classes\Game.cs" />
     <Compile Include="classes\GameState.cs" />

@@ -147,24 +147,6 @@ namespace CSDiaballik {
 
 
         /// <summary>
-        ///     Gets the positions to which this piece can legally be moved.
-        /// </summary>
-        /// <param name="pos">The position of the piece</param>
-        /// <exception cref="ArgumentException">If the piece is invalid</exception>
-        public IEnumerable<Position2D> GetValidMoves(Position2D pos) {
-            
-            if (!IsPositionOnBoard(pos) || IsFree(pos)) {
-                throw new ArgumentException("Illegal: no piece to move");
-            }
-            /*IntPtr nativeAlgo;
-            nativeAlgo = AlgoBoard_new();
-            AlgoBoard_fillMap(nativeAlgo, 5);*/
-
-            return pos.Neighbours().Where(IsPositionOnBoard).Where(IsFree);
-        }
-
-
-        /// <summary>
         ///     Returns true if the position has no piece on it.
         ///     Doesn't check for validity of the position.
         /// </summary>
@@ -332,13 +314,6 @@ namespace CSDiaballik {
             return (BallBearer1, BallBearer2);
         }
 
-        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern void AlgoBoard_fillMap(IntPtr algo, int nbTiles);
-
-        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern IntPtr AlgoBoard_new();
-
-        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern IntPtr AlgoBoard_delete(IntPtr algo);
+     
     }
 }

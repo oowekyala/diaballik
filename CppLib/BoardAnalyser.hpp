@@ -31,6 +31,8 @@ public:
 
 
 	void print_model() const;
+
+	int** get_possible_moves(int x, int y) const;
 };
 
 

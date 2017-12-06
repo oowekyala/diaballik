@@ -1,4 +1,8 @@
-﻿#include "BoardAnalyser.hpp"
+﻿#include "stdafx.h"
+
+
+#include "stdafx.h"
+#include "BoardAnalyser.hpp"
 #include <iostream>
 #include <algorithm>
 #include <time.h>
@@ -40,4 +44,8 @@ void board_analyser::print_model() const
 		}
 		std::cout << std::endl;
 	}
+}
+
+int** get_possible_moves(int x, int y) {
+	int** possible_moves = new int*[4];
 }
