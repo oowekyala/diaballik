@@ -23,8 +23,8 @@ namespace CSDiaballik
 
         private BoardAnalyser(GameBoard board)
         {
-            _underlying = new_board_analyser(board.Size);
 
+            _underlying = new_board_analyser(board.Size);
             foreach (var pos in board.Player1Positions)
             {
                 ba_set_status(_underlying, pos.X, pos.Y, 1);

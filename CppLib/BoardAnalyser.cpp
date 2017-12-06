@@ -1,8 +1,4 @@
-﻿#include "stdafx.h"
-
-
-#include "stdafx.h"
-#include "BoardAnalyser.hpp"
+﻿#include "BoardAnalyser.hpp"
 #include <iostream>
 #include <algorithm>
 #include <time.h>
