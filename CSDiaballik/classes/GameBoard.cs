@@ -333,12 +333,12 @@ namespace CSDiaballik {
         }
 
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
-        extern static void AlgoBoard_fillMap(IntPtr algo, int nbTiles);
+        static extern void AlgoBoard_fillMap(IntPtr algo, int nbTiles);
 
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
-        extern static IntPtr AlgoBoard_new();
+        static extern IntPtr AlgoBoard_new();
 
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
-        extern static IntPtr AlgoBoard_delete(IntPtr algo);
+        static extern IntPtr AlgoBoard_delete(IntPtr algo);
     }
 }

@@ -14,7 +14,9 @@ namespace CSDiaballik.Tests
                 .Map(ps => DummyPlayerSpec(size, ps));
 
             var board = GameBoard.Create(size, specs);
-            board.GetValidMoves(new Position2D(0, 0));
+            var ba = BoardAnalyser.New(board);
+            ba.PrintModel();
+
         }
     }
 }
