@@ -32,6 +32,15 @@ board_analyser::~board_analyser()
 void board_analyser::set_status(const int x, const int y, int status) const
 {
 	_board[x][y] = static_cast<tile_status>(status);
+	if (status == player_1) {
+		_p1_pieces->push_back(x);
+		_p1_pieces->push_back(y);
+	}
+	else if (status == player_2) {
+		_p2_pieces->push_back(x);
+		_p2_pieces->push_back(y);
+	}
+
 }
 
 /*
@@ -271,5 +280,61 @@ int* board_analyser::get_possible_moves(int x, int y) const {
 		return possible_moves;
 	}
 	
+}
+
+int* board_analyser::noob_IA_moves(int playerNumber) const {
+	int nb_moves = rand() % 3 ;
+	int* moves = new int[12];
+	for (int i = 0; i < 12; i++) {
+		moves[i] = -1;
+	}
+	int moveCount = 0;
+	if (playerNumber == 1) {
+		for (int i = 0; i < nb_moves; i++) {
+			int PieceX = rand() % (_board_size - 2);
+			if (PieceX % 2 == 0) {
+				PieceX = (PieceX + 1) % _board_size;
+			}
+			int PieceY = PieceX + 1;
+			int* possibleMoves = this->get_possible_moves(PieceX, PieceY);
+			int MoveX = rand() % 6;
+			if (MoveX % 2 == 0) {
+				MoveX = (MoveX + 1) % 8;
+			}
+			int MoveY = MoveX + 1;
+			moves[moveCount] = PieceX;
+			moveCount++;
+			moves[moveCount] = PieceY;
+			moveCount++;
+			moves[moveCount] = MoveX;
+			moveCount++;
+			moves[moveCount] = MoveY;
+			moveCount++;
+		}
+	}
+	else if (playerNumber == 2) {
+		for (int i = 0; i < nb_moves; i++) {
+			int PieceX = rand() % (_board_size - 2);
+			if (PieceX % 2 == 0) {
+				PieceX = (PieceX + 1) % _board_size;
+			}
+			int PieceY = PieceX + 1;
+			int* possibleMoves = this->get_possible_moves(PieceX, PieceY);
+			int MoveX = rand() % 6;
+			if (MoveX % 2 == 0) {
+				MoveX = (MoveX + 1) % 8;
+			}
+			int MoveY = MoveX + 1;
+			moves[moveCount] = PieceX;
+			moveCount++;
+			moves[moveCount] = PieceY;
+			moveCount++;
+			moves[moveCount] = MoveX;
+			moveCount++;
+			moves[moveCount] = MoveY;
+			moveCount++;
+		}
+	}
+	return moves;
 }
 

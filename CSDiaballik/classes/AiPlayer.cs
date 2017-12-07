@@ -42,7 +42,17 @@ namespace CSDiaballik {
 
 
         public override IPlayerAction GetNextMove(GameBoard board) {
-            throw new NotImplementedException();
+            var ba = BoardAnalyser.New(board);
+            var moves = ba.NoobIAMoves(board, this);
+            IPlayerAction action;
+            if (moves.Count > 0)
+            {
+                action = new MovePieceAction(moves[0], moves[1]);
+                moves.RemoveAt(0);
+                moves.RemoveAt(1);
+            }
+            else action = new PassAction();
+            return action;
         }
 
     }
@@ -66,7 +76,10 @@ namespace CSDiaballik {
 
     public class ProgressiveAiPlayer : AiPlayer {
 
+        int nbMoves;
+
         public ProgressiveAiPlayer(Color color, string name) : base(color, name) {
+            nbMoves = 0;
         }
 
 
@@ -74,7 +87,14 @@ namespace CSDiaballik {
 
 
         public override IPlayerAction GetNextMove(GameBoard board) {
-            throw new NotImplementedException();
+            if (nbMoves < 10)
+            {
+                return new NoobAiPlayer(this.Color, this.Name).GetNextMove(board);
+            }
+            else
+            {
+                return new StartingAiPlayer(this.Color, this.Name).GetNextMove(board);
+            }
         }
 
     }

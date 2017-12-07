@@ -21,6 +21,9 @@ namespace CSDiaballik
         [DllImport("..\\..\\..\\Debug\\CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ba_get_possible_moves(IntPtr ba, int x, int y);
 
+        [DllImport("..\\..\\..\\Debug\\CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr ba_noob_IA_moves(IntPtr ba, int playerNumber);
+
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void del_board_analyser(IntPtr ba);
 
@@ -116,7 +119,6 @@ namespace CSDiaballik
             int[] moves = new int[tabSize];
             IntPtr intptr = ba_get_possible_moves(_underlying, pos.X, pos.Y);
             Marshal.Copy(intptr, moves, 0, moves.Length);
-            Console.WriteLine(moves[0]);
             for(int i=0; i < tabSize; i=i+2)
             {
                 if (moves[i] != -1 && moves[i+1] != -1)
@@ -141,6 +143,29 @@ namespace CSDiaballik
                 possibleMoves.Add(new Position2D(moves[6], moves[7]));
             }*/
             return possibleMoves;
+        }
+        public List<Position2D> NoobIAMoves(GameBoard board, IPlayer player)
+        {
+            var moves = new List<Position2D>();
+            int[] noob_moves = new int[12];
+            if (player.Equals(board.Player1))
+            {
+                IntPtr intptr = ba_noob_IA_moves(_underlying, 1);
+                Marshal.Copy(intptr, noob_moves, 0, noob_moves.Length);
+            }else if (player.Equals(board.Player2))
+            {
+                IntPtr intptr = ba_noob_IA_moves(_underlying, 2);
+                Marshal.Copy(intptr, noob_moves, 0, noob_moves.Length);
+            }
+            for (int i = 0; i < 12; i = i + 2)
+            {
+                
+                if (noob_moves[i] != -1 && noob_moves[i + 1] != -1)
+                {
+                    moves.Add(new Position2D(noob_moves[i], noob_moves[i + 1]));
+                }
+            }
+            return moves;
         }
     }
 }

@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-
+#include <vector>
 
 enum tile_status
 {
@@ -19,6 +19,8 @@ class board_analyser
 {
 	int _board_size;
 	tile_status** _board;
+	std::vector<int>* _p1_pieces;
+	std::vector<int>* _p2_pieces;
 
 public:
 	explicit board_analyser(int size);
@@ -33,6 +35,8 @@ public:
 
 
 	int* get_possible_moves(int x, int y) const;
+
+	int* noob_IA_moves(int playerNumber) const;
 
 };
 
@@ -57,5 +61,10 @@ extern "C"
 	__declspec(dllexport) int* ba_get_possible_moves(board_analyser* ba, int x, int y)
 	{
 		return ba->get_possible_moves(x, y);
+	}
+
+	__declspec(dllexport) int* ba_noob_IA_moves(board_analyser* ba, int playerNumber)
+	{
+		return ba->noob_IA_moves(playerNumber);
 	}
 }
