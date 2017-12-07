@@ -116,16 +116,5 @@ namespace CSDiaballik.Tests {
             board = board.MoveBall(board.BallBearer1, new Position2D(0, 0));
             Assert.IsTrue(board.IsVictoriousPlayer(board.Player1));
         }
-
-        [Test]
-        public void TestLibrary([Range(3, 13)] int size)
-
-        {
-            var specs = (size - 1, 0).Map(row => Enumerable.Range(0, size).Select(y => new Position2D(row, y)))
-                                     .Map(ps => DummyPlayerSpec(size, ps));
-
-            var board = GameBoard.Create(size, specs);
-            board.GetValidMoves(new Position2D(0, 0));
-        }
     }
 }

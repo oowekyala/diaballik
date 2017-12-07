@@ -6,7 +6,9 @@ enum tile_status
 {
 	empty,
 	player_1,
-	player_2
+	player_2,
+	ball_player_1,
+	ball_player_2
 };
 
 /**
@@ -30,7 +32,7 @@ public:
 	void set_status(int x, int y, int status) const;
 
 
-	int** get_possible_moves(int x, int y) const;
+	int* get_possible_moves(int x, int y) const;
 
 };
 
@@ -50,5 +52,10 @@ extern "C"
 	__declspec(dllexport) void ba_set_status(board_analyser* ba, int x, int y, int status)
 	{
 		ba->set_status(x, y, status);
+	}
+
+	__declspec(dllexport) int* ba_get_possible_moves(board_analyser* ba, int x, int y)
+	{
+		return ba->get_possible_moves(x, y);
 	}
 }
