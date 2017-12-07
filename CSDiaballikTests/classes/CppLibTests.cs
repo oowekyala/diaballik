@@ -33,8 +33,7 @@ namespace CSDiaballik.Tests
             possibleMovesBall = ba.GetPossibleMoves(board, board.BallBearer1);
             Assert.AreEqual(1, possibleMoves.Count);
             Assert.AreEqual(size-1, possibleMovesBall.Count);
-            Assert.AreEqual(new Position2D(1, 0), possibleMoves[0]);
-            //Assert.AreEqual(new Position2D(1, 0), possibleMoves[1]);
+            Assert.AreEqual(new Position2D(1, 0), possibleMoves[0]);            
         }
     }
 }

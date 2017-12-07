@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <deque>
 
 enum tile_status
 {
@@ -19,8 +20,8 @@ class board_analyser
 {
 	int _board_size;
 	tile_status** _board;
-	std::vector<int>* _p1_pieces;
-	std::vector<int>* _p2_pieces;
+	std::vector<int> _p1_pieces;
+	std::vector<int> _p2_pieces;
 
 public:
 	explicit board_analyser(int size);
@@ -31,12 +32,16 @@ public:
 	 * 
 	 * An empty tile is status 0, player 1 is status 1, player 2 is status 2.
 	 */
-	void set_status(int x, int y, int status) const;
+	void set_status(int x, int y, int status) ;
 
 
 	int* get_possible_moves(int x, int y) const;
 
 	int* noob_IA_moves(int playerNumber) const;
+
+	int* starting_IA_moves(int playerNumber) const;
+
+	int dangerous_piece(int playerNumber) const;
 
 };
 
@@ -66,5 +71,10 @@ extern "C"
 	__declspec(dllexport) int* ba_noob_IA_moves(board_analyser* ba, int playerNumber)
 	{
 		return ba->noob_IA_moves(playerNumber);
+	}
+
+	__declspec(dllexport) int* ba_starting_IA_moves(board_analyser* ba, int playerNumber)
+	{
+		return ba->starting_IA_moves(playerNumber);
 	}
 }

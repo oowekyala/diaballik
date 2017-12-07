@@ -24,6 +24,9 @@ namespace CSDiaballik
         [DllImport("..\\..\\..\\Debug\\CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ba_noob_IA_moves(IntPtr ba, int playerNumber);
 
+        [DllImport("..\\..\\..\\Debug\\CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr ba_starting_IA_moves(IntPtr ba, int playerNumber);
+
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void del_board_analyser(IntPtr ba);
 
@@ -84,31 +87,11 @@ namespace CSDiaballik
             disposed = true;
         }
 
-        /*
-        public List<Position2D> GetPossibleMoves(Position2D pos)
-        {
-            var possibleMoves = new List<Position2D>();
-            int[][] moves = new int[4][];
-            moves = ba_get_possible_moves(_underlying, pos.X, pos.Y);
-            if(moves[0][0]!=-1 && moves[1][0] != -1)
-            {
-                possibleMoves.Add(new Position2D(moves[0][0], moves[1][0]));
-            }
-            if (moves[0][1] != -1 && moves[1][1] != -1)
-            {
-                possibleMoves.Add(new Position2D(moves[0][0], moves[1][0]));
-            }
-            if (moves[0][2] != -1 && moves[1][2] != -1)
-            {
-                possibleMoves.Add(new Position2D(moves[0][0], moves[1][0]));
-            }
-            if (moves[0][3] != -1 && moves[1][3] != -1)
-            {
-                possibleMoves.Add(new Position2D(moves[0][0], moves[1][0]));
-            }
-            return possibleMoves;
-        }
-        */
+        /// <summary>
+        /// Returns the possible moves of the piece at the position pos
+        /// </summary>
+        /// <param name="board">The board of the game</param>
+        /// <param name="pos">The position from which the possible moves are calculated</param>
         public List<Position2D> GetPossibleMoves(GameBoard board, Position2D pos)
         {
             int tabSize = 0;
@@ -125,25 +108,16 @@ namespace CSDiaballik
                 {
                     possibleMoves.Add(new Position2D(moves[i], moves[i+1]));
                 }
-            }/*
-            if (moves[0] != -1 && moves[1] != -1)
-            {
-                possibleMoves.Add(new Position2D(moves[0], moves[1]));
             }
-            if (moves[2] != -1 && moves[3] != -1)
-            {
-                possibleMoves.Add(new Position2D(moves[2], moves[3]));
-            }
-            if (moves[5] != -1 && moves[5] != -1)
-            {
-                possibleMoves.Add(new Position2D(moves[4], moves[5]));
-            }
-            if (moves[6] != -1 && moves[7] != -1)
-            {
-                possibleMoves.Add(new Position2D(moves[6], moves[7]));
-            }*/
             return possibleMoves;
         }
+
+        /// <summary>
+        /// Returns the moves of an Noob IA for a turn 
+        /// (a move is composed of 2 Position2D : the source and the destination)
+        /// </summary>
+        /// <param name="board">The board of the game</param>
+        /// <param name="player">The player making the moves</param>
         public List<Position2D> NoobIAMoves(GameBoard board, IPlayer player)
         {
             var moves = new List<Position2D>();
@@ -163,6 +137,37 @@ namespace CSDiaballik
                 if (noob_moves[i] != -1 && noob_moves[i + 1] != -1)
                 {
                     moves.Add(new Position2D(noob_moves[i], noob_moves[i + 1]));
+                }
+            }
+            return moves;
+        }
+
+        /// <summary>
+        /// Returns the moves of an Starting IA for a turn
+        /// (a move is composed of 2 Position2D : the source and the destination)
+        /// </summary>
+        /// <param name="board">The board of the game</param>
+        /// <param name="player">The player making the moves</param>
+        public List<Position2D> StartingIAMoves(GameBoard board, IPlayer player)
+        {
+            var moves = new List<Position2D>();
+            int[] starting_moves = new int[12];
+            if (player.Equals(board.Player1))
+            {
+                IntPtr intptr = ba_starting_IA_moves(_underlying, 1);
+                Marshal.Copy(intptr, starting_moves, 0, starting_moves.Length);
+            }
+            else if (player.Equals(board.Player2))
+            {
+                IntPtr intptr = ba_starting_IA_moves(_underlying, 2);
+                Marshal.Copy(intptr, starting_moves, 0, starting_moves.Length);
+            }
+            for (int i = 0; i < 12; i = i + 2)
+            {
+
+                if (starting_moves[i] != -1 && starting_moves[i + 1] != -1)
+                {
+                    moves.Add(new Position2D(starting_moves[i], starting_moves[i + 1]));
                 }
             }
             return moves;

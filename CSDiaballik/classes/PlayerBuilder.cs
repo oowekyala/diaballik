@@ -13,7 +13,7 @@ namespace CSDiaballik {
 
 
         public PlayerBuilder() {
-            _isFirstPlayer = !_isFirstPlayer; // true for the first instantiation, false for the second. Quite shitty tbh
+            _isFirstPlayer = !_isFirstPlayer; // true for the first instantiation, false for the second.
             Color = _isFirstPlayer ? Color.Blue : Color.Red;
         }
 
