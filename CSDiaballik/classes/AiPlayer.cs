@@ -43,7 +43,7 @@ namespace CSDiaballik {
 
         public override IPlayerAction GetNextMove(GameBoard board) {
             var ba = BoardAnalyser.New(board);
-            var moves = ba.NoobIAMoves(board, this);
+            var moves = ba.NoobAiMoves(board, this);
             IPlayerAction action;
             if (moves.Count > 0)
             {
@@ -69,7 +69,7 @@ namespace CSDiaballik {
 
         public override IPlayerAction GetNextMove(GameBoard board) {
             var ba = BoardAnalyser.New(board);
-            var moves = ba.StartingIAMoves(board, this);
+            var moves = ba.StartingAiMoves(board, this);
             IPlayerAction action;
             if (moves.Count > 0)
             {

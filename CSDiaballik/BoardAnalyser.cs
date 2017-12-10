@@ -4,12 +4,11 @@ using System.Runtime.InteropServices;
 
 namespace CSDiaballik {
     /// <summary>
-    ///     Wrapper around the c++ class board_analyser.
+    /// Wrapper around the c++ class board_analyser. There is one board analyser per gameboard.
     /// </summary>
     public class BoardAnalyser {
         private readonly IntPtr _underlying;
-        private readonly GameBoard _analysedBoard;
-        private bool _disposed = false;
+        private bool disposed = false;
 
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr new_board_analyser(int size);
@@ -31,14 +30,12 @@ namespace CSDiaballik {
 
 
         private BoardAnalyser(GameBoard board) {
-            _analysedBoard = board;
             _underlying = new_board_analyser(board.Size);
             for (var i = 0; i < board.Size; i++) {
                 for (var j = 0; j < board.Size; j++) {
                     ba_set_status(_underlying, i, j, 0);
                 }
             }
-
             foreach (var pos in board.Player1Positions) {
                 ba_set_status(_underlying, pos.X, pos.Y, 1);
             }
@@ -52,11 +49,6 @@ namespace CSDiaballik {
             ba_set_status(_underlying, board.BallBearer2.X, board.BallBearer2.Y, 4);
         }
 
-        /// <summary>
-        ///     Returns a new analyser bound to the given game board.
-        /// </summary>
-        /// <param name="board">The board to analyse.</param>
-        /// <returns>A new board analyser</returns>
         public static BoardAnalyser New(GameBoard board) {
             return new BoardAnalyser(board);
         }
@@ -74,76 +66,85 @@ namespace CSDiaballik {
         }
 
         protected virtual void Dispose(bool disposing) {
-            if (_disposed)
+            if (disposed)
                 return;
             if (disposing) {
                 del_board_analyser(_underlying);
             }
-            _disposed = true;
+            disposed = true;
         }
 
         /// <summary>
-        ///     Returns the possible moves of the piece at the position pos.
+        /// Returns the possible moves of the piece at the position pos
         /// </summary>
+        /// <param name="board">The board of the game</param>
         /// <param name="pos">The position from which the possible moves are calculated</param>
-        public List<Position2D> GetPossibleMoves(Position2D pos) {
+        public List<Position2D> GetPossibleMoves(GameBoard board, Position2D pos) {
             var tabSize = 0;
-            if (pos.Equals(_analysedBoard.BallBearer1) || pos.Equals(_analysedBoard.BallBearer2)) {
-                tabSize = _analysedBoard.Size * 2;
-            } else tabSize = 8;
+            if (pos.Equals(board.BallBearer1) || pos.Equals(board.BallBearer2)) {
+                tabSize = board.Size * 2;
+            } else {
+                tabSize = 8;
+            }
 
+            var possibleMoves = new List<Position2D>();
+            var moves = new int[tabSize];
             var intptr = ba_get_possible_moves(_underlying, pos.X, pos.Y);
-            return ConvertArrayToPositionList(intptr, tabSize);
-        }
-
-
-        // TODO these have nothing to do here, should be moved out and encapsulated into the players' implementation.
-
-        /// <summary>
-        ///     Returns the moves of a Noob AI for a turn. A move is composed of two 
-        ///     positions: the source and the destination.
-        /// </summary>
-        /// <param name="player">The player making the moves</param>
-        public List<Position2D> NoobAiMoves(IPlayer player) {
-            var playerIndex = PlayerIndex(player);
-            var intptr = ba_noob_IA_moves(_underlying, playerIndex);
-            return ConvertArrayToPositionList(intptr, 12);
-        }
-
-
-        /// <summary>
-        ///     Returns the moves of a Starting AI for a turn. A move is composed of two 
-        ///     positions: the source and the destination.
-        /// </summary>
-        /// <param name="player">The player making the moves</param>
-        public List<Position2D> StartingAiMoves(IPlayer player) {
-            var playerIndex = PlayerIndex(player);
-            var intptr = ba_starting_IA_moves(_underlying, playerIndex);
-            return ConvertArrayToPositionList(intptr, 12);
-        }
-
-
-        private static List<Position2D> ConvertArrayToPositionList(IntPtr arr, int size) {
-            var result = new List<Position2D>();
-            var startingMoves = new int[size];
-
-            Marshal.Copy(arr, startingMoves, 0, startingMoves.Length);
-
-            for (var i = 0; i < size; i = i + 2) {
-                if (startingMoves[i] != -1 && startingMoves[i + 1] != -1) {
-                    result.Add(new Position2D(startingMoves[i], startingMoves[i + 1]));
+            Marshal.Copy(intptr, moves, 0, moves.Length);
+            for (var i = 0; i < tabSize; i = i + 2) {
+                if (moves[i] != -1 && moves[i + 1] != -1) {
+                    possibleMoves.Add(new Position2D(moves[i], moves[i + 1]));
                 }
             }
-            return result;
+            return possibleMoves;
         }
 
+        /// <summary>
+        /// Returns the moves of an Noob IA for a turn 
+        /// (a move is composed of 2 Position2D : the source and the destination)
+        /// </summary>
+        /// <param name="board">The board of the game</param>
+        /// <param name="player">The player making the moves</param>
+        public List<Position2D> NoobAiMoves(GameBoard board, IPlayer player) {
+            var moves = new List<Position2D>();
+            var noobMoves = new int[12];
+            if (player.Equals(board.Player1)) {
+                var intptr = ba_noob_IA_moves(_underlying, 1);
+                Marshal.Copy(intptr, noobMoves, 0, noobMoves.Length);
+            } else if (player.Equals(board.Player2)) {
+                var intptr = ba_noob_IA_moves(_underlying, 2);
+                Marshal.Copy(intptr, noobMoves, 0, noobMoves.Length);
+            }
+            for (var i = 0; i < 12; i = i + 2) {
+                if (noobMoves[i] != -1 && noobMoves[i + 1] != -1) {
+                    moves.Add(new Position2D(noobMoves[i], noobMoves[i + 1]));
+                }
+            }
+            return moves;
+        }
 
-        private int PlayerIndex(IPlayer player) {
-            return _analysedBoard.Player1.Equals(player)
-                ? 1
-                : _analysedBoard.Player2.Equals(player)
-                    ? 2
-                    : throw new ArgumentException("Unknown player");
+        /// <summary>
+        /// Returns the moves of an Starting AI for a turn
+        /// (a move is composed of 2 Position2D : the source and the destination)
+        /// </summary>
+        /// <param name="board">The board of the game</param>
+        /// <param name="player">The player making the moves</param>
+        public List<Position2D> StartingAiMoves(GameBoard board, IPlayer player) {
+            var moves = new List<Position2D>();
+            var startingMoves = new int[12];
+            if (player.Equals(board.Player1)) {
+                var intptr = ba_starting_IA_moves(_underlying, 1);
+                Marshal.Copy(intptr, startingMoves, 0, startingMoves.Length);
+            } else if (player.Equals(board.Player2)) {
+                var intptr = ba_starting_IA_moves(_underlying, 2);
+                Marshal.Copy(intptr, startingMoves, 0, startingMoves.Length);
+            }
+            for (var i = 0; i < 12; i = i + 2) {
+                if (startingMoves[i] != -1 && startingMoves[i + 1] != -1) {
+                    moves.Add(new Position2D(startingMoves[i], startingMoves[i + 1]));
+                }
+            }
+            return moves;
         }
     }
 }
