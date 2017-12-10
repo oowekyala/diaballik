@@ -18,13 +18,13 @@ namespace CSDiaballik
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void ba_set_status(IntPtr ba, int x, int y, int status);
 
-        [DllImport("..\\..\\..\\Debug\\CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ba_get_possible_moves(IntPtr ba, int x, int y);
 
-        [DllImport("..\\..\\..\\Debug\\CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ba_noob_IA_moves(IntPtr ba, int playerNumber);
 
-        [DllImport("..\\..\\..\\Debug\\CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ba_starting_IA_moves(IntPtr ba, int playerNumber);
 
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]

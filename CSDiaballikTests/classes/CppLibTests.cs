@@ -10,7 +10,7 @@ namespace CSDiaballik.Tests
     public class CppLibTests
     {
         [Test]
-        public void TestLibrary([Range(3, 13)] int size)
+        public void TestNewAnalyser([Range(3, 13)] int size)
         {
             var specs = (size - 1, 0).Map(row => Enumerable.Range(0, size).Select(y => new Position2D(row, y)))
                 .Map(ps => DummyPlayerSpec(size, ps));
