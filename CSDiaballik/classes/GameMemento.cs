@@ -8,7 +8,6 @@
     ///     already built states.
     /// </summary>
     public abstract class GameMemento {
-
         /// <summary>
         ///     Gets the previous memento. Returns null if this is the root.
         /// </summary>
@@ -35,7 +34,7 @@
         public GameMemento Append(GameState state, IUpdateAction action) {
             return new MementoNode(state, this, action);
         }
-        
+
         /// <summary>
         ///     Creates a new memento based on this one, adding an undo action.
         /// </summary>
@@ -51,7 +50,6 @@
         /// </summary>
         /// <returns>A game</returns>
         public abstract GameState ToGame();
-
     }
 
 
@@ -60,7 +58,6 @@
     ///     Abstract class for memento nodes that have a parent.
     /// </summary>
     public abstract class AbstractMementoNode : GameMemento {
-
         /// Previous memento in the chain
         protected readonly GameMemento Previous;
 
@@ -73,12 +70,10 @@
         public sealed override GameMemento GetParent() {
             return Previous;
         }
-
     }
 
 
     public class MementoNode : AbstractMementoNode {
-
         /// Action to perform on the previous state to get this state
         private readonly IUpdateAction _action;
 
@@ -101,7 +96,6 @@
         public override GameState ToGame() {
             return _thisGameState ?? (_thisGameState = _action.UpdateState(Previous.ToGame()));
         }
-
     }
 
 
@@ -112,7 +106,6 @@
     ///     we delegate the call to ToGame to the previous nodes.
     /// </summary>
     public class UndoMementoNode : AbstractMementoNode {
-
         private readonly UndoAction _undoAction; // may be useful for eg timestamps
 
 
@@ -124,7 +117,6 @@
         public override GameState ToGame() {
             return Previous.GetParent().ToGame();
         }
-
     }
 
 
@@ -133,7 +125,6 @@
     ///     Contains enough info to build the initial state of the game. Has no parent.
     /// </summary>
     public class RootMemento : GameMemento {
-
         private readonly int _boardSize;
         private readonly bool _isFirstPlayerPlaying;
         private readonly PlayerBuilder _p1Spec;
@@ -159,7 +150,7 @@
         public override GameState ToGame() {
             var players = (_p1Spec.Build(), _p2Spec.Build());
             var specs = players.Zip((_boardSpec1, _boardSpec2),
-                                    (player, spec) => new FullPlayerBoardSpec(player, spec));
+                (player, spec) => new FullPlayerBoardSpec(player, spec));
 
             return _initialState ?? (_initialState = GameState.InitialState(_boardSize, specs, _isFirstPlayerPlaying));
         }
@@ -168,6 +159,5 @@
         public override GameMemento GetParent() {
             return null;
         }
-
     }
 }

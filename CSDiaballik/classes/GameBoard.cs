@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Runtime.InteropServices;
-
 using System.Linq;
 
 namespace CSDiaballik {
@@ -21,7 +20,6 @@ namespace CSDiaballik {
     ///     This class is immutable.
     /// </summary>
     public class GameBoard {
-
         // we could also delegate everything to the previous board
         // taking care to avoid delegation chains.
 
@@ -41,7 +39,7 @@ namespace CSDiaballik {
 
 
         public int Size { get; }
-        
+
         // Performs full consistency checks, only the first time
         private GameBoard(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
             Size = size;
@@ -55,14 +53,14 @@ namespace CSDiaballik {
 
             var lookupBuilder = ImmutableDictionary.CreateBuilder<Position2D, IPlayer>();
             specs.Map(spec => spec.Positions.Select(p => new KeyValuePair<Position2D, IPlayer>(p, spec.Player)))
-                 .Foreach(lookupBuilder.AddRange);
+                .Foreach(lookupBuilder.AddRange);
             _boardLookup = lookupBuilder.ToImmutable();
         }
 
 
         // used internally, for MovePiece updates
         private GameBoard(GameBoard previous, ImmutableDictionary<Position2D, IPlayer> lookup,
-                          (ImmutableHashSet<Position2D>, ImmutableHashSet<Position2D>) positions) {
+            (ImmutableHashSet<Position2D>, ImmutableHashSet<Position2D>) positions) {
             Size = previous.Size;
             Player1 = previous.Player1;
             Player2 = previous.Player2;
@@ -84,7 +82,6 @@ namespace CSDiaballik {
         }
 
 
-
         public bool IsVictoriousPlayer(IPlayer player) {
             return PositionsForPlayer(player)
                 .Select(p => p.X)
@@ -94,9 +91,11 @@ namespace CSDiaballik {
 
         // Gets the index of the starting row of a player. Used to check for victory
         private int GetRowIndexOfInitialLine(IPlayer player) {
-            return player == Player1 ? Size - 1
-                   : player == Player2 ? 0
-                   : throw new ArgumentException("Unknown player");
+            return player == Player1
+                ? Size - 1
+                : player == Player2
+                    ? 0
+                    : throw new ArgumentException("Unknown player");
         }
 
 
@@ -189,8 +188,8 @@ namespace CSDiaballik {
             positions.Add(dst);
 
             return player == Player1
-                       ? new GameBoard(this, lookup.ToImmutable(), (positions.ToImmutable(), _player2Positions))
-                       : new GameBoard(this, lookup.ToImmutable(), (_player1Positions, positions.ToImmutable()));
+                ? new GameBoard(this, lookup.ToImmutable(), (positions.ToImmutable(), _player2Positions))
+                : new GameBoard(this, lookup.ToImmutable(), (_player1Positions, positions.ToImmutable()));
         }
 
 
@@ -213,15 +212,17 @@ namespace CSDiaballik {
             }
 
             return PlayerOn(src) == Player1
-                       ? new GameBoard(this, (dst, BallBearer2))
-                       : new GameBoard(this, (BallBearer1, dst));
+                ? new GameBoard(this, (dst, BallBearer2))
+                : new GameBoard(this, (BallBearer1, dst));
         }
 
 
         private ImmutableHashSet<Position2D> _PositionsForPlayer(IPlayer player) {
-            return player == Player1 ? _player1Positions
-                   : player == Player2 ? _player2Positions
-                   : throw new ArgumentException("Unknown player");
+            return player == Player1
+                ? _player1Positions
+                : player == Player2
+                    ? _player2Positions
+                    : throw new ArgumentException("Unknown player");
         }
 
 
@@ -243,9 +244,11 @@ namespace CSDiaballik {
         /// <returns>The position</returns>
         /// <exception cref="ArgumentException">If the player is not recognised</exception>
         public Position2D BallBearerForPlayer(IPlayer player) {
-            return player == Player1 ? BallBearer1 :
-                   player == Player2 ? BallBearer2 :
-                   throw new ArgumentException("Unknown player");
+            return player == Player1
+                ? BallBearer1
+                : player == Player2
+                    ? BallBearer2
+                    : throw new ArgumentException("Unknown player");
         }
 
 
@@ -313,7 +316,5 @@ namespace CSDiaballik {
         public (Position2D, Position2D) BallBearerPair() {
             return (BallBearer1, BallBearer2);
         }
-
-     
     }
 }

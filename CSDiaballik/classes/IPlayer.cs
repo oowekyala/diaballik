@@ -5,7 +5,6 @@ namespace CSDiaballik {
     ///     Immutable player.
     /// </summary>
     public interface IPlayer {
-
         Color Color { get; }
         string Name { get; }
 
@@ -32,6 +31,5 @@ namespace CSDiaballik {
         /// </summary>
         /// <returns>A builder describing this player</returns>
         PlayerBuilder ToBuilder();
-
     }
 }

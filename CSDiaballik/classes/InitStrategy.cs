@@ -4,19 +4,16 @@ using System.Linq;
 
 namespace CSDiaballik {
     public interface IInitStrategy {
-
         /// <summary>
         ///     Gets the positions of the pieces of each player.
         /// </summary>
         /// <param name="size">Size of the board (square)</param>
         /// <returns>A tuple containing the positions of the pieces of each player </returns>
         (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size);
-
     }
 
 
     public abstract class AbstractInitStrategy : IInitStrategy {
-
         protected static readonly Random Rand = new Random();
 
 
@@ -32,7 +29,6 @@ namespace CSDiaballik {
         /// <returns></returns>
         protected static (IEnumerable<Position2D>, IEnumerable<Position2D>) InitialPositions(int size)
             => (size - 1, 0).ZipWithPair(Enumerable.Range(0, size), (x, ys) => ys.Select(y => new Position2D(x, y)));
-
     }
 
 
@@ -40,25 +36,20 @@ namespace CSDiaballik {
 
 
     public class StandardInitStrategy : AbstractInitStrategy {
-
         public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size) {
             return InitialPositions(size).Map(ps => new PlayerBoardSpec(ps, size / 2));
         }
-
     }
 
 
     public class BallRandomStrategy : AbstractInitStrategy {
-
         public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size) {
             return InitialPositions(size).Map(ps => new PlayerBoardSpec(ps, Rand.Next(size)));
         }
-
     }
 
 
     public class EnemyAmongUsStrategy : AbstractInitStrategy {
-
         public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size) {
             var (pos1, pos2) = InitialPositions(size).Map(ps => ps.ToList());
 
@@ -76,6 +67,5 @@ namespace CSDiaballik {
             pos1[num] = pos2[num];
             pos2[num] = tmp;
         }
-
     }
 }

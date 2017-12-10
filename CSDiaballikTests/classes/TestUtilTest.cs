@@ -6,7 +6,6 @@ namespace CSDiaballik.Tests {
     // Not intended as extensive tests, mainly for debugging
     [TestFixture]
     public class TestUtilTest {
-
         [Test]
         public void TestOrderedPositions([Random(1, 50, 10)] int i) {
             var pool = OrderedPositionsPool(i).ToList();
@@ -20,6 +19,5 @@ namespace CSDiaballik.Tests {
             var pool = RandomPositions(i * i, i); // expect no exception
             // pool.ToList().Select(p => p.ToString()).ToList().ForEach(Console.WriteLine); // debug output
         }
-
     }
 }

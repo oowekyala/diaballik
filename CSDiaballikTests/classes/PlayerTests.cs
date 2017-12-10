@@ -4,7 +4,6 @@ using NUnit.Framework;
 namespace CSDiaballik.Tests {
     [TestFixture]
     public class PlayerTests {
-
         [Test]
         public void TestAiLevel() {
             AiPlayer noob = new NoobAiPlayer(Color.AliceBlue, "dummy");
@@ -25,6 +24,5 @@ namespace CSDiaballik.Tests {
             Assert.AreEqual(player.Color, Color.Aqua);
             Assert.AreEqual(player.Name, "dummy");
         }
-
     }
 }

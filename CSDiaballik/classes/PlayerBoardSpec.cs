@@ -6,7 +6,6 @@ namespace CSDiaballik {
     ///     Summarises the initial config of the pieces of a player.
     /// </summary>
     public class PlayerBoardSpec {
-
         private readonly List<Position2D> _positions;
 
 
@@ -30,7 +29,6 @@ namespace CSDiaballik {
         ///     The index of the ball bearer piece in the positions
         /// </summary>
         public int BallIndex { get; }
-
     }
 
 
@@ -39,7 +37,6 @@ namespace CSDiaballik {
     ///     A board spec bound to its player.
     /// </summary>
     public class FullPlayerBoardSpec : PlayerBoardSpec {
-
         public FullPlayerBoardSpec(IPlayer player, IEnumerable<Position2D> positions, int ballIndex) :
             base(positions, ballIndex) {
             Player = player;
@@ -53,6 +50,5 @@ namespace CSDiaballik {
 
         /// The player.
         public IPlayer Player { get; }
-
     }
 }

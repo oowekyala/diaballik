@@ -30,21 +30,20 @@ public:
 	/**
 	 * Sets the status of one tile on the internal model of the board. Used to initialise the model.
 	 * 
-	 * An empty tile is status 0, player 1 is status 1, player 2 is status 2.
+	 * These status are represented by the enum tile_status.
 	 */
-	void set_status(int x, int y, int status) ;
-
+	void set_status(int x, int y, int status);
 
 	int* get_possible_moves(int x, int y) const;
 
-	int* noob_IA_moves(int playerNumber) const;
+	int* noob_ai_moves(int player_number) const;
 
-	int* starting_IA_moves(int playerNumber) const;
+	int* starting_ai_moves(int player_number) const;
 
-	int dangerous_piece(int playerNumber) const;
-
+	int dangerous_piece(int player_number) const;
 };
 
+// TODO move ai decision logic into other classes
 
 extern "C"
 {
@@ -68,13 +67,13 @@ extern "C"
 		return ba->get_possible_moves(x, y);
 	}
 
-	__declspec(dllexport) int* ba_noob_IA_moves(board_analyser* ba, int playerNumber)
+	__declspec(dllexport) int* ba_noob_ai_moves(board_analyser* ba, int player_number)
 	{
-		return ba->noob_IA_moves(playerNumber);
+		return ba->noob_ai_moves(player_number);
 	}
 
-	__declspec(dllexport) int* ba_starting_IA_moves(board_analyser* ba, int playerNumber)
+	__declspec(dllexport) int* ba_starting_ai_moves(board_analyser* ba, int player_number)
 	{
-		return ba->starting_IA_moves(playerNumber);
+		return ba->starting_ai_moves(player_number);
 	}
 }

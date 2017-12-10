@@ -6,7 +6,6 @@ namespace CSDiaballik {
     ///     Builds player instances.
     /// </summary>
     public class PlayerBuilder {
-
         private static bool _isFirstPlayer;
         private AiPlayer.AiLevel _aiLevel;
         private bool _isHuman;
@@ -68,6 +67,5 @@ namespace CSDiaballik {
                     throw new ArgumentOutOfRangeException();
             }
         }
-
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace CSDiaballik {
     public static class ExtensionUtil {
-
         // Mainly extension methods for homogeneous pairs. Avoids repeating symmetrical code over and over.
 
 
@@ -20,7 +19,7 @@ namespace CSDiaballik {
         public static (A, A) Pair<A>(A a) => (a, a);
 
 
-        public static (A,A) Foreach<A>(this(A, A) tuple, Action<A> f) {
+        public static (A, A) Foreach<A>(this(A, A) tuple, Action<A> f) {
             f(tuple.Item1);
             f(tuple.Item2);
             return tuple;
@@ -37,6 +36,5 @@ namespace CSDiaballik {
 
         public static ((A, B), (A, B)) Zip<A, B>(this (A, A) t1, (B, B) t2)
             => t1.Zip(t2, (a, b) => (a, b));
-
     }
 }

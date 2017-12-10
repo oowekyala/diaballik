@@ -3,7 +3,6 @@ using System.Drawing;
 
 namespace CSDiaballik {
     public class HumanPlayer : AbstractPlayer {
-
         public HumanPlayer(Color color, string name) : base(color, name) {
         }
 
@@ -17,6 +16,5 @@ namespace CSDiaballik {
 
 
         public override PlayerBuilder ToBuilder() => base.ToBuilder().SetIsHuman();
-
     }
 }

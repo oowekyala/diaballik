@@ -7,7 +7,6 @@ using static CSDiaballik.AiPlayer;
 namespace CSDiaballik.Tests {
     [TestFixture]
     public class PlayerBuilderTest {
-
         [Test]
         public void TestProperties([Values(Blue, Red, HotPink)] KnownColor color, [Values("a", "b", "c")] string name) {
             var builder = new PlayerBuilder {
@@ -48,6 +47,5 @@ namespace CSDiaballik.Tests {
             Assert.IsTrue(player.IsAi());
             Assert.IsInstanceOf<AiPlayer>(player);
         }
-
     }
 }

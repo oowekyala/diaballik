@@ -2,7 +2,6 @@
 
 namespace CSDiaballik {
     public abstract class AbstractPlayer : IPlayer {
-
         protected AbstractPlayer(Color color, string name) {
             Color = color;
             Name = name;
@@ -22,6 +21,5 @@ namespace CSDiaballik {
             Color = Color,
             Name = Name
         };
-
     }
 }

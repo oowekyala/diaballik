@@ -5,7 +5,6 @@ namespace CSDiaballik {
     ///     Utility datatype to store a position.
     /// </summary>
     public struct Position2D {
-
         public int X { get; }
         public int Y { get; }
 
@@ -62,6 +61,5 @@ namespace CSDiaballik {
         public static Position2D New(int x, int y) {
             return new Position2D(x, y);
         }
-
     }
 }

@@ -4,15 +4,13 @@ using NUnit.Framework;
 namespace CSDiaballik.Tests {
     [TestFixture]
     public class GameBuilderTests {
-
         [Test]
         public void TestSetSize([Range(1, 15)] int size) {
             var builder = new GameBuilder();
 
             if (size % 2 == 0 || size < 2) {
                 Assert.That(() => builder.Size = size, Throws.ArgumentException);
-            }
-            else {
+            } else {
                 builder.Size = size;
                 var game = builder.Build();
                 Assert.AreEqual(size, game.BoardSize);
@@ -70,11 +68,11 @@ namespace CSDiaballik.Tests {
             positionsTuple.Foreach(ps => Assert.AreEqual(size, ps.Count));
 
             positionsTuple.Zip((size - 1, 0))
-                          .Foreach(t => {
-                              var (ps, row) = t;
-                              Assert.AreEqual(size - 2, ps.Count(p => p.X == row)); // friend row
-                              Assert.AreEqual(2, ps.Count(p => p.X == size - 1 - row)); // enemy row
-                          });
+                .Foreach(t => {
+                    var (ps, row) = t;
+                    Assert.AreEqual(size - 2, ps.Count(p => p.X == row)); // friend row
+                    Assert.AreEqual(2, ps.Count(p => p.X == size - 1 - row)); // enemy row
+                });
 
             // ball bearers are middle pieces, in friend row
             game.BallBearerPair
@@ -85,6 +83,5 @@ namespace CSDiaballik.Tests {
                     Assert.AreEqual(row, ball.X);
                 });
         }
-
     }
 }

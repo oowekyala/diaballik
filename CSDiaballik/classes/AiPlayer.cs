@@ -3,13 +3,10 @@ using System.Drawing;
 
 namespace CSDiaballik {
     public abstract class AiPlayer : AbstractPlayer {
-
         public enum AiLevel {
-
             Noob,
             Starting,
             Progressive
-
         }
 
 
@@ -28,12 +25,10 @@ namespace CSDiaballik {
         public sealed override PlayerBuilder ToBuilder() {
             return base.ToBuilder().SetIsAi(Level);
         }
-
     }
 
 
     public class NoobAiPlayer : AiPlayer {
-
         public NoobAiPlayer(Color color, string name) : base(color, name) {
         }
 
@@ -45,21 +40,17 @@ namespace CSDiaballik {
             var ba = BoardAnalyser.New(board);
             var moves = ba.NoobAiMoves(board, this);
             IPlayerAction action;
-            if (moves.Count > 0)
-            {
+            if (moves.Count > 0) {
                 action = new MovePieceAction(moves[0], moves[1]);
                 moves.RemoveAt(0);
                 moves.RemoveAt(1);
-            }
-            else action = new PassAction();
+            } else action = new PassAction();
             return action;
         }
-
     }
 
 
     public class StartingAiPlayer : AiPlayer {
-
         public StartingAiPlayer(Color color, string name) : base(color, name) {
         }
 
@@ -71,21 +62,17 @@ namespace CSDiaballik {
             var ba = BoardAnalyser.New(board);
             var moves = ba.StartingAiMoves(board, this);
             IPlayerAction action;
-            if (moves.Count > 0)
-            {
+            if (moves.Count > 0) {
                 action = new MovePieceAction(moves[0], moves[1]);
                 moves.RemoveAt(0);
                 moves.RemoveAt(1);
-            }
-            else action = new PassAction();
+            } else action = new PassAction();
             return action;
         }
-
     }
 
 
     public class ProgressiveAiPlayer : AiPlayer {
-
         int nbMoves;
 
         public ProgressiveAiPlayer(Color color, string name) : base(color, name) {
@@ -97,15 +84,11 @@ namespace CSDiaballik {
 
 
         public override IPlayerAction GetNextMove(GameBoard board) {
-            if (nbMoves < 10)
-            {
+            if (nbMoves < 10) {
                 return new NoobAiPlayer(this.Color, this.Name).GetNextMove(board);
-            }
-            else
-            {
+            } else {
                 return new StartingAiPlayer(this.Color, this.Name).GetNextMove(board);
             }
         }
-
     }
 }

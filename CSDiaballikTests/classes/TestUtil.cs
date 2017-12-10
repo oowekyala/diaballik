@@ -8,7 +8,6 @@ namespace CSDiaballik.Tests {
     ///     Utility methods to mock objects.
     /// </summary>
     public static class TestUtil {
-
         private static readonly Random Rng = new Random();
 
 
@@ -29,8 +28,8 @@ namespace CSDiaballik.Tests {
 
         internal static IEnumerable<Position2D> OrderedPositionsPool(int boardSize)
             => from col in Enumerable.Range(0, boardSize)
-               from row in Enumerable.Range(0, boardSize)
-               select new Position2D(col, row);
+                from row in Enumerable.Range(0, boardSize)
+                select new Position2D(col, row);
 
 
         public static (IEnumerable<Position2D>, IEnumerable<Position2D>) RandomPositionsPair(int n, int boardSize) {
@@ -72,7 +71,5 @@ namespace CSDiaballik.Tests {
 
 
         public static IPlayer DummyPlayer() => new NoobAiPlayer(RandomColor(), "dummy" + Rng.Next(100));
-
-
     }
 }

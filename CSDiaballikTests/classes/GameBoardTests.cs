@@ -7,7 +7,6 @@ using System.Collections.Generic;
 namespace CSDiaballik.Tests {
     [TestFixture]
     public class GameBoardTests {
-
         [Test]
         public void TestMovePiece([Range(3, 13)] int size) {
             var positions = RandomPositionsPair(size + 1, size).Map(e => e.ToList());
@@ -106,7 +105,7 @@ namespace CSDiaballik.Tests {
         [Test]
         public void TestVictory([Range(3, 13)] int size) {
             var specs = (size - 1, 0).Map(row => Enumerable.Range(0, size).Select(y => new Position2D(row, y)))
-                                     .Map(ps => DummyPlayerSpec(size, ps));
+                .Map(ps => DummyPlayerSpec(size, ps));
 
             var board = GameBoard.Create(size, specs);
 

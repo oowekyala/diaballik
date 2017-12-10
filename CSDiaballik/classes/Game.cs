@@ -11,7 +11,6 @@ namespace CSDiaballik {
     ///    these actions in the memento.
     /// </summary>
     public class Game {
-
         public const int MaxMovesPerTurn = 3;
 
 
@@ -42,7 +41,7 @@ namespace CSDiaballik {
         /// <param name="isFirstPlayerPlaying">Whether player 1 is the first to start playing or not</param>
         /// <returns>A new game</returns>
         public static Game Init(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs,
-                                bool isFirstPlayerPlaying) {
+            bool isFirstPlayerPlaying) {
             return new Game(size, specs, isFirstPlayerPlaying);
         }
 
@@ -91,6 +90,5 @@ namespace CSDiaballik {
                     break;
             }
         }
-
     }
 }

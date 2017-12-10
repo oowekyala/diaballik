@@ -8,9 +8,9 @@ namespace CSDiaballik {
     ///     Represents a state in the game. This class is immutable.
     /// </summary>
     public class GameState {
-
         /* delegated properties */
         public IPlayer Player1 => Board.Player1;
+
         public IPlayer Player2 => Board.Player2;
         public int BoardSize => Board.Size;
         public (IEnumerable<Position2D>, IEnumerable<Position2D>) PositionsPair => Board.PositionsPair();
@@ -44,15 +44,17 @@ namespace CSDiaballik {
 
 
         public static GameState InitialState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs,
-                                             bool isFirstPlayerPlaying) {
+            bool isFirstPlayerPlaying) {
             return new GameState(size, specs, isFirstPlayerPlaying);
         }
 
 
         private IPlayer GetOtherPlayer(IPlayer player) {
-            return player == Player1 ? Player2 :
-                   player == Player2 ? Player1 :
-                   throw new ArgumentException("Unknown player");
+            return player == Player1
+                ? Player2
+                : player == Player2
+                    ? Player1
+                    : throw new ArgumentException("Unknown player");
         }
 
 
@@ -106,6 +108,5 @@ namespace CSDiaballik {
                 return hashCode;
             }
         }
-
     }
 }

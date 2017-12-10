@@ -6,7 +6,6 @@ namespace CSDiaballik {
     ///     Builds a game, enforcing the correctness of its arguments throughout the process.
     /// </summary>
     public class GameBuilder {
-
         private readonly PlayerBuilder _playerBuilder1 = new PlayerBuilder();
         private readonly PlayerBuilder _playerBuilder2 = new PlayerBuilder();
         private int _size = 7;
@@ -17,8 +16,8 @@ namespace CSDiaballik {
         public int Size {
             get => _size;
             set => _size = value % 2 == 1 && value > 1
-                               ? value
-                               : throw new ArgumentException("The size of the board must be odd and > 1");
+                ? value
+                : throw new ArgumentException("The size of the board must be odd and > 1");
         }
 
 
@@ -36,10 +35,9 @@ namespace CSDiaballik {
         public Game Build() {
             var players = (_playerBuilder1, _playerBuilder2).Map(x => x.Build());
             var specs = InitStrategy.InitPositions(Size)
-                                    .Zip(players, (spec, player) => new FullPlayerBoardSpec(player, spec));
+                .Zip(players, (spec, player) => new FullPlayerBoardSpec(player, spec));
 
             return Game.Init(Size, specs);
         }
-
     }
 }

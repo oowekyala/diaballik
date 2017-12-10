@@ -3,7 +3,6 @@
 namespace CSDiaballik.Tests {
     [TestFixture]
     public class GameStateTests {
-
         [Test]
         public void TestPlayerIdentity() {
             const int size = 7;
@@ -13,6 +12,5 @@ namespace CSDiaballik.Tests {
             Assert.AreSame(spec1.Player, g.Player1);
             Assert.AreSame(spec2.Player, g.Player2);
         }
-
     }
 }
