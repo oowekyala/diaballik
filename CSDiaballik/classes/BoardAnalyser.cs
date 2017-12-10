@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
+
 namespace CSDiaballik {
     /// <summary>
     ///     Wrapper around the c++ class board_analyser.
@@ -11,20 +12,33 @@ namespace CSDiaballik {
         private readonly GameBoard _analysedBoard;
         private bool _disposed = false;
 
+        // mirrors the enum in BoardAnalyser.hpp
+        private enum TileStatus {
+            Empty,
+            Player1,
+            Player2,
+            BallPlayer1,
+            BallPlayer2
+        }
+
+
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr new_board_analyser(int size);
 
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void ba_set_status(IntPtr ba, int x, int y, int status);
+        private static extern void ba_set_status(IntPtr ba, int x, int y, TileStatus status);
 
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr ba_get_possible_moves(IntPtr ba, int x, int y);
+        private static extern IntPtr ba_get_possible_moves_for_piece(IntPtr ba, int x, int y);
 
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr ba_noob_IA_moves(IntPtr ba, int playerNumber);
+        private static extern IntPtr ba_get_possible_moves_for_ball(IntPtr ba, int x, int y);
 
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr ba_starting_IA_moves(IntPtr ba, int playerNumber);
+        private static extern IntPtr ba_noob_ai_moves(IntPtr ba, int playerNumber);
+
+        [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr ba_starting_ai_moves(IntPtr ba, int playerNumber);
 
         [DllImport("CppLib.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void del_board_analyser(IntPtr ba);
@@ -35,21 +49,20 @@ namespace CSDiaballik {
             _underlying = new_board_analyser(board.Size);
             for (var i = 0; i < board.Size; i++) {
                 for (var j = 0; j < board.Size; j++) {
-                    ba_set_status(_underlying, i, j, 0);
+                    ba_set_status(_underlying, i, j, TileStatus.Empty);
                 }
             }
 
             foreach (var pos in board.Player1Positions) {
-                ba_set_status(_underlying, pos.X, pos.Y, 1);
+                ba_set_status(_underlying, pos.X, pos.Y, TileStatus.Player1);
             }
-
-            ba_set_status(_underlying, board.BallBearer1.X, board.BallBearer1.Y, 3);
 
             foreach (var pos in board.Player2Positions) {
-                ba_set_status(_underlying, pos.X, pos.Y, 2);
+                ba_set_status(_underlying, pos.X, pos.Y, TileStatus.Player2);
             }
 
-            ba_set_status(_underlying, board.BallBearer2.X, board.BallBearer2.Y, 4);
+            ba_set_status(_underlying, board.BallBearer1.X, board.BallBearer1.Y, TileStatus.BallPlayer1);
+            ba_set_status(_underlying, board.BallBearer2.X, board.BallBearer2.Y, TileStatus.BallPlayer2);
         }
 
         /// <summary>
@@ -87,15 +100,29 @@ namespace CSDiaballik {
         /// </summary>
         /// <param name="pos">The position from which the possible moves are calculated</param>
         public List<Position2D> GetPossibleMoves(Position2D pos) {
-            var tabSize = 0;
-            if (pos.Equals(_analysedBoard.BallBearer1) || pos.Equals(_analysedBoard.BallBearer2)) {
-                tabSize = _analysedBoard.Size * 2;
-            } else tabSize = 8;
+            if (_analysedBoard.IsFree(pos)) {
+                throw new ArgumentException("No piece to move");
+            }
 
-            var intptr = ba_get_possible_moves(_underlying, pos.X, pos.Y);
-            return ConvertArrayToPositionList(intptr, tabSize);
+            if (pos.Equals(_analysedBoard.BallBearer1)
+                || pos.Equals(_analysedBoard.BallBearer2)) {
+                return GetPossibleMovesForBall(pos);
+            } else {
+                return GetPossibleMovesForPiece(pos);
+            }
         }
 
+
+        private List<Position2D> GetPossibleMovesForPiece(Position2D pos) {
+            var intptr = ba_get_possible_moves_for_piece(_underlying, pos.X, pos.Y);
+            return ConvertArrayToPositionList(intptr, 8);
+        }
+
+
+        private List<Position2D> GetPossibleMovesForBall(Position2D pos) {
+            var intptr = ba_get_possible_moves_for_ball(_underlying, pos.X, pos.Y);
+            return ConvertArrayToPositionList(intptr, _analysedBoard.Size * 2);
+        }
 
         // TODO these have nothing to do here, should be moved out and encapsulated into the players' implementation.
 
@@ -106,7 +133,7 @@ namespace CSDiaballik {
         /// <param name="player">The player making the moves</param>
         public List<Position2D> NoobAiMoves(IPlayer player) {
             var playerIndex = PlayerIndex(player);
-            var intptr = ba_noob_IA_moves(_underlying, playerIndex);
+            var intptr = ba_noob_ai_moves(_underlying, playerIndex);
             return ConvertArrayToPositionList(intptr, 12);
         }
 
@@ -118,7 +145,7 @@ namespace CSDiaballik {
         /// <param name="player">The player making the moves</param>
         public List<Position2D> StartingAiMoves(IPlayer player) {
             var playerIndex = PlayerIndex(player);
-            var intptr = ba_starting_IA_moves(_underlying, playerIndex);
+            var intptr = ba_starting_ai_moves(_underlying, playerIndex);
             return ConvertArrayToPositionList(intptr, 12);
         }
 

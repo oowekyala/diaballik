@@ -73,5 +73,11 @@
   <ItemGroup>
     <Folder Include="tests\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CppLib\CppLibP.vcxproj">
+      <Project>{81e670fe-8518-4c71-b28d-d3d6ac90c790}</Project>
+      <Name>CppLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

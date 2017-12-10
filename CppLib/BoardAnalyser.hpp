@@ -1,7 +1,8 @@
 #pragma once
+
 #include <memory>
 #include <vector>
-#include <deque>
+
 
 enum tile_status
 {
@@ -12,6 +13,7 @@ enum tile_status
 	ball_player_2
 };
 
+
 /**
  *  Provides insight into board configurations, e.g. available moves and best move.
  *  Bound to a single board.
@@ -20,6 +22,7 @@ class board_analyser
 {
 	int _board_size;
 	tile_status** _board;
+
 	std::vector<int> _p1_pieces;
 	std::vector<int> _p2_pieces;
 
@@ -29,12 +32,19 @@ public:
 
 	/**
 	 * Sets the status of one tile on the internal model of the board. Used to initialise the model.
-	 * 
+	 *
 	 * These status are represented by the enum tile_status.
 	 */
-	void set_status(int x, int y, int status);
+	void set_status(int x, int y, tile_status status);
 
-	int* get_possible_moves(int x, int y) const;
+	int* get_possible_moves_for_piece(int x, int y) const;
+
+	int* get_possible_moves_for_ball(int x, int y) const;
+
+	int* get_possible_moves(int x, int y) const
+	{
+		throw "Illegal";
+	}
 
 	int* noob_ai_moves(int player_number) const;
 
@@ -42,6 +52,7 @@ public:
 
 	int dangerous_piece(int player_number) const;
 };
+
 
 // TODO move ai decision logic into other classes
 
@@ -59,12 +70,17 @@ extern "C"
 
 	__declspec(dllexport) void ba_set_status(board_analyser* ba, int x, int y, int status)
 	{
-		ba->set_status(x, y, status);
+		ba->set_status(x, y, static_cast<tile_status>(status));
 	}
 
-	__declspec(dllexport) int* ba_get_possible_moves(board_analyser* ba, int x, int y)
+	__declspec(dllexport) int* ba_get_possible_moves_for_piece(board_analyser* ba, int x, int y)
 	{
-		return ba->get_possible_moves(x, y);
+		return ba->get_possible_moves_for_piece(x, y);
+	}
+
+	__declspec(dllexport) int* ba_get_possible_moves_for_ball(board_analyser* ba, int x, int y)
+	{
+		return ba->get_possible_moves_for_ball(x, y);
 	}
 
 	__declspec(dllexport) int* ba_noob_ai_moves(board_analyser* ba, int player_number)
@@ -72,7 +88,7 @@ extern "C"
 		return ba->noob_ai_moves(player_number);
 	}
 
-	__declspec(dllexport) int* ba_starting_ai_moves(board_analyser* ba, int player_number)
+	int* ba_starting_ai_moves(board_analyser* ba, int player_number)
 	{
 		return ba->starting_ai_moves(player_number);
 	}

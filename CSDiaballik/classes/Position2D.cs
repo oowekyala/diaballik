@@ -15,16 +15,6 @@ namespace CSDiaballik {
         }
 
 
-        public IEnumerable<Position2D> Neighbours() {
-            return new List<Position2D> {
-                new Position2D(X - 1, Y),
-                new Position2D(X + 1, Y),
-                new Position2D(X, Y - 1),
-                new Position2D(X, Y + 1)
-            };
-        }
-
-
         public bool Equals(Position2D other) {
             return X == other.X && Y == other.Y;
         }

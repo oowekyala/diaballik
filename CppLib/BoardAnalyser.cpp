@@ -26,15 +26,15 @@ board_analyser::~board_analyser()
 }
 
 //Sets the status of the tiles of the board
-void board_analyser::set_status(const int x, const int y, int status)
+void board_analyser::set_status(const int x, const int y, tile_status status)
 {
-	_board[x][y] = static_cast<tile_status>(status);
-	if (status == player_1)
+	_board[x][y] = status;
+	if (status == tile_status::player_1)
 	{
 		_p1_pieces.push_back(x);
 		_p1_pieces.push_back(y);
 	}
-	else if (status == player_2)
+	else if (status == tile_status::player_2)
 	{
 		_p2_pieces.push_back(x);
 		_p2_pieces.push_back(y);
@@ -42,107 +42,105 @@ void board_analyser::set_status(const int x, const int y, int status)
 	_p1_pieces.push_back(x);
 }
 
-//Beta version
-//Gets the possible moves for a piece at a given position
-//(a move is composed of 2 integers : x destination and y destination)
-int* board_analyser::get_possible_moves(const int x, const int y) const
+
+int* board_analyser::get_possible_moves_for_ball(int x, int y) const
 {
 	//PLayer 1 moveBall suggestions
-	if (_board[x][y] == ball_player_1)
+	if (_board[x][y] == tile_status::ball_player_1)
 	{
 		int* possible_moves = new int[_board_size * 2];
 		int counter = 0;
 		for (int i = x + 1; i < _board_size; i++)
 		{
-			if (_board[i][y] == player_1)
+			if (_board[i][y] == tile_status::player_1)
 			{
 				possible_moves[counter] = i;
 				possible_moves[counter + 1] = y;
 				counter += 2;
 			}
-			else if (_board[i][y] == player_2) break;
+			else if (_board[i][y] == tile_status::player_2) break;
 		}
 		for (int i = x - 1; i >= 0; i--)
 		{
-			if (_board[i][y] == player_1)
+			if (_board[i][y] == tile_status::player_1)
 			{
 				possible_moves[counter] = i;
 				possible_moves[counter + 1] = y;
 				counter += 2;
 			}
-			else if (_board[i][y] == player_2) break;
+			else if (_board[i][y] == tile_status::player_2) break;
 		}
 		for (int i = y - 1; i >= 0; i--)
 		{
-			if (_board[x][i] == player_1)
+			if (_board[x][i] == tile_status::player_1)
 			{
 				possible_moves[counter] = x;
 				possible_moves[counter + 1] = i;
 				counter += 2;
 			}
-			else if (_board[x][i] == player_2) break;
+			else if (_board[x][i] == tile_status::player_2) break;
 		}
 		for (int i = y + 1; i < _board_size; i++)
 		{
-			if (_board[x][i] == player_1)
+			if (_board[x][i] == tile_status::player_1)
 			{
 				possible_moves[counter] = x;
 				possible_moves[counter + 1] = i;
 				counter += 2;
 			}
-			else if (_board[i][y] == player_2) break;
+			else if (_board[i][y] == tile_status::player_2) break;
 		}
 
 		int j = 1;
 		for (int i = x + 1; i < _board_size; i++)
 		{
-			if ((y + j) < _board_size && _board[i][y + j] == player_1)
+			if ((y + j) < _board_size && _board[i][y + j] == tile_status::player_1)
 			{
 				possible_moves[counter] = i;
 				possible_moves[counter + 1] = y + j;
 				counter += 2;
 				j++;
 			}
-			else if (_board[i][y + j] == player_2) break;
+			else if (_board[i][y + j] == tile_status::player_2) break;
 		}
 
 		j = 1;
 		for (int i = x + 1; i < _board_size; i++)
 		{
-			if ((y - j) >= 0 && _board[i][y - j] == player_1)
+			if ((y - j) >= 0 && _board[i][y - j] == tile_status::player_1)
 			{
 				possible_moves[counter] = i;
 				possible_moves[counter + 1] = y - j;
 				counter += 2;
 				j++;
 			}
-			else if ((y - j) >= 0 && _board[i][y - j] == player_2) break;
+			else if ((y - j) >= 0 && _board[i][y - j] == tile_status::player_2) break;
 		}
 
 		j = 1;
 		for (int i = x - 1; i >= 0; i--)
 		{
-			if ((y + j) < _board_size && _board[i][y + j] == player_1)
+			if ((y + j) < _board_size && _board[i][y + j] == tile_status::player_1)
 			{
 				possible_moves[counter] = i;
 				possible_moves[counter + 1] = y + j;
 				counter += 2;
 				j++;
 			}
-			else if (_board[i][y + j] == player_2) break;
+			else if (_board[i][y + j] == tile_status::player_2) break;
 		}
 
 		j = 1;
 		for (int i = x - 1; i >= 0; i--)
 		{
-			if ((y - j) >= 0 && _board[i][y - j] == player_1)
+			if ((y - j) >= 0 && _board[i][y - j] == tile_status::player_1)
 			{
 				possible_moves[counter] = i;
 				possible_moves[counter + 1] = y - j;
 				counter += 2;
 				j++;
 			}
-			else if (_board[i][y - j] == player_2) break;
+			else if (_board[i][y - j] == tile_status::player_2) break;
 		}
 		for (int i = counter; i < _board_size * 2; i++)
 			possible_moves[i] = -1;
@@ -150,161 +148,162 @@ int* board_analyser::get_possible_moves(const int x, const int y) const
 	}
 
 		//PLayer 2 moveBall suggestions
-	else if (_board[x][y] == ball_player_2)
+	else if (_board[x][y] == tile_status::ball_player_2)
 	{
 		int* possible_moves = new int[_board_size * 2];
 		int counter = 0;
 		for (int i = x + 1; i < _board_size; i++)
 		{
-			if (_board[i][y] == player_2)
+			if (_board[i][y] == tile_status::player_2)
 			{
 				possible_moves[counter] = i;
 				possible_moves[counter + 1] = y;
 				counter += 2;
 			}
-			else if (_board[i][y] == player_1) break;
+			else if (_board[i][y] == tile_status::player_1) break;
 		}
 		for (int i = x - 1; i >= 0; i--)
 		{
-			if (_board[i][y] == player_2)
+			if (_board[i][y] == tile_status::player_2)
 			{
 				possible_moves[counter] = i;
 				possible_moves[counter + 1] = y;
 				counter += 2;
 			}
-			else if (_board[i][y] == player_1) break;
+			else if (_board[i][y] == tile_status::player_1) break;
 		}
 		for (int i = y - 1; i >= 0; i--)
 		{
-			if (_board[x][i] == player_2)
+			if (_board[x][i] == tile_status::player_2)
 			{
 				possible_moves[counter] = x;
 				possible_moves[counter + 1] = i;
 				counter += 2;
 			}
-			else if (_board[x][i] == player_1) break;
+			else if (_board[x][i] == tile_status::player_1) break;
 		}
 		for (int i = y + 1; i < _board_size; i++)
 		{
-			if (_board[x][i] == player_2)
+			if (_board[x][i] == tile_status::player_2)
 			{
 				possible_moves[counter] = x;
 				possible_moves[counter + 1] = i;
 				counter += 2;
 			}
-			else if (_board[i][y] == player_1) break;
+			else if (_board[i][y] == tile_status::player_1) break;
 		}
 		int j = 1;
 		for (int i = x + 1; i < _board_size; i++)
 		{
-			if ((y + j) < _board_size && _board[i][y + j] == player_2)
+			if ((y + j) < _board_size && _board[i][y + j] == tile_status::player_2)
 			{
 				possible_moves[counter] = i;
 				possible_moves[counter + 1] = y + j;
 				counter += 2;
 				j++;
 			}
-			else if (_board[i][y + j] == player_1) break;
+			else if (_board[i][y + j] == tile_status::player_1) break;
 		}
 
 		j = 1;
 		for (int i = x + 1; i < _board_size; i++)
 		{
-			if ((y - j) >= 0 && _board[i][y - j] == player_2)
+			if ((y - j) >= 0 && _board[i][y - j] == tile_status::player_2)
 			{
 				possible_moves[counter] = i;
 				possible_moves[counter + 1] = y - j;
 				counter += 2;
 				j++;
 			}
-			else if ((y - j) >= 0 && _board[i][y - j] == player_1) break;
+			else if ((y - j) >= 0 && _board[i][y - j] == tile_status::player_1) break;
 		}
 
 		j = 1;
 		for (int i = x - 1; i >= 0; i--)
 		{
-			if ((y + j) < _board_size && _board[i][y + j] == player_2)
+			if ((y + j) < _board_size && _board[i][y + j] == tile_status::player_2)
 			{
 				possible_moves[counter] = i;
 				possible_moves[counter + 1] = y + j;
 				counter += 2;
 				j++;
 			}
-			else if (_board[i][y + j] == player_1) break;
+			else if (_board[i][y + j] == tile_status::player_1) break;
 		}
 
 		j = 1;
 		for (int i = x - 1; i >= 0; i--)
 		{
-			if ((y - j) >= 0 && _board[i][y - j] == player_2)
+			if ((y - j) >= 0 && _board[i][y - j] == tile_status::player_2)
 			{
 				possible_moves[counter] = i;
 				possible_moves[counter + 1] = y - j;
 				counter += 2;
 				j++;
 			}
-			else if (_board[i][y - j] == player_1) break;
+			else if (_board[i][y - j] == tile_status::player_1) break;
 		}
 		for (int i = counter; i < _board_size * 2; i++)
 			possible_moves[i] = -1;
 		return possible_moves;
 	}
-		//MovePiece suggestions
+}
+
+int* board_analyser::get_possible_moves_for_piece(int x, int y) const
+{
+	int* possible_moves = new int[8];
+	//Move piece forward
+	if ((x + 1) < _board_size && _board[x + 1][y] == tile_status::empty)
+	{
+		possible_moves[0] = x + 1;
+		possible_moves[1] = y;
+	}
 	else
 	{
-		int* possible_moves = new int[8];
-		//Move piece forward
-		if ((x + 1) < _board_size && _board[x + 1][y] == tile_status::empty)
-		{
-			possible_moves[0] = x + 1;
-			possible_moves[1] = y;
-		}
-		else
-		{
-			possible_moves[0] = -1;
-			possible_moves[1] = -1;
-		}
-		//Move piece backward
-		if ((x - 1) >= 0 && _board[x - 1][y] == tile_status::empty)
-		{
-			possible_moves[2] = x - 1;
-			possible_moves[3] = y;
-		}
-		else
-		{
-			possible_moves[2] = -1;
-			possible_moves[3] = -1;
-		}
-		//Move piece rightward
-		if ((y + 1) < _board_size && _board[x][y + 1] == tile_status::empty)
-		{
-			possible_moves[4] = x;
-			possible_moves[5] = y + 1;
-		}
-		else
-		{
-			possible_moves[4] = -1;
-			possible_moves[5] = -1;
-		}
-		//Move piece leftward
-		if ((y - 1) >= 0 && _board[x][y - 1] == tile_status::empty)
-		{
-			possible_moves[6] = x;
-			possible_moves[7] = y - 1;
-		}
-		else
-		{
-			possible_moves[6] = -1;
-			possible_moves[7] = -1;
-		}
-		return possible_moves;
+		possible_moves[0] = -1;
+		possible_moves[1] = -1;
 	}
+	//Move piece backward
+	if ((x - 1) >= 0 && _board[x - 1][y] == tile_status::empty)
+	{
+		possible_moves[2] = x - 1;
+		possible_moves[3] = y;
+	}
+	else
+	{
+		possible_moves[2] = -1;
+		possible_moves[3] = -1;
+	}
+	//Move piece rightward
+	if ((y + 1) < _board_size && _board[x][y + 1] == tile_status::empty)
+	{
+		possible_moves[4] = x;
+		possible_moves[5] = y + 1;
+	}
+	else
+	{
+		possible_moves[4] = -1;
+		possible_moves[5] = -1;
+	}
+	//Move piece leftward
+	if ((y - 1) >= 0 && _board[x][y - 1] == tile_status::empty)
+	{
+		possible_moves[6] = x;
+		possible_moves[7] = y - 1;
+	}
+	else
+	{
+		possible_moves[6] = -1;
+		possible_moves[7] = -1;
+	}
+	return possible_moves;
 }
+
 
 //Beta version
 //Gets the moves of a noob AI for a turn (moves are selected randomly)
 //(a move is composed of 4 integers : x source, y source, x destination and y destination)
-int* board_analyser::noob_ai_moves(const int player_number) const
+int* board_analyser::noob_ai_moves(int playerNumber) const
 {
 	int nb_moves = rand() % 3;
 	int* moves = new int[12];
@@ -313,7 +312,7 @@ int* board_analyser::noob_ai_moves(const int player_number) const
 		moves[i] = -1;
 	}
 	int move_count = 0;
-	if (player_number == 1)
+	if (playerNumber == 1)
 	{
 		for (int i = 0; i < nb_moves; i++)
 		{
@@ -338,7 +337,7 @@ int* board_analyser::noob_ai_moves(const int player_number) const
 			moves[move_count++] = yDest;
 		}
 	}
-	else if (player_number == 2)
+	else if (playerNumber == 2)
 	{
 		for (int i = 0; i < nb_moves; i++)
 		{
@@ -456,6 +455,17 @@ int* board_analyser::starting_ai_moves(const int player_number) const
 //(a piece is considered dangerous for a player if it is 2 or less turns away from being on this player's starting line)
 int board_analyser::dangerous_piece(const int player_number) const
 {
+	auto opponent = player_number == 1 ? _p2_pieces : _p1_pieces;
+	const int base_line = player_number == 1 ? _board_size - 1 : 0;
+
+	for (int i = 0; i < opponent.size(); i += 2)
+	{
+		if (std::abs(opponent[i] - base_line) < 3) return i;
+	}
+
+	//return -1;
+
+
 	if (player_number == 1)
 	{
 		for (int i = _board_size - 1; i >= 0; i = i - 2)
