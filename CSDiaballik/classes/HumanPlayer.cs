@@ -10,7 +10,7 @@ namespace CSDiaballik {
         public sealed override bool IsAi() => false;
 
 
-        public override IPlayerAction GetNextMove(GameBoard board) {
+        public override PlayerAction GetNextMove(GameBoard board) {
             throw new NotImplementedException();
         }
 

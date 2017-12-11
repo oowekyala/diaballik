@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSDiaballik", "CSDiaballik\CSDiaballik.csproj", "{FCDB9834-C071-40B0-84B8-2BC325ABFD35}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EE9B6841-0191-4494-9B6D-84BABCBDA22F} = {EE9B6841-0191-4494-9B6D-84BABCBDA22F}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diaballik_WPF", "Diaballik_WPF\Diaballik_WPF.csproj", "{F61871AE-5EF9-4CCF-9AC2-60A2A672CC17}"
 EndProject

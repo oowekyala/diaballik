@@ -5,7 +5,6 @@ namespace CppDiaballik {
 
 	/**
 	 * Utility class to represent a Position. Immutable struct.
-	 * TODO should maybe be a class
 	 */
 	public value struct Position2D
 	{

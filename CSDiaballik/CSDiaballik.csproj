@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AlgoLib, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Debug\AlgoLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
@@ -48,7 +52,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="classes\BoardAnalyser.cs" />
     <Compile Include="classes\AbstractPlayer.cs" />
     <Compile Include="classes\Game.cs" />
     <Compile Include="classes\GameState.cs" />
@@ -71,12 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="tests\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AlgoLib\AlgoLib.vcxproj">
-      <Project>{ee9b6841-0191-4494-9b6d-84babcbda22f}</Project>
-      <Name>AlgoLib</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

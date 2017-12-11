@@ -1,5 +1,5 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
+using CppDiaballik;
 
 namespace CSDiaballik {
     public abstract class AiPlayer : AbstractPlayer {
@@ -27,68 +27,64 @@ namespace CSDiaballik {
         }
     }
 
+    /// <summary>
+    ///    Ai player backed by an <see cref="AiDecisionAlgo"/>, which is used
+    ///    as a Strategy pattern.
+    /// </summary>
+    public abstract class StrategyBackedAiPlayer : AiPlayer {
+        private readonly AiDecisionAlgo _algo;
 
-    public class NoobAiPlayer : AiPlayer {
-        public NoobAiPlayer(Color color, string name) : base(color, name) {
+
+        protected StrategyBackedAiPlayer(Color color, string name, AiDecisionAlgo algo) : base(color, name) {
+            _algo = algo;
+        }
+
+        public override PlayerAction GetNextMove(GameBoard board) {
+            var ba = board.Analyser();
+            return _algo.NextMove(ba);
+        }
+    }
+
+    public class NoobAiPlayer : StrategyBackedAiPlayer {
+        public NoobAiPlayer(Color color, string name) : base(color, name, new NoobAiAlgo()) {
         }
 
 
         public override AiLevel Level => AiLevel.Noob;
-
-
-        public override IPlayerAction GetNextMove(GameBoard board) {
-            var ba = BoardAnalyser.New(board);
-            var moves = ba.NoobAiMoves(this);
-            IPlayerAction action;
-            if (moves.Count > 0) {
-                action = new MovePieceAction(moves[0], moves[1]);
-                moves.RemoveAt(0);
-                moves.RemoveAt(1);
-            } else action = new PassAction();
-            return action;
-        }
     }
 
 
-    public class StartingAiPlayer : AiPlayer {
-        public StartingAiPlayer(Color color, string name) : base(color, name) {
+    public class StartingAiPlayer : StrategyBackedAiPlayer {
+        public StartingAiPlayer(Color color, string name) : base(color, name, new StartingAiAlgo()) {
         }
 
 
         public override AiLevel Level => AiLevel.Starting;
-
-
-        public override IPlayerAction GetNextMove(GameBoard board) {
-            var ba = BoardAnalyser.New(board);
-            var moves = ba.StartingAiMoves(this);
-            IPlayerAction action;
-            if (moves.Count > 0) {
-                action = new MovePieceAction(moves[0], moves[1]);
-                moves.RemoveAt(0);
-                moves.RemoveAt(1);
-            } else action = new PassAction();
-            return action;
-        }
     }
 
 
     public class ProgressiveAiPlayer : AiPlayer {
-        int nbMoves;
+        private int _nbMoves = 0;
+        private NoobAiPlayer _noob;
+        private StartingAiPlayer _starting;
 
         public ProgressiveAiPlayer(Color color, string name) : base(color, name) {
-            nbMoves = 0;
         }
 
 
         public override AiLevel Level => AiLevel.Progressive;
 
+        private NoobAiPlayer Noob() {
+            return _noob ?? (_noob = new NoobAiPlayer(Color, Name));
+        }
 
-        public override IPlayerAction GetNextMove(GameBoard board) {
-            if (nbMoves < 10) {
-                return new NoobAiPlayer(this.Color, this.Name).GetNextMove(board);
-            } else {
-                return new StartingAiPlayer(this.Color, this.Name).GetNextMove(board);
-            }
+
+        private StartingAiPlayer Starting() {
+            return _starting ?? (_starting = new StartingAiPlayer(Color, Name));
+        }
+
+        public override PlayerAction GetNextMove(GameBoard board) {
+            return _nbMoves++ < 10 ? Noob().GetNextMove(board) : Starting().GetNextMove(board);
         }
     }
 }
