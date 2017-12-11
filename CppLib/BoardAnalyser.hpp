@@ -88,7 +88,7 @@ extern "C"
 		return ba->noob_ai_moves(player_number);
 	}
 
-	int* ba_starting_ai_moves(board_analyser* ba, int player_number)
+	__declspec(dllexport) int* ba_starting_ai_moves(board_analyser* ba, int player_number)
 	{
 		return ba->starting_ai_moves(player_number);
 	}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using System.Linq;
+using CppDiaballik;
 
 namespace CSDiaballik {
     /// <summary>
