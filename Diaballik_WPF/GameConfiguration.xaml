@@ -5,8 +5,42 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Diaballik_WPF"
         mc:Ignorable="d"
-        Title="Game Configuration" Height="428.718" Width="545.378">
+        Title="Game Configuration" Height="420" Width="525" Background="#FFAD8FD8">
     <Grid>
-
+        <Label Content="Game Configuration" HorizontalAlignment="Left" Margin="86,10,0,0" VerticalAlignment="Top" FontSize="36" FontFamily="MV Boli" Width="342" Height="66" RenderTransformOrigin="0.544,1.535"/>
+        <GridSplitter HorizontalAlignment="Left" Height="500" Margin="256,-176,0,-4" VerticalAlignment="Top" Width="4" Background="#FF938C8C" RenderTransformOrigin="0.5,0.5">
+            <GridSplitter.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="90"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </GridSplitter.RenderTransform>
+        </GridSplitter>
+        <Label Content="Game type" HorizontalAlignment="Left" Margin="26,88,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="0.294,-0.276" FontFamily="MV Boli"/>
+        <RadioButton Content="Player vs Player" HorizontalAlignment="Left" Margin="86,122,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.114,3.625" GroupName="game type" IsChecked="True" FontFamily="MV Boli"/>
+        <RadioButton Content="Player vs AI" HorizontalAlignment="Left" Margin="220,122,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked" GroupName="game type" RenderTransformOrigin="0.395,-0.5" IsChecked="True" FontFamily="MV Boli"/>
+        <RadioButton Content="Standard" HorizontalAlignment="Left" Margin="86,179,0,0" VerticalAlignment="Top" GroupName="game scenario" IsChecked="True" FontFamily="MV Boli"/>
+        <Label Content="Game scenario" HorizontalAlignment="Left" Margin="26,150,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="0.294,-0.276" FontFamily="MV Boli"/>
+        <RadioButton Content="Ball random" HorizontalAlignment="Left" Margin="220,179,0,0" VerticalAlignment="Top" GroupName="game scenario" FontFamily="MV Boli"/>
+        <RadioButton Content="Enemy among us" HorizontalAlignment="Left" Margin="350,179,0,0" VerticalAlignment="Top" GroupName="game scenario" FontFamily="MV Boli"/>
+        <Label Content="AI Level" HorizontalAlignment="Left" Margin="26,203,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="0.294,-0.276" FontFamily="MV Boli"/>
+        <RadioButton Content="Noob" HorizontalAlignment="Left" Margin="86,231,0,0" VerticalAlignment="Top" GroupName="AI level" IsChecked="True" FontFamily="MV Boli"/>
+        <RadioButton Content="Starting" HorizontalAlignment="Left" Margin="220,231,0,0" VerticalAlignment="Top" GroupName="AI level" IsChecked="True" FontFamily="MV Boli"/>
+        <RadioButton Content="Progressive" HorizontalAlignment="Left" Margin="350,231,0,0" VerticalAlignment="Top" GroupName="AI level" IsChecked="True" FontFamily="MV Boli"/>
+        <Label Content="Players settings" HorizontalAlignment="Left" Margin="26,263,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="0.294,-0.276" Background="Transparent" FontFamily="MV Boli"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="159,297,0,0" TextWrapping="Wrap" Text="Player1 Name" VerticalAlignment="Top" Width="120" FontFamily="MV Boli"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="159,325,0,0" TextWrapping="Wrap" Text="Player2 Name" VerticalAlignment="Top" Width="120" FontFamily="MV Boli"/>
+        <Label Content="Player 1" HorizontalAlignment="Left" Margin="86,295,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.294,-0.276" FontFamily="MV Boli"/>
+        <Label Content="Player 2" HorizontalAlignment="Left" Margin="86,323,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.294,-0.276" FontFamily="MV Boli"/>
+        <Label Content="Color" HorizontalAlignment="Left" Margin="291,293,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.294,-0.276" FontFamily="MV Boli"/>
+        <Label Content="Color" HorizontalAlignment="Left" Margin="291,321,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.294,-0.276" FontFamily="MV Boli"/>
+        <ComboBox HorizontalAlignment="Left" Margin="341,295,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="ComboBox_SelectionChanged_1" Background="#FF175EC5"/>
+        <ComboBox HorizontalAlignment="Left" Margin="341,324,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="ComboBox_SelectionChanged" Background="#FFF17814"/>
+        <Separator HorizontalAlignment="Left" Height="20" Margin="10,191,0,0" VerticalAlignment="Top" Width="497" FontFamily="MV Boli"/>
+        <Button Content="Start Game" HorizontalAlignment="Left" Margin="387,355,0,0" VerticalAlignment="Top" Width="120" FontFamily="MV Boli"/>
+        <Separator HorizontalAlignment="Left" Height="20" Margin="10,250,0,0" VerticalAlignment="Top" Width="497" FontFamily="MV Boli"/>
+        <Separator HorizontalAlignment="Left" Height="20" Margin="10,141,0,0" VerticalAlignment="Top" Width="497" FontFamily="MV Boli"/>
     </Grid>
 </Window>
