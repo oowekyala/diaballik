@@ -22,7 +22,7 @@ namespace CSDiaballik {
         /// Underlying gameboard
         private GameBoard Board { get; }
 
-        /// Number of moves left to the current layer before automatic player change.
+        /// Number of moves left to the current player before automatic player change.
         public int NumMovesLeft { get; } = Game.MaxMovesPerTurn;
 
         /// Current player of the game
