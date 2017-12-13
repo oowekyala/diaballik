@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using System.Linq;
+using CppDiaballik;
 
 namespace CSDiaballik {
     /// <summary>
@@ -37,6 +38,7 @@ namespace CSDiaballik {
         public IEnumerable<Position2D> Player1Positions => _player1Positions;
         public IEnumerable<Position2D> Player2Positions => _player2Positions;
 
+        private WeakReference<BoardAnalyser> _analyser;
 
         public int Size { get; }
 
@@ -315,6 +317,20 @@ namespace CSDiaballik {
 
         public (Position2D, Position2D) BallBearerPair() {
             return (BallBearer1, BallBearer2);
+        }
+
+        private BoardAnalyser CreateAnalyser() {
+            return new BoardAnalyser(Player1Positions, Player2Positions, BallBearer1, BallBearer2);
+        }
+
+        public BoardAnalyser Analyser() {
+            if (_analyser == null) {
+                _analyser = new WeakReference<BoardAnalyser>(CreateAnalyser());
+            }
+            if (!_analyser.TryGetTarget(out var result)) {
+                _analyser.SetTarget(CreateAnalyser());
+            }
+            return result;
         }
     }
 }

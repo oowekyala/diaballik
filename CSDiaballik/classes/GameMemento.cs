@@ -20,7 +20,7 @@
         /// </summary>
         /// <param name="action">The transition from this memento to the result</param>
         /// <returns>A new memento with this as its parent</returns>
-        public GameMemento Append(IUpdateAction action) {
+        public GameMemento Append(UpdateAction action) {
             return new MementoNode(this, action);
         }
 
@@ -31,7 +31,7 @@
         /// <param name="state">The state obtained after the transition</param>
         /// <param name="action">The transition from this memento to the result</param>
         /// <returns>A new memento with this as its parent</returns>
-        public GameMemento Append(GameState state, IUpdateAction action) {
+        public GameMemento Append(GameState state, UpdateAction action) {
             return new MementoNode(state, this, action);
         }
 
@@ -75,19 +75,19 @@
 
     public class MementoNode : AbstractMementoNode {
         /// Action to perform on the previous state to get this state
-        private readonly IUpdateAction _action;
+        private readonly UpdateAction _action;
 
         /// Cached game state
         private GameState _thisGameState;
 
 
-        public MementoNode(GameState thisState, GameMemento previous, IUpdateAction action) : base(previous) {
+        public MementoNode(GameState thisState, GameMemento previous, UpdateAction action) : base(previous) {
             _action = action;
             _thisGameState = thisState;
         }
 
 
-        public MementoNode(GameMemento previous, IUpdateAction action) : base(previous) {
+        public MementoNode(GameMemento previous, UpdateAction action) : base(previous) {
             _action = action;
         }
 

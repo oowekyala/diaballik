@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using CppDiaballik;
 
 namespace CSDiaballik.Tests {
     /// <summary>

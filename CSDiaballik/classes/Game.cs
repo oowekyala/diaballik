@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CppDiaballik;
 
 namespace CSDiaballik {
     /// <summary>
@@ -65,7 +66,7 @@ namespace CSDiaballik {
         /// <exception cref="ArgumentException">
         ///     If the move is invalid. The action's validity should be verified upstream.
         /// </exception>
-        public void Update(IPlayerAction action) {
+        public void Update(PlayerAction action) {
             if (!State.IsMoveValid(action)) {
                 throw new ArgumentException("Invalid move: " + action);
             }

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using static CSDiaballik.Tests.TestUtil;
 using System.Collections.Generic;
+using CppDiaballik;
 
 namespace CSDiaballik.Tests {
     [TestFixture]

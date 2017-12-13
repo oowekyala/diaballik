@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using static CSDiaballik.IPlayerAction;
+using CppDiaballik;
+using static CSDiaballik.PlayerAction;
 
 namespace CSDiaballik {
     /// <summary>
@@ -81,7 +82,7 @@ namespace CSDiaballik {
         /// </summary>
         /// <param name="action">The action to check</param>
         /// <returns>True if the action can be performed on this state</returns>
-        public bool IsMoveValid(IPlayerAction action) {
+        public bool IsMoveValid(PlayerAction action) {
             return action.IsMoveValid(CurrentPlayer, Board, NumMovesLeft);
         }
 
