@@ -72,17 +72,9 @@ namespace CSDiaballik {
             }
 
             switch (action) {
-                case MoveBallAction moveBall:
-                    State = State.MoveBall(moveBall.Src, moveBall.Dst);
-                    Memento = Memento.Append(State, moveBall);
-                    break;
-                case MovePieceAction movePiece:
-                    State = State.MovePiece(movePiece.Src, movePiece.Dst);
-                    Memento = Memento.Append(State, movePiece);
-                    break;
-                case PassAction pass:
-                    State = State.Pass();
-                    Memento = Memento.Append(State, pass);
+                case UpdateAction update:
+                    State = update.UpdateState(State);
+                    Memento = Memento.Append(State, update);
                     break;
                 case UndoAction undo:
                     var previousState = Memento.GetParent().ToGame();
