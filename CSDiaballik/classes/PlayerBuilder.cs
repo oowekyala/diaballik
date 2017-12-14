@@ -21,6 +21,18 @@ namespace CSDiaballik {
 
         public string Name { set; get; }
 
+        // for fluent interface
+        public PlayerBuilder SetName(string n) {
+            Name = n;
+            return this;
+        }
+
+        // for fluent interface
+        public PlayerBuilder SetColor(Color c) {
+            Color = c;
+            return this;
+        }
+
 
         /// <summary>
         ///     Specify that the current player is an Ai.

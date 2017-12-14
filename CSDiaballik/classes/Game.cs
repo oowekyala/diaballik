@@ -78,7 +78,7 @@ namespace CSDiaballik {
                     break;
                 case UndoAction undo:
                     var previousState = Memento.GetParent().ToGame();
-                    Memento = Memento.Undo(undo);
+                    Memento = Memento.Append(undo);
                     State = previousState;
                     break;
             }

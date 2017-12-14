@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CSDiaballik {
     public static class ExtensionUtil {
@@ -8,9 +9,18 @@ namespace CSDiaballik {
 
         public static List<T> ToList<T>(this (T, T) tuple) => new List<T> {tuple.Item1, tuple.Item2};
 
+        public static (A, A) ToTuple<A>(this List<A> l) => (l[0], l[1]);
+
+        public static (A, A) ToTuple<A>(this IEnumerable<A> l) {
+            var it = l.GetEnumerator();
+            var a0 = it.Current;
+            it.MoveNext();
+            var a1 = it.Current;
+            it.Dispose();
+            return (a0, a1);
+        }
 
         public static (B, B) Map<A, B>(this (A, A) tuple, Func<A, B> f) => (f(tuple.Item1), f(tuple.Item2));
-
 
         public static (B, B) ZipWithPair<A, B, C>(this (A, A) tuple, C z, Func<A, C, B> f)
             => tuple.Zip(Pair(z), f);
@@ -36,5 +46,20 @@ namespace CSDiaballik {
 
         public static ((A, B), (A, B)) Zip<A, B>(this (A, A) t1, (B, B) t2)
             => t1.Zip(t2, (a, b) => (a, b));
+
+
+        public static IEnumerable<(A, int)> ZipWithIndex<A>(this IEnumerable<A> l) => ZipWithIndex(l, (a, i) => (a, i));
+
+
+        public static IEnumerable<B> ZipWithIndex<A, B>(this IEnumerable<A> l, Func<A, int, B> f) {
+            var i = 0;
+            foreach (var a in l) {
+                yield return f(a, i++);
+            }
+        }
+
+        public static IEnumerable<A> SortAndUnzip<A>(this IEnumerable<(A, int)> l) {
+            return l.OrderBy(t => t.Item2).Select(t => t.Item1);
+        }
     }
 }

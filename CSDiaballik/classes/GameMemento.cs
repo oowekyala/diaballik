@@ -1,4 +1,7 @@
-﻿namespace CSDiaballik {
+﻿using System;
+using System.Collections.Generic;
+
+namespace CSDiaballik {
     /// <summary>
     ///     Represents a delta from a previous game state.
     /// 
@@ -20,36 +23,49 @@
         /// </summary>
         /// <param name="action">The transition from this memento to the result</param>
         /// <returns>A new memento with this as its parent</returns>
-        public GameMemento Append(UpdateAction action) {
-            return new MementoNode(this, action);
+        public MementoNode Append(PlayerAction action) {
+            switch (action) {
+                case UndoAction undo:
+                    return new UndoMementoNode(this, undo);
+                case UpdateAction up:
+                    return new ActionMementoNode(this, up);
+                default: throw new ArgumentOutOfRangeException();
+            }
         }
 
 
         /// <summary>
-        ///     Creates a new memento based on this one.
+        ///     Creates a new memento based on this one, caching the already computed state.
         /// </summary>
         /// <param name="state">The state obtained after the transition</param>
         /// <param name="action">The transition from this memento to the result</param>
         /// <returns>A new memento with this as its parent</returns>
-        public GameMemento Append(GameState state, UpdateAction action) {
-            return new MementoNode(state, this, action);
-        }
-
-        /// <summary>
-        ///     Creates a new memento based on this one, adding an undo action.
-        /// </summary>
-        /// <param name="undoAction">Undo action</param>
-        /// <returns>A new memento with this as its parent</returns>
-        public GameMemento Undo(UndoAction undoAction) {
-            return new UndoMementoNode(this, undoAction);
+        public MementoNode Append(GameState state, UpdateAction action) {
+            return new ActionMementoNode(state, this, action);
         }
 
 
         /// <summary>
-        ///     Turns this memento into a Game.
+        ///     Turns this memento into a GameState.
         /// </summary>
-        /// <returns>A game</returns>
+        /// <returns>A game corresponding to this memento</returns>
         public abstract GameState ToGame();
+
+        /// <summary>
+        ///     Deconstructs this memento into its root and an enumerable of
+        ///     MementoNodes, ordered chronologically.
+        /// </summary>
+        /// <returns>A pair of root and ordered nodes</returns>
+        public (RootMemento, IEnumerable<MementoNode>) Deconstruct() {
+            var nodes = new List<MementoNode>();
+            var cur = this;
+            while (cur is MementoNode n) {
+                nodes.Add(n);
+                cur = cur.GetParent();
+            }
+            nodes.Reverse();
+            return ((RootMemento) cur, nodes);
+        }
     }
 
 
@@ -57,13 +73,16 @@
     /// <summary>
     ///     Abstract class for memento nodes that have a parent.
     /// </summary>
-    public abstract class AbstractMementoNode : GameMemento {
+    public abstract class MementoNode : GameMemento {
         /// Previous memento in the chain
         protected readonly GameMemento Previous;
 
+        /// Action to perform on the previous state to get this state
+        public PlayerAction Action { get; }
 
-        protected AbstractMementoNode(GameMemento previous) {
+        protected MementoNode(GameMemento previous, PlayerAction action) {
             Previous = previous;
+            Action = action;
         }
 
 
@@ -73,28 +92,24 @@
     }
 
 
-    public class MementoNode : AbstractMementoNode {
-        /// Action to perform on the previous state to get this state
-        private readonly UpdateAction _action;
-
+    public class ActionMementoNode : MementoNode {
         /// Cached game state
         private GameState _thisGameState;
 
 
-        public MementoNode(GameState thisState, GameMemento previous, UpdateAction action) : base(previous) {
-            _action = action;
+        public ActionMementoNode(GameState thisState, GameMemento previous, UpdateAction action) : base(previous,
+            action) {
             _thisGameState = thisState;
         }
 
 
-        public MementoNode(GameMemento previous, UpdateAction action) : base(previous) {
-            _action = action;
+        public ActionMementoNode(GameMemento previous, UpdateAction action) : base(previous, action) {
         }
 
 
         // Only works with immutable games
         public override GameState ToGame() {
-            return _thisGameState ?? (_thisGameState = _action.UpdateState(Previous.ToGame()));
+            return _thisGameState ?? (_thisGameState = ((UpdateAction) Action).UpdateState(Previous.ToGame()));
         }
     }
 
@@ -105,12 +120,8 @@
     ///     handling because we don't create a new state when undoing, 
     ///     we delegate the call to ToGame to the previous nodes.
     /// </summary>
-    public class UndoMementoNode : AbstractMementoNode {
-        private readonly UndoAction _undoAction; // may be useful for eg timestamps
-
-
-        public UndoMementoNode(GameMemento memento, UndoAction undoAction) : base(memento) {
-            _undoAction = undoAction;
+    public class UndoMementoNode : MementoNode {
+        public UndoMementoNode(GameMemento memento, UndoAction undoAction) : base(memento, undoAction) {
         }
 
 
@@ -125,34 +136,31 @@
     ///     Contains enough info to build the initial state of the game. Has no parent.
     /// </summary>
     public class RootMemento : GameMemento {
-        private readonly int _boardSize;
-        private readonly bool _isFirstPlayerPlaying;
-        private readonly PlayerBuilder _p1Spec;
-        private readonly PlayerBuilder _p2Spec;
-        private readonly PlayerBoardSpec _boardSpec1;
-        private readonly PlayerBoardSpec _boardSpec2;
+        public readonly int BoardSize;
+        public readonly bool IsFirstPlayerPlaying;
+        public readonly (FullPlayerBoardSpec, FullPlayerBoardSpec) Specs;
+
+        public IPlayer Player1 => Specs.Item1.Player;
+        public IPlayer Player2 => Specs.Item2.Player;
+
+
         private GameState _initialState;
 
 
-        public RootMemento(GameState initialState, (PlayerBoardSpec, PlayerBoardSpec) specs) {
-            _isFirstPlayerPlaying = initialState.CurrentPlayer == initialState.Player1;
-            _p1Spec = initialState.Player1.ToBuilder();
-            _p2Spec = initialState.Player2.ToBuilder();
-
-            _boardSize = initialState.BoardSize;
+        public RootMemento(GameState initialState, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) : this(specs,
+            initialState.BoardSize,
+            initialState.CurrentPlayer == specs.Item1.Player) {
             _initialState = initialState;
-
-            _boardSpec1 = specs.Item1;
-            _boardSpec2 = specs.Item2;
         }
 
+        public RootMemento((FullPlayerBoardSpec, FullPlayerBoardSpec) specs, int boardSize, bool isFirstPlayerPlaying) {
+            IsFirstPlayerPlaying = isFirstPlayerPlaying;
+            BoardSize = boardSize;
+            Specs = specs;
+        }
 
         public override GameState ToGame() {
-            var players = (_p1Spec.Build(), _p2Spec.Build());
-            var specs = players.Zip((_boardSpec1, _boardSpec2),
-                (player, spec) => new FullPlayerBoardSpec(player, spec));
-
-            return _initialState ?? (_initialState = GameState.InitialState(_boardSize, specs, _isFirstPlayerPlaying));
+            return _initialState ?? (_initialState = GameState.InitialState(BoardSize, Specs, IsFirstPlayerPlaying));
         }
 
 
