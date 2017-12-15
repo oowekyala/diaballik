@@ -3,19 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSDiaballik", "CSDiaballik\CSDiaballik.csproj", "{FCDB9834-C071-40B0-84B8-2BC325ABFD35}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EE9B6841-0191-4494-9B6D-84BABCBDA22F} = {EE9B6841-0191-4494-9B6D-84BABCBDA22F}
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiaballikCore", "DiaballikCore\DiaballikCore.csproj", "{FCDB9834-C071-40B0-84B8-2BC325ABFD35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diaballik_WPF", "Diaballik_WPF\Diaballik_WPF.csproj", "{F61871AE-5EF9-4CCF-9AC2-60A2A672CC17}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiaballikWPF", "DiaballikWPF\DiaballikWPF.csproj", "{F61871AE-5EF9-4CCF-9AC2-60A2A672CC17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSDiaballikTests", "CSDiaballikTests\CSDiaballikTests.csproj", "{03021F09-939E-487D-AEE9-4CFB09848B16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiaballikTests", "DiaballikTests\DiaballikTests.csproj", "{03021F09-939E-487D-AEE9-4CFB09848B16}"
 	ProjectSection(ProjectDependencies) = postProject
 		{EE9B6841-0191-4494-9B6D-84BABCBDA22F} = {EE9B6841-0191-4494-9B6D-84BABCBDA22F}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AlgoLib", "AlgoLib\AlgoLib.vcxproj", "{EE9B6841-0191-4494-9B6D-84BABCBDA22F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FCDB9834-C071-40B0-84B8-2BC325ABFD35} = {FCDB9834-C071-40B0-84B8-2BC325ABFD35}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiaballikPlayers", "DiaballikPlayers\DiaballikPlayers.csproj", "{82115560-5ABF-4302-95E8-89A55D25F840}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FCDB9834-C071-40B0-84B8-2BC325ABFD35} = {FCDB9834-C071-40B0-84B8-2BC325ABFD35}
+		{EE9B6841-0191-4494-9B6D-84BABCBDA22F} = {EE9B6841-0191-4494-9B6D-84BABCBDA22F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,6 +80,18 @@ Global
 		{EE9B6841-0191-4494-9B6D-84BABCBDA22F}.Release|x64.Build.0 = Release|x64
 		{EE9B6841-0191-4494-9B6D-84BABCBDA22F}.Release|x86.ActiveCfg = Release|Win32
 		{EE9B6841-0191-4494-9B6D-84BABCBDA22F}.Release|x86.Build.0 = Release|Win32
+		{82115560-5ABF-4302-95E8-89A55D25F840}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82115560-5ABF-4302-95E8-89A55D25F840}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82115560-5ABF-4302-95E8-89A55D25F840}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{82115560-5ABF-4302-95E8-89A55D25F840}.Debug|x64.Build.0 = Debug|Any CPU
+		{82115560-5ABF-4302-95E8-89A55D25F840}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{82115560-5ABF-4302-95E8-89A55D25F840}.Debug|x86.Build.0 = Debug|Any CPU
+		{82115560-5ABF-4302-95E8-89A55D25F840}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82115560-5ABF-4302-95E8-89A55D25F840}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82115560-5ABF-4302-95E8-89A55D25F840}.Release|x64.ActiveCfg = Release|Any CPU
+		{82115560-5ABF-4302-95E8-89A55D25F840}.Release|x64.Build.0 = Release|Any CPU
+		{82115560-5ABF-4302-95E8-89A55D25F840}.Release|x86.ActiveCfg = Release|Any CPU
+		{82115560-5ABF-4302-95E8-89A55D25F840}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

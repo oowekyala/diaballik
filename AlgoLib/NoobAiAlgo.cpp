@@ -2,8 +2,8 @@
 #include "NoobAiAlgo.hpp"
 
 
-namespace CppDiaballik {
-	PlayerActions::ActionDescriptor^ NoobAiAlgo::NextMove(BoardAnalyser^ analyser)
+namespace Diaballik::AlgoLib {
+	PlayerAction^ NoobAiAlgo::NextMove(BoardAnalyser^ analyser)
 	{
 		throw "Not implemented";
 	}

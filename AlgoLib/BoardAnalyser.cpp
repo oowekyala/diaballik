@@ -1,12 +1,9 @@
 ﻿#include "stdafx.h"
 #include "BoardAnalyser.hpp"
-#include "Position2D.hpp"
 
 
 
-
-
-namespace CppDiaballik
+namespace Diaballik::AlgoLib
 {
 
 	HashSet<Position2D>^ hashset_of_collection(IEnumerable<Position2D>^ ps) {
@@ -75,7 +72,7 @@ namespace CppDiaballik
 			for (int y = p.Y - 1; y <= p.Y + 1; y++)
 			{
 				Position2D pos(x, y);
-				if (is_on_board(pos) && is_free(pos) && pos != p)
+				if (is_on_board(pos) && is_free(pos))
 				{
 					validDst->Add(pos);
 				}

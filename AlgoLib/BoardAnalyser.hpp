@@ -1,13 +1,14 @@
 ﻿#pragma once
 #include "stdafx.h"
-#include "Position2D.hpp"
 #include <vector>
-#include <optional>
 
 using namespace System::Collections::Generic;
 using namespace System;
+using namespace Diaballik::Core;
+using namespace System::Runtime::CompilerServices;
 
-namespace CppDiaballik {
+namespace Diaballik::AlgoLib {
+
 
 	private enum class TileStatus
 	{
@@ -68,6 +69,18 @@ namespace CppDiaballik {
 		/** Gets the set of positions on which this ball can be moved. */
 		IEnumerable<Position2D>^ MovesForBall(Position2D p);
 
+	};
+
+
+
+	[ExtensionAttribute]
+	public ref class GameBoardExtension {
+	public:
+		[ExtensionAttribute]
+		static BoardAnalyser^ Analyser(GameBoard^ board)
+		{
+			return gcnew BoardAnalyser(board->Size, board->Player1Positions, board->Player2Positions, board->BallBearer1, board->BallBearer2);
+		}
 	};
 
 }
