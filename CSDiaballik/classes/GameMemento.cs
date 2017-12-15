@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace CSDiaballik {
     /// <summary>
-    ///     Represents a delta from a previous game state.
+    ///     Represents the chain of states went through by
+    ///     a game.
     /// 
-    ///     This recursive data structure stores the chain
-    ///     of actions building up to a current game state.
-    ///     They can build the game they represent, and reuse
-    ///     already built states.
+    ///     They can be converted to the game they represent, 
+    ///     and reuse be serialized to and deserialized from 
+    ///     XML using <see cref="MementoSerializationUtil"/>.
     /// </summary>
     public abstract class GameMemento {
         /// <summary>

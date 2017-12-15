@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="classes\CppLibTests.cs" />
     <Compile Include="classes\GameBuilderTests.cs" />
+    <Compile Include="classes\GameMementoTests.cs" />
     <Compile Include="classes\PlayerBuilderTest.cs" />
     <Compile Include="classes\PlayerTests.cs" />
     <Compile Include="classes\GameBoardTests.cs" />

@@ -319,7 +319,7 @@ namespace CSDiaballik {
         }
 
         private BoardAnalyser CreateAnalyser() {
-            return new BoardAnalyser(Player1Positions, Player2Positions, BallBearer1, BallBearer2);
+            return new BoardAnalyser(Size, Player1Positions, Player2Positions, BallBearer1, BallBearer2);
         }
 
         public BoardAnalyser Analyser() {

@@ -12,5 +12,6 @@ namespace CSDiaballik.Tests {
             Assert.AreSame(spec1.Player, g.Player1);
             Assert.AreSame(spec2.Player, g.Player2);
         }
+
     }
 }
