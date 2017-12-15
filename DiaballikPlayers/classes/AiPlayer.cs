@@ -36,8 +36,7 @@ namespace Diaballik.Players {
         }
 
         public override PlayerAction GetNextMove(GameBoard board) {
-            var ba = board.Analyser();
-            return _algo.NextMove(ba);
+            return _algo.NextMove(board);
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Linq;
 using static Diaballik.Core.PlayerAction;
 
 namespace Diaballik.Core {
@@ -50,29 +50,22 @@ namespace Diaballik.Core {
         }
 
 
-        private IPlayer GetOtherPlayer(IPlayer player) {
-            return player == Player1
-                ? Player2
-                : player == Player2
-                    ? Player1
-                    : throw new ArgumentException("Unknown player");
-        }
 
 
         public GameState MoveBall(Position2D src, Position2D dst) {
-            var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
+            var nextPlayer = NumMovesLeft == 1 ? Board.GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
             return new GameState(Board.MoveBall(src, dst), nextPlayer, NumMovesLeft - 1);
         }
 
 
         public GameState MovePiece(Position2D src, Position2D dst) {
-            var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
+            var nextPlayer = NumMovesLeft == 1 ? Board.GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
             return new GameState(Board.MovePiece(src, dst), nextPlayer, NumMovesLeft - 1);
         }
 
 
         public GameState Pass() {
-            return new GameState(Board, GetOtherPlayer(CurrentPlayer), 3);
+            return new GameState(Board, Board.GetOtherPlayer(CurrentPlayer), 3);
         }
 
 

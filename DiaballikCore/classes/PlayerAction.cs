@@ -68,8 +68,8 @@ namespace Diaballik.Core {
 
         public override bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft) {
             return movesLeft > 0
-                   && board.PlayerOn(Src) == board.PlayerOn(Dst)
                    && board.PlayerOn(Src) == actor
+                   && board.PlayerOn(Src) == board.PlayerOn(Dst)
                    && board.IsLineFreeBetween(Src, Dst);
         }
 
@@ -88,14 +88,19 @@ namespace Diaballik.Core {
         public MovePieceAction(Position2D src, Position2D dst) : base(src, dst) {
         }
 
-
+        // [R21_11_GAMEPLAY_MOVE_PIECE_WITH_BALL]
+        // A piece shall not move if it carries the ball.
+        // [R21_10_GAMEPLAY_MOVE_PIECE]
+        // A piece shall be moved to the direct left, right, up, or bottom tile if free.
         public override bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft) {
+            var dX = Math.Abs(Src.X - Dst.X);
+            var dY = Math.Abs(Src.Y - Dst.Y);
+
             return movesLeft > 0
-                   && Math.Abs(Src.X - Dst.X) <= 1
-                   && Math.Abs(Src.Y - Dst.Y) <= 1
+                   && (dX == 1 && dY == 0 || dX == 0 && dY == 1)
                    && board.IsFree(Dst)
                    && board.PlayerOn(Src) == actor
-                   && board.BallBearerForPlayer(actor) != Src;
+                   && !board.HasBall(Src);
         }
 
 

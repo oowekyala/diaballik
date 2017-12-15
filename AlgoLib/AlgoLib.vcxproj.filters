@@ -21,9 +21,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BoardAnalyser.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AiDecisionAlgo.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -33,18 +30,21 @@
     <ClInclude Include="NoobAiAlgo.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BoardAnalysis.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BoardAnalyser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StartingAiAlgo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NoobAiAlgo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoardAnalysis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

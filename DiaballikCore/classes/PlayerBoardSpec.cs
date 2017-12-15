@@ -24,7 +24,7 @@ namespace Diaballik.Core {
         /// <summary>
         ///     The positions of all the pieces
         /// </summary>
-        public IEnumerable<Position2D> Positions => _positions;
+        public IList<Position2D> Positions => _positions;
 
         /// <summary>
         ///     The index of the ball bearer piece in the positions

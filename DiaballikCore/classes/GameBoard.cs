@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
 
 
 namespace Diaballik.Core {
@@ -100,7 +101,7 @@ namespace Diaballik.Core {
 
 
         /// <summary>
-        ///     Creates a new gameboard.
+        ///     Creates a new gameBoard.
         /// </summary>
         /// <param name="size">Size of the board</param>
         /// <param name="p1Spec">Spec of player 2</param>
@@ -116,7 +117,7 @@ namespace Diaballik.Core {
 
 
         /// <summary>
-        ///     Creates a new gameboard.
+        ///     Creates a new gameBoard.
         /// </summary>
         /// <param name="size">Size of the board</param>
         /// <param name="specs">Pair of the specs of each players</param>
@@ -153,6 +154,10 @@ namespace Diaballik.Core {
         /// <returns>True if the position is free</returns>
         public bool IsFree(Position2D pos) {
             return !_boardLookup.ContainsKey(pos);
+        }
+
+        public bool HasBall(Position2D p) {
+            return p == BallBearer1 || p == BallBearer2;
         }
 
 
@@ -252,19 +257,34 @@ namespace Diaballik.Core {
         }
 
 
+        public IPlayer GetOtherPlayer(IPlayer player) {
+            return player == Player1
+                ? Player2
+                : player == Player2
+                    ? Player1
+                    : throw new ArgumentException("Unknown player");
+        }
+
+        /// <summary>
+        ///     Returns the player at the specified position.
+        ///     Returns null if the tile is empty or out of bounds.
+        /// </summary>
+        /// <param name="pos">The position to test</param>
+        /// <returns>The player, or null</returns>
         public IPlayer PlayerOn(Position2D pos) {
-            return _boardLookup[pos];
+            var ok = _boardLookup.TryGetValue(pos, out var player);
+            return ok ? player : null;
         }
 
 
-        public bool IsPositionOnBoard(Position2D p) {
+        public bool IsOnBoard(Position2D p) {
             return p.X >= 0 && p.X < Size
                    && p.Y >= 0 && p.Y < Size;
         }
 
 
         private void CheckPositionIsValid(Position2D p) {
-            if (!IsPositionOnBoard(p)) {
+            if (!IsOnBoard(p)) {
                 throw new ArgumentException("Illegal: position is out of the board " + p);
             }
         }
@@ -273,15 +293,17 @@ namespace Diaballik.Core {
         // TODO this could be moved out
         /// <summary>
         ///     Returns true if there is a piece-free vertical, horizontal, or diagonal line
-        ///     between the two positions on the board.
+        ///     between the two positions on the Board.
         /// </summary>
         /// <param name="p1">Position</param>
         /// <param name="p2">Position</param>
         /// <returns>True if there is a free line between the specified positions</returns>
         /// <exception cref="ArgumentException">If the positions are identical</exception>
         public bool IsLineFreeBetween(Position2D p1, Position2D p2) {
-            var deltaX = Math.Abs(p2.X - p1.X);
-            var deltaY = Math.Abs(p2.Y - p1.Y);
+            var dX = p2.X - p1.X;
+            var dY = p2.Y - p1.Y;
+            var deltaX = Math.Abs(dX);
+            var deltaY = Math.Abs(dY);
 
             if (deltaX == 0 && deltaY == 0) {
                 throw new ArgumentException("Illegal: cannot move to the same piece");
@@ -291,8 +313,14 @@ namespace Diaballik.Core {
                 return true; // pieces are side by side
             }
 
-            var ys = Enumerable.Range(Math.Min(p1.Y, p2.Y) + 1, deltaY - 2);
-            var xs = Enumerable.Range(Math.Min(p1.X, p2.X) + 1, deltaX - 2);
+            // neither straight line nor diagonal
+            if (deltaX != 0 && deltaY != 0 && deltaX != deltaY) {
+                return false;
+            }
+
+            // compute the range only if count > 0. Otherwise we won't use the value anyway
+            var ys = deltaY > 0 ? Enumerable.Range(Math.Min(p1.Y, p2.Y) + 1, deltaY - 1) : null;
+            var xs = deltaX > 0 ? Enumerable.Range(Math.Min(p1.X, p2.X) + 1, deltaX - 1) : null;
 
             if (deltaX == 0) {
                 // same row
@@ -304,7 +332,8 @@ namespace Diaballik.Core {
                 return xs.Select(x => new Position2D(x, p1.Y)).All(IsFree);
             }
 
-            return deltaX == deltaY && xs.Zip(ys, Position2D.New).All(IsFree); // diagonal
+            // we have to reverse one list in two quadrants, otherwise the zipped positions cross the diagonal
+            return deltaX == deltaY && xs.Zip(dX * dY > 0 ? ys : ys.Reverse(), Position2D.New).All(IsFree); // diagonal
         }
 
 
@@ -315,6 +344,40 @@ namespace Diaballik.Core {
 
         public (Position2D, Position2D) BallBearerPair() {
             return (BallBearer1, BallBearer2);
+        }
+
+
+        public override string ToString() {
+            var sb = new StringBuilder();
+            sb.Append("    ");
+            foreach (var i in Enumerable.Range(0, Size)) {
+                sb.Append(" ").Append(i).Append(" ");
+            }
+            sb.AppendLine();
+            for (var x = 0; x < Size; x++) {
+                sb.AppendFormat("{0,3} ", x);
+                for (var y = 0; y < Size; y++) {
+                    var pos = new Position2D(x, y);
+                    if (pos == BallBearer1) {
+                        sb.Append(" X ");
+                        continue;
+                    }
+                    if (pos == BallBearer2) {
+                        sb.Append(" O ");
+                        continue;
+                    }
+                    var p = PlayerOn(pos);
+                    if (p == Player1) {
+                        sb.Append(" x ");
+                    } else if (p == Player2) {
+                        sb.Append(" o ");
+                    } else {
+                        sb.Append("   ");
+                    }
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
         }
     }
 }
