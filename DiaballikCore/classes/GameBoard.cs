@@ -213,6 +213,7 @@ namespace Diaballik.Core {
                          "Illegal: no friendly piece on position " + dst);
 #endif
 
+            
             return PlayerOn(src) == Player1
                 ? new GameBoard(this, (dst, BallBearer2))
                 : new GameBoard(this, (BallBearer1, dst));

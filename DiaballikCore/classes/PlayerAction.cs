@@ -15,8 +15,6 @@ namespace Diaballik.Core {
         /// <param name="movesLeft">The number of moves left to the player for this turn</param>
         /// <returns>True if the move is valid</returns>
         public abstract bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft);
-
-       
     }
 
 
@@ -37,7 +35,7 @@ namespace Diaballik.Core {
 
     /// <inheritdoc />
     /// <summary>
-    ///     Base class for MovePiece and MoveBall
+    ///     Base class for MovePiece and MoveBall.
     /// </summary>
     public abstract class MoveAction : UpdateAction {
         public Position2D Src { get; }
@@ -62,10 +60,13 @@ namespace Diaballik.Core {
     ///     Move the ball to another piece.
     /// </summary>
     public class MoveBallAction : MoveAction {
-        public MoveBallAction(Position2D src, Position2D dst) : base(src, dst) {
+        private MoveBallAction(Position2D src, Position2D dst) : base(src, dst) {
         }
 
-
+        // [R21_9_GAMEPLAY_MOVE_BALL]
+        // A ball carried by a piece shall be moved to another piece 
+        // of the same player if there is a horizontal, vertical,
+        // diagonal piece-free line between these two pieces
         public override bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft) {
             return movesLeft > 0
                    && board.PlayerOn(Src) == actor
@@ -77,6 +78,12 @@ namespace Diaballik.Core {
         public override GameState UpdateState(GameState state) {
             return state.MoveBall(Src, Dst);
         }
+
+        // can be used as method group
+        public static MoveBallAction New(Position2D src, Position2D dst)
+        {
+            return new MoveBallAction(src, dst);
+        }
     }
 
 
@@ -85,7 +92,7 @@ namespace Diaballik.Core {
     ///     Move a piece to a new location.
     /// </summary>
     public class MovePieceAction : MoveAction {
-        public MovePieceAction(Position2D src, Position2D dst) : base(src, dst) {
+        private MovePieceAction(Position2D src, Position2D dst) : base(src, dst) {
         }
 
         // [R21_11_GAMEPLAY_MOVE_PIECE_WITH_BALL]
@@ -107,6 +114,11 @@ namespace Diaballik.Core {
         public override GameState UpdateState(GameState state) {
             return state.MovePiece(Src, Dst);
         }
+
+        // can be used as method group
+        public static MovePieceAction New(Position2D src, Position2D dst) {
+            return new MovePieceAction(src, dst);
+        }
     }
 
 
@@ -126,6 +138,9 @@ namespace Diaballik.Core {
     ///     End the turn and give initiative to the other player prematurely.
     /// </summary>
     public class PassAction : UpdateAction {
+
+        // [R21_8_GAMEPLAY_ACTIONS]
+        // A player shall do one to three actions per turn.
         public override bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft) {
             return movesLeft < Game.MaxMovesPerTurn; // at least one move has been played
         }

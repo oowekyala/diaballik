@@ -5,13 +5,39 @@
 namespace Diaballik::AlgoLib
 {
 
+	IEnumerable<MoveAction^>^ BoardAnalysis::AvailableMoves(GameBoard^ Board, Position2D p)
+	{
+		if (Board->HasBall(p))
+		{
+			IEnumerable<Position2D>^ dsts = BoardAnalysis::MovesForBall(Board, p);
+
+			List<MoveAction^>^ result = gcnew List<MoveAction^>;
+			for each (auto dst in dsts)
+			{
+				result->Add(MoveBallAction::New(p, dst));
+			}
+
+			return result;
+		} 
+		else
+		{
+			IEnumerable<Position2D>^ dsts = BoardAnalysis::MovesForPiece(Board, p);
+			List<MoveAction^>^ result = gcnew List<MoveAction^>;
+			for each (auto dst in dsts)
+			{
+				result->Add(MovePieceAction::New(p, dst));
+			}
+
+			return result;
+		}
+
+	}
+
 
 	IEnumerable<Position2D>^ BoardAnalysis::MovesForPiece(GameBoard^ Board, Position2D p)
 	{
-		if (!Board->IsOnBoard(p) || Board->IsFree(p))
-		{
-			throw gcnew ArgumentException("Invalid position");
-		}
+		
+		CLIASSERT(Board->IsOnBoard(p) && !Board->IsFree(p), "Invalid position");
 
 		if (Board->HasBall(p))
 		{
@@ -38,10 +64,9 @@ namespace Diaballik::AlgoLib
 
 	IEnumerable<Position2D>^ BoardAnalysis::MovesForBall(GameBoard^ Board, Position2D p)
 	{
-		if (Board->BallBearer1 != p && Board->BallBearer2 != p)
-		{
-			throw gcnew ArgumentException("This piece doesn't currently carry the ball");
-		}
+
+		CLIASSERT(Board->HasBall(p), "This piece doesn't currently carry the ball");
+
 
 		List<Position2D>^ validDst = gcnew List<Position2D>;
 		IPlayer^ player = Board->PlayerOn(p);

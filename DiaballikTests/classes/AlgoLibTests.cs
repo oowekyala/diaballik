@@ -393,8 +393,8 @@ namespace Diaballik.Tests {
             var specs = DummyPlayerSpecPair(size);
             var board = GameBoard.Create(size, specs);
 
-            Console.WriteLine(board);
-            Console.WriteLine(GenerateTestCase(size, specs.Map(s => s.Positions)));
+            // Console.WriteLine(board); // to generate test cases
+            // Console.WriteLine(GenerateTestCase(size, specs.Map(s => s.Positions)));
 
             board.BallBearerPair()
                  .Foreach(p => CollectionAssert.AreEquivalent(MovesForBallReference(board, p).ToList(),

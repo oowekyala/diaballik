@@ -15,7 +15,7 @@ namespace Diaballik::AlgoLib {
 	  *  This is our implementation of the required algorithm library.
 	  */
 	[ExtensionAttribute]
-	public ref class BoardAnalysis {
+	public ref class BoardAnalysis abstract sealed {
 	public:
 		/** Gets the set of positions on which this piece can be moved. */
 		[ExtensionAttribute]
@@ -25,6 +25,9 @@ namespace Diaballik::AlgoLib {
 		[ExtensionAttribute]
 		static IEnumerable<Position2D>^ MovesForBall(GameBoard^ Board, Position2D p);
 
+		/** Gets the moves this piece can legally perform (either ball moves or piece moves). */
+		[ExtensionAttribute]
+		static IEnumerable<MoveAction^>^ AvailableMoves(GameBoard^ Board, Position2D p);
 
 	private:
 		/* Helper class for the TryGetFriend algorithm. */
