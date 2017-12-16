@@ -10,7 +10,7 @@ namespace Diaballik.Tests {
     ///     Utility methods to mock objects.
     /// </summary>
     public static class TestUtil {
-        private static readonly Random Rng = new Random();
+        public static readonly Random Rng = new Random();
 
 
         public static IEnumerable<Position2D> RandomPositions(int n, int boardSize) {

@@ -98,7 +98,7 @@ namespace Diaballik.Core {
 
 
         public ActionMementoNode(GameState thisState, GameMemento previous, UpdateAction action) : base(previous,
-            action) {
+                                                                                                        action) {
             _thisGameState = thisState;
         }
 
@@ -147,9 +147,8 @@ namespace Diaballik.Core {
         private GameState _initialState;
 
 
-        public RootMemento(GameState initialState, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) : this(specs,
-            initialState.BoardSize,
-            initialState.CurrentPlayer == specs.Item1.Player) {
+        public RootMemento(GameState initialState, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs)
+            : this(specs, initialState.BoardSize, initialState.CurrentPlayer == specs.Item1.Player) {
             _initialState = initialState;
         }
 

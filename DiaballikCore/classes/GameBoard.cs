@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -47,7 +48,10 @@ namespace Diaballik.Core {
             (Player1, Player2) = specs.Map(x => x.Player);
 
             var positions = specs.Map(x => x.Positions.ToList());
+
+#if DEBUG
             CheckPieces(size, positions);
+#endif
 
             (BallBearer1, BallBearer2) = positions.Zip(specs, (l, spec) => l[spec.BallIndex]);
             (_player1Positions, _player2Positions) = positions.Map(ImmutableHashSet.CreateRange);
@@ -130,21 +134,19 @@ namespace Diaballik.Core {
             return new GameBoard(size, specs);
         }
 
-
+#if DEBUG
         private static void CheckPieces(int size, (List<Position2D>, List<Position2D>) positions) {
-            if (!positions.Map(l => l.Count).Forall(i => i == size)) {
-                throw new ArgumentException("One or more players have an incorrect number of pieces");
-            }
+            Debug.Assert(positions.Map(l => l.Count).Forall(i => i == size),
+                         "One or more players have an incorrect number of pieces");
 
             var (p1List, p2List) = positions;
 
-            if (p1List.Distinct().Count() != p1List.Count
-                || p2List.Distinct().Count() != p2List.Count
-                || p1List.Intersect(p2List).Any()) {
-                throw new ArgumentException("One or more players have duplicate pieces");
-            }
+            Debug.Assert(p1List.Distinct().Count() == p1List.Count
+                         && p2List.Distinct().Count() == p2List.Count
+                         && !p1List.Intersect(p2List).Any(),
+                         "One or more players have duplicate pieces");
         }
-
+#endif
 
         /// <summary>
         ///     Returns true if the position has no piece on it.
@@ -169,19 +171,15 @@ namespace Diaballik.Core {
         /// <returns>The updated gameboard</returns>
         /// <exception cref="ArgumentException">If the piece or destination position is invalid</exception>
         public GameBoard MovePiece(Position2D src, Position2D dst) {
-            if (Equals(src, BallBearer1) || Equals(src, BallBearer2)) {
-                throw new ArgumentException("Illegal: cannot move the piece which carries the ball");
-            }
+#if DEBUG
+            Debug.Assert(!HasBall(src), "Illegal: cannot move the piece which carries the ball");
 
             CheckPositionIsValid(src);
-            if (IsFree(src)) {
-                throw new ArgumentException("Illegal: no piece to move");
-            }
-
             CheckPositionIsValid(dst);
-            if (!IsFree(dst)) {
-                throw new ArgumentException("Illegal: destination is not free");
-            }
+
+            Debug.Assert(!IsFree(src), "Illegal: no piece to move");
+            Debug.Assert(IsFree(dst), "Illegal: destination is not free");
+#endif
 
             var player = PlayerOn(src);
             var lookup = _boardLookup.ToBuilder();
@@ -206,15 +204,14 @@ namespace Diaballik.Core {
         /// <returns>The updated game</returns>
         /// <exception cref="ArgumentException">If the piece or destination position is invalid</exception>
         public GameBoard MoveBall(Position2D src, Position2D dst) {
+#if DEBUG
             CheckPositionIsValid(src);
-            if (IsFree(src) || !Equals(src, BallBearer1) && !Equals(src, BallBearer2)) {
-                throw new ArgumentException("Illegal: no ball to move on position " + src);
-            }
-
+            Debug.Assert(!IsFree(src) && HasBall(src),
+                         "Illegal: no ball to move on position " + src);
             CheckPositionIsValid(dst);
-            if (IsFree(dst) || PlayerOn(dst) != PlayerOn(src)) {
-                throw new ArgumentException("Illegal: no friendly piece on position " + dst);
-            }
+            Debug.Assert(!IsFree(dst) && PlayerOn(dst) == PlayerOn(src),
+                         "Illegal: no friendly piece on position " + dst);
+#endif
 
             return PlayerOn(src) == Player1
                 ? new GameBoard(this, (dst, BallBearer2))
@@ -282,15 +279,15 @@ namespace Diaballik.Core {
                    && p.Y >= 0 && p.Y < Size;
         }
 
-
+#if DEBUG
         private void CheckPositionIsValid(Position2D p) {
             if (!IsOnBoard(p)) {
                 throw new ArgumentException("Illegal: position is out of the board " + p);
             }
         }
+#endif
 
-
-        // TODO this could be moved out
+        // TODO Move this into the C++ lib
         /// <summary>
         ///     Returns true if there is a piece-free vertical, horizontal, or diagonal line
         ///     between the two positions on the Board.
@@ -305,9 +302,8 @@ namespace Diaballik.Core {
             var deltaX = Math.Abs(dX);
             var deltaY = Math.Abs(dY);
 
-            if (deltaX == 0 && deltaY == 0) {
-                throw new ArgumentException("Illegal: cannot move to the same piece");
-            }
+            Debug.Assert(deltaX != 0 || deltaY != 0, "Illegal: cannot move to the same piece");
+
 
             if (deltaX <= 1 && deltaY <= 1) {
                 return true; // pieces are side by side
@@ -349,30 +345,37 @@ namespace Diaballik.Core {
 
         public override string ToString() {
             var sb = new StringBuilder();
-            sb.Append("    ");
+            sb.Append("   ");
+
+            void AppendItem(object o) {
+                sb.AppendFormat("{0,3}", o);
+            }
+
             foreach (var i in Enumerable.Range(0, Size)) {
-                sb.Append(" ").Append(i).Append(" ");
+                AppendItem(i);
             }
             sb.AppendLine();
+
+
             for (var x = 0; x < Size; x++) {
-                sb.AppendFormat("{0,3} ", x);
+                AppendItem(x);
                 for (var y = 0; y < Size; y++) {
                     var pos = new Position2D(x, y);
                     if (pos == BallBearer1) {
-                        sb.Append(" X ");
+                        AppendItem('X');
                         continue;
                     }
                     if (pos == BallBearer2) {
-                        sb.Append(" O ");
+                        AppendItem('O');
                         continue;
                     }
                     var p = PlayerOn(pos);
                     if (p == Player1) {
-                        sb.Append(" x ");
+                        AppendItem('x');
                     } else if (p == Player2) {
-                        sb.Append(" o ");
+                        AppendItem('o');
                     } else {
-                        sb.Append("   ");
+                        AppendItem(' ');
                     }
                 }
                 sb.AppendLine();
