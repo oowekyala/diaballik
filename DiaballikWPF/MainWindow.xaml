@@ -7,10 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525" Background="#FFAD8FD8">
     <Grid>
-        <Button Content="New Game" HorizontalAlignment="Left" Margin="26,192,0,0" VerticalAlignment="Top" Width="153" Height="23"/>
-        <Button Content="Load Game" HorizontalAlignment="Left" Margin="184,192,0,0" VerticalAlignment="Top" Width="153" Height="23" Click="Button_Click"/>
-        <Button Content="Replay Game" HorizontalAlignment="Left" Margin="342,192,0,0" VerticalAlignment="Top" Width="153" Height="23"/>
-        <Button Content="Quit" HorizontalAlignment="Left" Margin="184,220,0,0" VerticalAlignment="Top" Width="153" Height="23"/>
+        
+        <Button Content="New Game" HorizontalAlignment="Left" Margin="26,192,0,0" VerticalAlignment="Top" Width="153" Height="23" Click="NewGame_Click"/>
+        <Button Content="Load Game" HorizontalAlignment="Left" Margin="184,192,0,0" VerticalAlignment="Top" Width="153" Height="23" Click="LoadGame_Click"/>
+        <Button Content="Replay Game" HorizontalAlignment="Left" Margin="342,192,0,0" VerticalAlignment="Top" Width="153" Height="23" Click="ReplayGame_Click"/>
+        <Button Content="Quit" HorizontalAlignment="Left" Margin="184,220,0,0" VerticalAlignment="Top" Width="153" Height="23" Click="Quit_Click"/>
         <Label Content="Diaballik" HorizontalAlignment="Left" Margin="117,33,0,0" VerticalAlignment="Top" FontSize="72" FontFamily="MV Boli" Width="278"/>
 
     </Grid>

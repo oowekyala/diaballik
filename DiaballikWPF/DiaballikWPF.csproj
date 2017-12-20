@@ -75,6 +75,9 @@
     <Compile Include="GameConfiguration.xaml.cs">
       <DependentUpon>GameConfiguration.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GameWindow.xaml.cs">
+      <DependentUpon>GameWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -88,6 +91,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="GameConfiguration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GameWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -118,6 +125,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AlgoLib\AlgoLib.vcxproj">
+      <Project>{ee9b6841-0191-4494-9b6d-84babcbda22f}</Project>
+      <Name>AlgoLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiaballikCore\DiaballikCore.csproj">
+      <Project>{fcdb9834-c071-40b0-84b8-2bc325abfd35}</Project>
+      <Name>DiaballikCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiaballikPlayers\DiaballikPlayers.csproj">
+      <Project>{82115560-5abf-4302-95e8-89a55d25f840}</Project>
+      <Name>DiaballikPlayers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
