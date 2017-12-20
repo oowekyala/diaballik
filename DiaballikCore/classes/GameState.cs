@@ -1,26 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using static Diaballik.Core.PlayerAction;
 
 namespace Diaballik.Core {
     /// <summary>
-    ///     Represents a state in the game. This class is immutable.
+    ///     Represents a state in the game. Decorates a GameBoard with logic about the current
+    ///     player and number of moves.
     /// </summary>
-    public class GameState {
-        /* delegated properties */
-        public IPlayer Player1 => Board.Player1;
-
-        public IPlayer Player2 => Board.Player2;
-        public int BoardSize => Board.Size;
-        public (IEnumerable<Position2D>, IEnumerable<Position2D>) PositionsPair => Board.PositionsPair();
-        public (Position2D, Position2D) BallBearerPair => Board.BallBearerPair();
-
+    public sealed class GameState : BoardLikeDecorator<GameBoard> {
+        private static readonly Random Rng = new Random();
 
         /* Core state of the game */
-        /// Underlying gameboard
-        private GameBoard Board { get; }
+        // The gameboard is decorated by this.
 
         /// Number of moves left to the current player before automatic player change.
         public int NumMovesLeft { get; } = Game.MaxMovesPerTurn;
@@ -30,42 +20,72 @@ namespace Diaballik.Core {
 
 
         // Called to build an initial state
-        private GameState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs, bool isFirstPlayerPlaying) {
-            Board = GameBoard.Create(size, specs);
+        private GameState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs, bool isFirstPlayerPlaying)
+            : base(GameBoard.Create(size, specs)) {
             CurrentPlayer = isFirstPlayerPlaying ? Player1 : Player2;
         }
-
+        
 
         // Called when updating an existing game
-        private GameState(GameBoard board, IPlayer currentPlayer, int numMoves) {
-            Board = board;
+        private GameState(GameBoard board, IPlayer currentPlayer, int numMoves) : base(board) {
             CurrentPlayer = currentPlayer;
             NumMovesLeft = numMoves;
         }
 
-
+        /// <summary>
+        ///     Creates an initial state, with the given board size and player specifications.
+        /// </summary>
+        /// <param name="size">Size of the board</param>
+        /// <param name="specs">Player specifications</param>
+        /// <param name="isFirstPlayerPlaying">True if the first player will be the first to play</param>
+        /// <returns>A new gamestate</returns>
         public static GameState InitialState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs,
             bool isFirstPlayerPlaying) {
             return new GameState(size, specs, isFirstPlayerPlaying);
         }
 
+        /// <summary>
+        ///     Creates an initial state, with the given board size and player specifications. The first
+        ///     player to play is selected randomly.
+        /// </summary>
+        /// <param name="size">Size of the board</param>
+        /// <param name="specs">Player specifications</param>
+        /// <returns>A new gamestate</returns>
+        public static GameState InitialState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
+            return InitialState(size, specs, (Rng.Next() & 1) == 0);
+        }
 
 
-
+        /// <summary>
+        ///     Moves a ball from src to dst. Returns the updated state.
+        /// </summary>
+        /// <param name="src">Original position</param>
+        /// <param name="dst">New position</param>
+        /// <returns>The updated state</returns>
         public GameState MoveBall(Position2D src, Position2D dst) {
-            var nextPlayer = NumMovesLeft == 1 ? Board.GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
-            return new GameState(Board.MoveBall(src, dst), nextPlayer, NumMovesLeft - 1);
+            var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
+            var nextMovesLeft = NumMovesLeft == 1 ? 3 : NumMovesLeft - 1;
+            return new GameState(UnderlyingBoard.MoveBall(src, dst), nextPlayer, nextMovesLeft);
         }
 
-
+        /// <summary>
+        ///     Moves a piece from src to dst. Returns the updated state.
+        /// </summary>
+        /// <param name="src">Original position</param>
+        /// <param name="dst">New position</param>
+        /// <returns>The updated state</returns>
         public GameState MovePiece(Position2D src, Position2D dst) {
-            var nextPlayer = NumMovesLeft == 1 ? Board.GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
-            return new GameState(Board.MovePiece(src, dst), nextPlayer, NumMovesLeft - 1);
+            var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
+            var nextMovesLeft = NumMovesLeft == 1 ? 3 : NumMovesLeft - 1;
+            return new GameState(UnderlyingBoard.MovePiece(src, dst), nextPlayer, nextMovesLeft);
         }
 
-
+        /// <summary>
+        ///     Changes the current player. Returns the updated state.
+        /// </summary>
+        /// <returns>The updated state</returns>
         public GameState Pass() {
-            return new GameState(Board, Board.GetOtherPlayer(CurrentPlayer), 3);
+            return new GameState(UnderlyingBoard, GetOtherPlayer(CurrentPlayer), 3);
         }
 
 
@@ -76,31 +96,39 @@ namespace Diaballik.Core {
         /// <param name="action">The action to check</param>
         /// <returns>True if the action can be performed on this state</returns>
         public bool IsMoveValid(PlayerAction action) {
-            return action.IsMoveValid(CurrentPlayer, Board, NumMovesLeft);
+            return action.IsMoveValid(CurrentPlayer, UnderlyingBoard, NumMovesLeft);
         }
 
 
-        protected bool Equals(GameState other) {
-            return Equals(Board, other.Board)
-                   && NumMovesLeft == other.NumMovesLeft
-                   && Equals(CurrentPlayer, other.CurrentPlayer);
+        private bool Equals(GameState other) {
+            return UnderlyingBoard.Equals(other.UnderlyingBoard) && NumMovesLeft == other.NumMovesLeft &&
+                   CurrentPlayer.Equals(other.CurrentPlayer);
         }
 
 
         public override bool Equals(object obj) {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((GameState) obj);
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((GameState) obj);
         }
 
 
         public override int GetHashCode() {
             unchecked {
-                var hashCode = Board != null ? Board.GetHashCode() : 0;
+                var hashCode = UnderlyingBoard.GetHashCode();
                 hashCode = (hashCode * 397) ^ NumMovesLeft;
-                hashCode = (hashCode * 397) ^ (CurrentPlayer != null ? CurrentPlayer.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ CurrentPlayer.GetHashCode();
                 return hashCode;
             }
+        }
+
+        public static bool operator ==(GameState left, GameState right) {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(GameState left, GameState right) {
+            return !Equals(left, right);
         }
     }
 }

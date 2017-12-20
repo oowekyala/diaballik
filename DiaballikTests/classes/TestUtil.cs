@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Diaballik.AlgoLib;
 using Diaballik.Core;
+using Diaballik.Core.Util;
 using Diaballik.Players;
 
 namespace Diaballik.Tests {
@@ -73,5 +75,35 @@ namespace Diaballik.Tests {
 
 
         public static IPlayer DummyPlayer() => new NoobAiPlayer(RandomColor(), "dummy" + Rng.Next(100));
+
+
+        public static UpdateAction GetAMove(GameState state) {
+            var ps = state.PositionsForPlayer(state.CurrentPlayer);
+
+            foreach (var p in ps) {
+                var moves = state.AvailableMoves(p).ToList();
+                if (moves.Any()) {
+                    return moves.First();
+                }
+            }
+
+            return new PassAction();
+        }
+
+        public static GameState WhateverState(int size) {
+            return WhateverState(size, Rng.Next() % 20);
+        }
+
+        public static GameState WhateverState(int size, int historySize) {
+            var specs = DummyPlayerSpecPair(size);
+            var cur = GameState.InitialState(size, specs, true);
+
+            while (historySize-- > 0) {
+                var move = GetAMove(cur);
+                cur = move.UpdateState(cur);
+            }
+
+            return cur;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Diaballik.Core;
+using Diaballik.Core.Util;
 using Diaballik.Players;
 using NUnit.Framework;
 

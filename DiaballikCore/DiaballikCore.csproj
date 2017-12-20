@@ -42,6 +42,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="classes\BoardLike.cs" />
     <Compile Include="classes\Game.cs" />
     <Compile Include="classes\GameState.cs" />
     <Compile Include="classes\GameBoard.cs" />
@@ -50,7 +51,8 @@
     <Compile Include="classes\IPlayer.cs" />
     <Compile Include="classes\PlayerAction.cs" />
     <Compile Include="classes\PlayerBoardSpec.cs" />
-    <Compile Include="classes\ExtensionUtil.cs" />
+    <Compile Include="classes\util\DiaballikUtil.cs" />
+    <Compile Include="classes\util\TupleExtensions.cs" />
     <Compile Include="classes\Position2D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Xml.Linq;
 using Diaballik.Core;
+using Diaballik.Core.Util;
 
 // ReSharper disable PossibleNullReferenceException
 
@@ -134,12 +135,12 @@ namespace Diaballik.Players {
                 switch (type) {
                     case MoveBallToken: {
                         var (src, dst) = MoveActionParamsFromElement(element.Element(MoveParamsElement));
-                        action = new MoveBallAction(src, dst);
+                        action = MoveBallAction.New(src, dst);
                         break;
                     }
                     case MovePieceToken: {
                         var (src, dst) = MoveActionParamsFromElement(element.Element(MoveParamsElement));
-                        action = new MovePieceAction(src, dst);
+                        action = MovePieceAction.New(src, dst);
                         break;
                     }
                     case PassToken:

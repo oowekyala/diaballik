@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
+using Diaballik.Core.Util;
 using NUnit.Framework;
 using static Diaballik.Tests.TestUtil;
 
 namespace Diaballik.Tests {
     [TestFixture]
-    public class AlgoLibTests {
+    public class BoardAnalysisTests {
         // MovesForPiece is easy to check so we test it with a reference implementation.
         // MovesForBall is harder, in fact, the reference implementation was the one that
         // needed debugging in the beginning. We now test for regression against a handful 
@@ -53,11 +54,11 @@ namespace Diaballik.Tests {
         /// <param name="expectedp1">Expected reachable positions of the player 1's ball</param>
         /// <param name="expectedp2">Expected reachable positions of the player 2's ball</param>
         private static void TestCaseAssert(GameBoard board, IList<Position2D> expectedp1, IList<Position2D> expectedp2) {
-            board.BallBearerPair()
+            board.BallBearerPair
                  .Map(board.MovesForBall)
                  .Zip((expectedp1, expectedp2))
                  .Foreach(t => CollectionAssert.AreEquivalent(t.Item2, t.Item1, "BoardAnalysis.MovesForBall failed"));
-            board.BallBearerPair()
+            board.BallBearerPair
                  .Map(bb => MovesForBallReference(board, bb))
                  .Zip((expectedp1, expectedp2))
                  .Foreach(t => CollectionAssert.AreEquivalent(t.Item2, t.Item1, "MovesForBallReference failed"));
@@ -401,7 +402,7 @@ namespace Diaballik.Tests {
             // Console.WriteLine(board); // to generate test cases
             // Console.WriteLine(GenerateTestCase(size, specs.Map(s => s.Positions)));
 
-            board.BallBearerPair()
+            board.BallBearerPair
                  .Foreach(p => CollectionAssert.AreEquivalent(MovesForBallReference(board, p).ToList(),
                                                               board.MovesForBall(p).ToList(), "{0}\n{1}", p));
         }

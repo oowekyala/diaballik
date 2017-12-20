@@ -5,7 +5,7 @@
 namespace Diaballik::AlgoLib
 {
 
-	IEnumerable<MoveAction^>^ BoardAnalysis::AvailableMoves(GameBoard^ Board, Position2D p)
+	IEnumerable<MoveAction^>^ BoardAnalysis::AvailableMoves(BoardLike^ Board, Position2D p)
 	{
 		if (Board->HasBall(p))
 		{
@@ -34,7 +34,7 @@ namespace Diaballik::AlgoLib
 	}
 
 
-	IEnumerable<Position2D>^ BoardAnalysis::MovesForPiece(GameBoard^ Board, Position2D p)
+	IEnumerable<Position2D>^ BoardAnalysis::MovesForPiece(BoardLike^ Board, Position2D p)
 	{
 		
 		CLIASSERT(Board->IsOnBoard(p) && !Board->IsFree(p), "Invalid position");
@@ -62,7 +62,7 @@ namespace Diaballik::AlgoLib
 	}
 
 
-	IEnumerable<Position2D>^ BoardAnalysis::MovesForBall(GameBoard^ Board, Position2D p)
+	IEnumerable<Position2D>^ BoardAnalysis::MovesForBall(BoardLike^ Board, Position2D p)
 	{
 
 		CLIASSERT(Board->HasBall(p), "This piece doesn't currently carry the ball");

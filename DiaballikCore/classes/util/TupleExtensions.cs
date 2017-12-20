@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Diaballik.Core {
-    public static class ExtensionUtil {
+namespace Diaballik.Core.Util {
+    public static class TupleExtensions {
         // Mainly extension methods for homogeneous pairs. Avoids repeating symmetrical code over and over.
 
 

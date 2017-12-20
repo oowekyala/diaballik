@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 
 namespace Diaballik.Core {
@@ -11,7 +10,7 @@ namespace Diaballik.Core {
     ///    the same GameState objects in case of Undo actions while still registering
     ///    these actions in the memento.
     /// </summary>
-    public class Game {
+    public sealed class Game : BoardLikeDecorator<GameState> {
         public const int MaxMovesPerTurn = 3;
 
 
@@ -20,16 +19,14 @@ namespace Diaballik.Core {
         public GameMemento Memento { get; private set; }
 
         /// Current state of the game
-        public GameState State { get; private set; }
-
-        public int BoardSize => State.BoardSize;
-        public (IEnumerable<Position2D>, IEnumerable<Position2D>) PositionsPair => State.PositionsPair;
-        public (Position2D, Position2D) BallBearerPair => State.BallBearerPair;
-
+        public GameState State {
+            get => UnderlyingBoard;
+            private set => UnderlyingBoard = value; // used to get a private accessor
+        }
 
         // Only to initialise the game
-        private Game(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs, bool isFirstPlayerPlaying) {
-            State = GameState.InitialState(size, specs, isFirstPlayerPlaying);
+        private Game(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs, bool isFirstPlayerPlaying)
+            : base(GameState.InitialState(size, specs, isFirstPlayerPlaying)) {
             Memento = new RootMemento(State, specs);
         }
 

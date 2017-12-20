@@ -57,7 +57,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="classes\AlgoLibTests.cs" />
+    <Compile Include="classes\BoardAnalysisTests.cs" />
     <Compile Include="classes\GameBuilderTests.cs" />
     <Compile Include="classes\GameMementoTests.cs" />
     <Compile Include="classes\PlayerBuilderTest.cs" />

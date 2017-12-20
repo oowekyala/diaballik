@@ -19,15 +19,15 @@ namespace Diaballik::AlgoLib {
 	public:
 		/** Gets the set of positions on which this piece can be moved. */
 		[ExtensionAttribute]
-		static IEnumerable<Position2D>^ MovesForPiece(GameBoard^ Board, Position2D p);
+		static IEnumerable<Position2D>^ MovesForPiece(BoardLike^ Board, Position2D p);
 
 		/** Gets the set of positions on which this ball can be moved. */
 		[ExtensionAttribute]
-		static IEnumerable<Position2D>^ MovesForBall(GameBoard^ Board, Position2D p);
+		static IEnumerable<Position2D>^ MovesForBall(BoardLike^ Board, Position2D p);
 
 		/** Gets the moves this piece can legally perform (either ball moves or piece moves). */
 		[ExtensionAttribute]
-		static IEnumerable<MoveAction^>^ AvailableMoves(GameBoard^ Board, Position2D p);
+		static IEnumerable<MoveAction^>^ AvailableMoves(BoardLike^ Board, Position2D p);
 
 	private:
 		/* Helper class for the TryGetFriend algorithm. */
@@ -38,9 +38,9 @@ namespace Diaballik::AlgoLib {
 			int startY;
 			IPlayer^ player;
 			IPlayer^ opponent;
-			GameBoard^ Board;
+			BoardLike^ Board;
 
-			Helper(List<Position2D>^ acc, Position2D start, IPlayer^ p, IPlayer^ o, GameBoard^ board)
+			Helper(List<Position2D>^ acc, Position2D start, IPlayer^ p, IPlayer^ o, BoardLike^ board)
 				: accumulator(acc), startX(start.X), startY(start.Y), player(p), opponent(o), Board(board) {}
 		};
 
