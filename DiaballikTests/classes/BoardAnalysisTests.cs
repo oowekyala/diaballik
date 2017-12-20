@@ -5,7 +5,6 @@ using System.Text;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
 using NUnit.Framework;
-using static Diaballik.AlgoLib.BoardAnalysis;
 using static Diaballik.Tests.TestUtil;
 
 namespace Diaballik.Tests {
@@ -47,7 +46,13 @@ namespace Diaballik.Tests {
             return neighbours.Where(board.IsOnBoard).Where(board.IsFree);
         }
 
-        private void TestCaseAssert(GameBoard board, IList<Position2D> expectedp1, IList<Position2D> expectedp2) {
+        /// <summary>
+        ///    Assertions for a generated test case. Called by the test case when it's done constructing the board.
+        /// </summary>
+        /// <param name="board">The board described by the test case</param>
+        /// <param name="expectedp1">Expected reachable positions of the player 1's ball</param>
+        /// <param name="expectedp2">Expected reachable positions of the player 2's ball</param>
+        private static void TestCaseAssert(GameBoard board, IList<Position2D> expectedp1, IList<Position2D> expectedp2) {
             board.BallBearerPair()
                  .Map(board.MovesForBall)
                  .Zip((expectedp1, expectedp2))
@@ -410,7 +415,7 @@ namespace Diaballik.Tests {
 
         // Generates the code for a complete test case using 
         // the current implementation of BoardAnalysis.MovesForBall
-        private static String GenerateTestCase(int size, (IList<Position2D>, IList<Position2D>) specs) {
+        private static string GenerateTestCase(int size, (IList<Position2D>, IList<Position2D>) specs) {
             var sb = new StringBuilder();
             sb.AppendLine("[Test]")
               .Append("public void TestMoveBallScenario").Append(TestUtil.Rng.Next()).AppendLine("(){")
