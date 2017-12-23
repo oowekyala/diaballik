@@ -7,14 +7,12 @@ namespace Diaballik.Core {
     /// </summary>
     public abstract class PlayerAction {
         /// <summary>
-        ///     Returns true if the move is valid, in the context of specified actor
-        ///     player and the board.
+        ///     Returns true if the move is valid, in the context of 
+        ///     the specified state.
         /// </summary>
-        /// <param name="actor">The player making the move</param>
-        /// <param name="board">The current state of the board</param>
-        /// <param name="movesLeft">The number of moves left to the player for this turn</param>
+        /// <param name="state">The context of the move</param>
         /// <returns>True if the move is valid</returns>
-        public abstract bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft);
+        public abstract bool IsMoveValid(GameState state);
     }
 
 
@@ -51,7 +49,7 @@ namespace Diaballik.Core {
 
         public abstract override GameState UpdateState(GameState state);
 
-        public abstract override bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft);
+        public abstract override bool IsMoveValid(GameState state);
     }
 
 
@@ -67,11 +65,11 @@ namespace Diaballik.Core {
         // A ball carried by a piece shall be moved to another piece 
         // of the same player if there is a horizontal, vertical,
         // diagonal piece-free line between these two pieces
-        public override bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft) {
-            return movesLeft > 0
-                   && board.PlayerOn(Src) == actor
-                   && board.PlayerOn(Src) == board.PlayerOn(Dst)
-                   && board.IsLineFreeBetween(Src, Dst);
+        public override bool IsMoveValid(GameState state) {
+            return state.NumMovesLeft > 0
+                   && Equals(state.PlayerOn(Src), state.CurrentPlayer)
+                   && Equals(state.PlayerOn(Src), state.PlayerOn(Dst))
+                   && state.IsLineFreeBetween(Src, Dst);
         }
 
 
@@ -80,8 +78,7 @@ namespace Diaballik.Core {
         }
 
         // can be used as method group
-        public static MoveBallAction New(Position2D src, Position2D dst)
-        {
+        public static MoveBallAction New(Position2D src, Position2D dst) {
             return new MoveBallAction(src, dst);
         }
     }
@@ -99,15 +96,15 @@ namespace Diaballik.Core {
         // A piece shall not move if it carries the ball.
         // [R21_10_GAMEPLAY_MOVE_PIECE]
         // A piece shall be moved to the direct left, right, up, or bottom tile if free.
-        public override bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft) {
+        public override bool IsMoveValid(GameState state) {
             var dX = Math.Abs(Src.X - Dst.X);
             var dY = Math.Abs(Src.Y - Dst.Y);
 
-            return movesLeft > 0
+            return state.NumMovesLeft > 0
                    && (dX == 1 && dY == 0 || dX == 0 && dY == 1)
-                   && board.IsFree(Dst)
-                   && board.PlayerOn(Src) == actor
-                   && !board.HasBall(Src);
+                   && state.IsFree(Dst)
+                   && Equals(state.PlayerOn(Src), state.CurrentPlayer)
+                   && !state.HasBall(Src);
         }
 
 
@@ -127,8 +124,8 @@ namespace Diaballik.Core {
     ///     Undo the last action of the player.
     /// </summary>
     public class UndoAction : PlayerAction {
-        public override bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft) {
-            return movesLeft < Game.MaxMovesPerTurn; // can only undo actions the player has played himself
+        public override bool IsMoveValid(GameState state) {
+            return state.NumMovesLeft < Game.MaxMovesPerTurn; // can only undo actions the player has played himself
         }
     }
 
@@ -138,11 +135,10 @@ namespace Diaballik.Core {
     ///     End the turn and give initiative to the other player prematurely.
     /// </summary>
     public class PassAction : UpdateAction {
-
         // [R21_8_GAMEPLAY_ACTIONS]
         // A player shall do one to three actions per turn.
-        public override bool IsMoveValid(IPlayer actor, GameBoard board, int movesLeft) {
-            return movesLeft < Game.MaxMovesPerTurn; // at least one move has been played
+        public override bool IsMoveValid(GameState state) {
+            return state.NumMovesLeft < Game.MaxMovesPerTurn; // at least one move has been played
         }
 
 

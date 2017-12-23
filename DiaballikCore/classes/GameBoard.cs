@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Diaballik.Core.Util;
 
 
 namespace Diaballik.Core {
+    using FullPlayerSpecPair = ValueTuple<FullPlayerBoardSpec, FullPlayerBoardSpec>;
+
     /// <summary>
     ///     Represents the game board and manages the moving of pieces.
     ///     By convention, if n is the value of BoardSize, the four corners
@@ -44,7 +45,7 @@ namespace Diaballik.Core {
         public override int BoardSize { get; }
 
         // Performs full consistency checks, only the first time
-        private GameBoard(int boardSize, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
+        private GameBoard(int boardSize, FullPlayerSpecPair specs) {
             BoardSize = boardSize;
             (Player1, Player2) = specs.Map(x => x.Player);
 
@@ -114,7 +115,7 @@ namespace Diaballik.Core {
         ///     If the players have an incorrect number of pieces,
         ///     or there are duplicate pieces
         /// </exception>
-        public static GameBoard Create(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
+        public static GameBoard Create(int size, FullPlayerSpecPair specs) {
             return new GameBoard(size, specs);
         }
 
@@ -208,52 +209,6 @@ namespace Diaballik.Core {
             }
         }
 #endif
-
-        // TODO Move this into the C++ lib
-        /// <summary>
-        ///     Returns true if there is a piece-free vertical, horizontal, or diagonal line
-        ///     between the two positions on the Board.
-        /// </summary>
-        /// <param name="p1">Position</param>
-        /// <param name="p2">Position</param>
-        /// <returns>True if there is a free line between the specified positions</returns>
-        /// <exception cref="ArgumentException">If the positions are identical</exception>
-        public bool IsLineFreeBetween(Position2D p1, Position2D p2) {
-            var dX = p2.X - p1.X;
-            var dY = p2.Y - p1.Y;
-            var deltaX = Math.Abs(dX);
-            var deltaY = Math.Abs(dY);
-
-            DiaballikUtil.Assert(deltaX != 0 || deltaY != 0, "Illegal: cannot move to the same piece");
-
-
-            if (deltaX <= 1 && deltaY <= 1) {
-                return true; // pieces are side by side
-            }
-
-            // neither straight line nor diagonal
-            if (deltaX != 0 && deltaY != 0 && deltaX != deltaY) {
-                return false;
-            }
-
-            // compute the range only if count > 0. Otherwise we won't use the value anyway
-            var ys = deltaY > 0 ? Enumerable.Range(Math.Min(p1.Y, p2.Y) + 1, deltaY - 1) : null;
-            var xs = deltaX > 0 ? Enumerable.Range(Math.Min(p1.X, p2.X) + 1, deltaX - 1) : null;
-
-            if (deltaX == 0) {
-                // same row
-                return ys.Select(y => new Position2D(p1.X, y)).All(IsFree);
-            }
-
-            if (deltaY == 0) {
-                // same column
-                return xs.Select(x => new Position2D(x, p1.Y)).All(IsFree);
-            }
-
-            // we have to reverse one list in two quadrants, otherwise the zipped positions cross the diagonal
-            return deltaX == deltaY && xs.Zip(dX * dY > 0 ? ys : ys.Reverse(), Position2D.New).All(IsFree); // diagonal
-        }
-
 
         public override string ToString() {
             var sb = new StringBuilder();

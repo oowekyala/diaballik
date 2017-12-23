@@ -4,7 +4,6 @@
     ///     player and number of moves.
     /// </summary>
     public sealed class GameState : BoardLikeDecorator<GameBoard> {
-
         /* Core state of the game */
         // The gameboard is decorated by this.
 
@@ -20,7 +19,7 @@
             : base(GameBoard.Create(size, specs)) {
             CurrentPlayer = isFirstPlayerPlaying ? Player1 : Player2;
         }
-        
+
 
         // Called when updating an existing game
         private GameState(GameBoard board, IPlayer currentPlayer, int numMoves) : base(board) {
@@ -71,17 +70,6 @@
         /// <returns>The updated state</returns>
         public GameState Pass() {
             return new GameState(UnderlyingBoard, GetOtherPlayer(CurrentPlayer), 3);
-        }
-
-
-        /// <summary>
-        ///     Returns true is the given player action is valid in the 
-        ///     context of this game state.
-        /// </summary>
-        /// <param name="action">The action to check</param>
-        /// <returns>True if the action can be performed on this state</returns>
-        public bool IsMoveValid(PlayerAction action) {
-            return action.IsMoveValid(CurrentPlayer, UnderlyingBoard, NumMovesLeft);
         }
 
 

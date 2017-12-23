@@ -7,8 +7,8 @@ namespace Diaballik.Core {
     ///     a game.
     /// 
     ///     They can be converted to the game they represent, 
-    ///     and reuse be serialized to and deserialized from 
-    ///     XML using Diaballik.Players.MementoSerializationUtil.
+    ///     and be serialized to and deserialized from XML 
+    ///     using Diaballik.Players.MementoSerializationUtil.
     /// </summary>
     public abstract class GameMemento {
         /// <summary>
@@ -50,6 +50,7 @@ namespace Diaballik.Core {
         /// </summary>
         /// <returns>A game corresponding to this memento</returns>
         public abstract GameState ToGame();
+
 
         /// <summary>
         ///     Deconstructs this memento into its root and an enumerable of
@@ -97,8 +98,8 @@ namespace Diaballik.Core {
         private GameState _thisGameState;
 
 
-        public ActionMementoNode(GameState thisState, GameMemento previous, UpdateAction action) : base(previous,
-                                                                                                        action) {
+        public ActionMementoNode(GameState thisState, GameMemento previous, UpdateAction action) 
+            : base(previous, action) {
             _thisGameState = thisState;
         }
 

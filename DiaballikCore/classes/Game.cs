@@ -2,6 +2,8 @@
 
 
 namespace Diaballik.Core {
+    using FullPlayerSpecPair = ValueTuple<FullPlayerBoardSpec, FullPlayerBoardSpec>;
+
     /// <summary>
     ///    Represents a game. This class is mutable, and maintains a GameState 
     ///    instance and the memento instance. 
@@ -10,7 +12,7 @@ namespace Diaballik.Core {
     ///    the same GameState objects in case of Undo actions while still registering
     ///    these actions in the memento.
     /// </summary>
-    public sealed class Game : BoardLikeDecorator<GameState> {
+    public sealed class Game {
         private static readonly Random Rng = new Random();
         public const int MaxMovesPerTurn = 3;
 
@@ -19,16 +21,12 @@ namespace Diaballik.Core {
         /// Equals(Memento.ToGame(), State)
         public GameMemento Memento { get; private set; }
 
-        /// Current state of the game
-        public GameState State {
-            get => UnderlyingBoard;
-            private set => UnderlyingBoard = value; // used to get a private accessor
-        }
+        public GameState State => Memento.ToGame();
 
         // Only to initialise the game
-        private Game(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs, bool isFirstPlayerPlaying)
-            : base(GameState.InitialState(size, specs, isFirstPlayerPlaying)) {
-            Memento = new RootMemento(State, specs);
+        private Game(int size, FullPlayerSpecPair specs, bool isFirstPlayerPlaying) {
+            var state = GameState.InitialState(size, specs, isFirstPlayerPlaying);
+            Memento = new RootMemento(state, specs);
         }
 
 
@@ -39,7 +37,7 @@ namespace Diaballik.Core {
         /// <param name="specs">Board configurations for each player</param>
         /// <param name="isFirstPlayerPlaying">Whether player 1 is the first to start playing or not</param>
         /// <returns>A new game</returns>
-        public static Game Init(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs,
+        public static Game Init(int size, FullPlayerSpecPair specs,
             bool isFirstPlayerPlaying) {
             return new Game(size, specs, isFirstPlayerPlaying);
         }
@@ -52,7 +50,7 @@ namespace Diaballik.Core {
         /// <param name="size">Size of the board</param>
         /// <param name="specs">Board configuration for each player</param>
         /// <returns>A new game</returns>
-        public static Game Init(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
+        public static Game Init(int size, FullPlayerSpecPair specs) {
             return new Game(size, specs, Rng.Next(0, 1) == 1);
         }
 
@@ -65,19 +63,16 @@ namespace Diaballik.Core {
         ///     If the move is invalid. The action's validity should be verified upstream.
         /// </exception>
         public void Update(PlayerAction action) {
-            if (!State.IsMoveValid(action)) {
+            if (!action.IsMoveValid(State)) {
                 throw new ArgumentException("Invalid move: " + action);
             }
 
             switch (action) {
                 case UpdateAction update:
-                    State = update.UpdateState(State);
-                    Memento = Memento.Append(State, update);
+                    Memento = Memento.Append(update.UpdateState(State), update);
                     break;
                 case UndoAction undo:
-                    var previousState = Memento.GetParent().ToGame();
                     Memento = Memento.Append(undo);
-                    State = previousState;
                     break;
             }
         }

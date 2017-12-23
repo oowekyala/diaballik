@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.CodeDom;
+using System.Drawing;
 
 namespace Diaballik.Core
 {
@@ -9,6 +10,8 @@ namespace Diaballik.Core
     {
         Color Color { get; }
         string Name { get; }
+
+        
 
         /// <summary>
         ///     Returns true if this player is an AI, in which case it
