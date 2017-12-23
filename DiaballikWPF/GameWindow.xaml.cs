@@ -24,8 +24,8 @@ namespace DiaballikWPF
         public Window2()
         {
             InitializeComponent();
-            board.Rows = gb.Size;
-            board.Columns = gb.Size;
+            board.Rows = gb.BoardSize;
+            board.Columns = gb.BoardSize;
         }
     }
 }
