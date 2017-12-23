@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Diaballik.Core {
+﻿namespace Diaballik.Core {
     /// <summary>
     ///     Represents a state in the game. Decorates a GameBoard with logic about the current
     ///     player and number of moves.
     /// </summary>
     public sealed class GameState : BoardLikeDecorator<GameBoard> {
-        private static readonly Random Rng = new Random();
 
         /* Core state of the game */
         // The gameboard is decorated by this.
@@ -42,17 +38,6 @@ namespace Diaballik.Core {
         public static GameState InitialState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs,
             bool isFirstPlayerPlaying) {
             return new GameState(size, specs, isFirstPlayerPlaying);
-        }
-
-        /// <summary>
-        ///     Creates an initial state, with the given board size and player specifications. The first
-        ///     player to play is selected randomly.
-        /// </summary>
-        /// <param name="size">Size of the board</param>
-        /// <param name="specs">Player specifications</param>
-        /// <returns>A new gamestate</returns>
-        public static GameState InitialState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
-            return InitialState(size, specs, (Rng.Next() & 1) == 0);
         }
 
 

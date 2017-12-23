@@ -11,6 +11,7 @@ namespace Diaballik.Core {
     ///    these actions in the memento.
     /// </summary>
     public sealed class Game : BoardLikeDecorator<GameState> {
+        private static readonly Random Rng = new Random();
         public const int MaxMovesPerTurn = 3;
 
 
@@ -52,7 +53,7 @@ namespace Diaballik.Core {
         /// <param name="specs">Board configuration for each player</param>
         /// <returns>A new game</returns>
         public static Game Init(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs) {
-            return new Game(size, specs, new Random().Next(0, 1) == 1);
+            return new Game(size, specs, Rng.Next(0, 1) == 1);
         }
 
 

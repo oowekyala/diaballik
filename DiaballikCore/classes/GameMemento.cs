@@ -150,6 +150,8 @@ namespace Diaballik.Core {
         public RootMemento(GameState initialState, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs)
             : this(specs, initialState.BoardSize, initialState.CurrentPlayer == specs.Item1.Player) {
             _initialState = initialState;
+            BoardSize = initialState.BoardSize;
+            IsFirstPlayerPlaying = initialState.CurrentPlayer == Player1;
         }
 
         public RootMemento((FullPlayerBoardSpec, FullPlayerBoardSpec) specs, int boardSize, bool isFirstPlayerPlaying) {
