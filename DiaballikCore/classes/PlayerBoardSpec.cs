@@ -14,7 +14,7 @@ namespace Diaballik.Core {
         ///     Create a new spec.
         /// </summary>
         /// <param name="positions">The positions of all the pieces</param>
-        /// <param name="ballIndex">The index of the ball bearer piece in the positions</param>
+        /// <param name="ballIndex">The index of the piece which carries the ball in positions</param>
         public PlayerBoardSpec(IEnumerable<Position2D> positions, int ballIndex) {
             _positions = positions.ToList();
             BallIndex = ballIndex;
@@ -27,7 +27,7 @@ namespace Diaballik.Core {
         public IList<Position2D> Positions => _positions;
 
         /// <summary>
-        ///     The index of the ball bearer piece in the positions
+        ///     The index of the piece which carries the ball in the positions
         /// </summary>
         public int BallIndex { get; }
     }

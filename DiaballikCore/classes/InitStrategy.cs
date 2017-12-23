@@ -5,13 +5,17 @@ using Diaballik.Core.Util;
 
 
 namespace Diaballik.Core {
+    using PlayerSpecPair = ValueTuple<PlayerBoardSpec, PlayerBoardSpec>;
+
+
+
     public interface IInitStrategy {
         /// <summary>
         ///     Gets the positions of the pieces of each player.
         /// </summary>
         /// <param name="size">Size of the board (square)</param>
         /// <returns>A tuple containing the positions of the pieces of each player </returns>
-        (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size);
+        PlayerSpecPair InitPositions(int size);
     }
 
 
@@ -19,13 +23,13 @@ namespace Diaballik.Core {
         protected static readonly Random Rand = new Random();
 
 
-        public abstract (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size);
+        public abstract PlayerSpecPair InitPositions(int size);
 
 
         /// <summary>
-        /// Gets a tuple of positions corresponding to the default positions of each player,
-        /// that is, that is, each player has the top or bottom row, according to the convention
-        /// defined in <see cref="GameBoard"/>.
+        ///     Gets a tuple of positions corresponding to the default positions of each player,
+        ///     that is, that is, each player has the top or bottom row, according to the convention
+        ///     defined in <see cref="GameBoard"/>.
         /// </summary>
         /// <param name="size">The size of the board</param>
         /// <returns></returns>
@@ -38,21 +42,21 @@ namespace Diaballik.Core {
 
 
     public class StandardInitStrategy : AbstractInitStrategy {
-        public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size) {
+        public override PlayerSpecPair InitPositions(int size) {
             return InitialPositions(size).Map(ps => new PlayerBoardSpec(ps, size / 2));
         }
     }
 
 
     public class BallRandomStrategy : AbstractInitStrategy {
-        public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size) {
+        public override PlayerSpecPair InitPositions(int size) {
             return InitialPositions(size).Map(ps => new PlayerBoardSpec(ps, Rand.Next(size)));
         }
     }
 
 
     public class EnemyAmongUsStrategy : AbstractInitStrategy {
-        public override (PlayerBoardSpec, PlayerBoardSpec) InitPositions(int size) {
+        public override PlayerSpecPair InitPositions(int size) {
             var (pos1, pos2) = InitialPositions(size).Map(ps => ps.ToList());
 
             // swap two positions randomly twice

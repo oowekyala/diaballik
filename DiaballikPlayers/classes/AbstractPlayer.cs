@@ -2,7 +2,12 @@
 using Diaballik.Core;
 
 namespace Diaballik.Players {
+
+    /// <summary>
+    ///     Base class for players.
+    /// </summary>
     public abstract class AbstractPlayer : IPlayer {
+
         protected AbstractPlayer(Color color, string name) {
             Color = color;
             Name = name;
@@ -13,11 +18,11 @@ namespace Diaballik.Players {
 
         public string Name { get; }
 
-        public abstract bool IsAi();
+        public abstract bool IsAi { get; }
 
         public abstract PlayerAction GetNextMove(GameBoard board);
 
-
+        // Partial implementation, to be completed by derived classes
         public virtual PlayerBuilder ToBuilder() => new PlayerBuilder {
             Color = Color,
             Name = Name

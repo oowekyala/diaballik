@@ -45,7 +45,7 @@ namespace Diaballik.Tests {
                     throw new ArgumentOutOfRangeException(nameof(level), level, null);
             }
 
-            Assert.IsTrue(player.IsAi());
+            Assert.IsTrue(player.IsAi);
             Assert.IsInstanceOf<AiPlayer>(player);
         }
     }

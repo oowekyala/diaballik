@@ -35,8 +35,8 @@ namespace Diaballik.Core {
         public override IPlayer Player1 { get; }
         public override IPlayer Player2 { get; }
 
-        public override Position2D BallBearer1 { get; }
-        public override Position2D BallBearer2 { get; }
+        public override Position2D BallCarrier1 { get; }
+        public override Position2D BallCarrier2 { get; }
 
         public override IEnumerable<Position2D> Player1Positions => _player1Positions;
         public override IEnumerable<Position2D> Player2Positions => _player2Positions;
@@ -55,7 +55,7 @@ namespace Diaballik.Core {
             CheckPieces(boardSize, positions);
 #endif
 
-            (BallBearer1, BallBearer2) = positions.Zip(specs, (l, spec) => l[spec.BallIndex]);
+            (BallCarrier1, BallCarrier2) = positions.Zip(specs, (l, spec) => l[spec.BallIndex]);
             (_player1Positions, _player2Positions) = positions.Map(ImmutableHashSet.CreateRange);
 
             var lookupBuilder = ImmutableDictionary.CreateBuilder<Position2D, IPlayer>();
@@ -72,18 +72,18 @@ namespace Diaballik.Core {
             Player1 = previous.Player1;
             Player2 = previous.Player2;
             _boardLookup = lookup;
-            (BallBearer1, BallBearer2) = previous.BallBearerPair;
+            (BallCarrier1, BallCarrier2) = previous.BallCarrierPair;
             (_player1Positions, _player2Positions) = positions;
         }
 
 
         // used internally, for MoveBall updates
-        private GameBoard(GameBoard previous, (Position2D, Position2D) ballBearers) {
+        private GameBoard(GameBoard previous, (Position2D, Position2D) ballCarriers) {
             BoardSize = previous.BoardSize;
             Player1 = previous.Player1;
             Player2 = previous.Player2;
             _boardLookup = previous._boardLookup;
-            (BallBearer1, BallBearer2) = ballBearers;
+            (BallCarrier1, BallCarrier2) = ballCarriers;
             _player1Positions = previous._player1Positions;
             _player2Positions = previous._player2Positions;
         }
@@ -191,8 +191,8 @@ namespace Diaballik.Core {
 
 
             return PlayerOn(src) == Player1
-                ? new GameBoard(this, (dst, BallBearer2))
-                : new GameBoard(this, (BallBearer1, dst));
+                ? new GameBoard(this, (dst, BallCarrier2))
+                : new GameBoard(this, (BallCarrier1, dst));
         }
 
 
@@ -228,11 +228,11 @@ namespace Diaballik.Core {
                 AppendItem(x);
                 for (var y = 0; y < BoardSize; y++) {
                     var pos = new Position2D(x, y);
-                    if (pos == BallBearer1) {
+                    if (pos == BallCarrier1) {
                         AppendItem('X');
                         continue;
                     }
-                    if (pos == BallBearer2) {
+                    if (pos == BallCarrier2) {
                         AppendItem('O');
                         continue;
                     }
@@ -256,8 +256,8 @@ namespace Diaballik.Core {
                    && _player2Positions.SetEquals(other._player2Positions)
                    && Player1.Equals(other.Player1)
                    && Player2.Equals(other.Player2)
-                   && BallBearer1.Equals(other.BallBearer1)
-                   && BallBearer2.Equals(other.BallBearer2)
+                   && BallCarrier1.Equals(other.BallCarrier1)
+                   && BallCarrier2.Equals(other.BallCarrier2)
                    && BoardSize == other.BoardSize;
         }
 
@@ -274,8 +274,8 @@ namespace Diaballik.Core {
                 hashCode = (hashCode * 397) ^ _player2Positions.GetHashCode();
                 hashCode = (hashCode * 397) ^ Player1.GetHashCode();
                 hashCode = (hashCode * 397) ^ Player2.GetHashCode();
-                hashCode = (hashCode * 397) ^ BallBearer1.GetHashCode();
-                hashCode = (hashCode * 397) ^ BallBearer2.GetHashCode();
+                hashCode = (hashCode * 397) ^ BallCarrier1.GetHashCode();
+                hashCode = (hashCode * 397) ^ BallCarrier2.GetHashCode();
                 hashCode = (hashCode * 397) ^ BoardSize;
                 return hashCode;
             }

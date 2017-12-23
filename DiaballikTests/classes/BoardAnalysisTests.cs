@@ -54,11 +54,11 @@ namespace Diaballik.Tests {
         /// <param name="expectedp1">Expected reachable positions of the player 1's ball</param>
         /// <param name="expectedp2">Expected reachable positions of the player 2's ball</param>
         private static void TestCaseAssert(GameBoard board, IList<Position2D> expectedp1, IList<Position2D> expectedp2) {
-            board.BallBearerPair
+            board.BallCarrierPair
                  .Map(board.MovesForBall)
                  .Zip((expectedp1, expectedp2))
                  .Foreach(t => CollectionAssert.AreEquivalent(t.Item2, t.Item1, "BoardAnalysis.MovesForBall failed"));
-            board.BallBearerPair
+            board.BallCarrierPair
                  .Map(bb => MovesForBallReference(board, bb))
                  .Zip((expectedp1, expectedp2))
                  .Foreach(t => CollectionAssert.AreEquivalent(t.Item2, t.Item1, "MovesForBallReference failed"));
@@ -402,7 +402,7 @@ namespace Diaballik.Tests {
             // Console.WriteLine(board); // to generate test cases
             // Console.WriteLine(GenerateTestCase(size, specs.Map(s => s.Positions)));
 
-            board.BallBearerPair
+            board.BallCarrierPair
                  .Foreach(p => CollectionAssert.AreEquivalent(MovesForBallReference(board, p).ToList(),
                                                               board.MovesForBall(p).ToList(), "{0}\n{1}", p));
         }
@@ -437,12 +437,12 @@ namespace Diaballik.Tests {
               .AppendLine("var specs = (p1, p2).Map(ps => new FullPlayerBoardSpec(DummyPlayer(), ps, size / 2));")
               .AppendLine("var board = GameBoard.Create(size, specs);")
               .AppendLine("var expectedp1 = new List<Position2D> {");
-            foreach (var p in board.MovesForBall(board.BallBearer1)) {
+            foreach (var p in board.MovesForBall(board.BallCarrier1)) {
                 sb.AppendLine("    new Position2D(" + p.X + ", " + p.Y + "),");
             }
             sb.AppendLine("};")
               .AppendLine("var expectedp2 = new List<Position2D> {");
-            foreach (var p in board.MovesForBall(board.BallBearer2)) {
+            foreach (var p in board.MovesForBall(board.BallCarrier2)) {
                 sb.AppendLine("    new Position2D(" + p.X + ", " + p.Y + "),");
             }
             sb.AppendLine("};")

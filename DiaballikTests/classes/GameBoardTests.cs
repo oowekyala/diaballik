@@ -31,14 +31,14 @@ namespace Diaballik.Tests {
             var positions = RandomPositionsPair(size + 1, size).Map(e => e.ToList());
             var empty = positions.Item1[0];
             positions.Foreach(e => e.RemoveAt(0));
-            var ballBearer = positions.Item1[ballIndex];
+            var ballCarrier = positions.Item1[ballIndex];
             var specs = positions.Map(p => DummyPlayerSpec(p, ballIndex));
 
             var board = GameBoard.Create(size, specs);
 
-            Assert.AreEqual(ballBearer, board.BallBearer1);
+            Assert.AreEqual(ballCarrier, board.BallCarrier1);
             Assert.IsTrue(board.IsFree(empty));
-            Assert.That(() => board.MovePiece(ballBearer, empty), Throws.ArgumentException);
+            Assert.That(() => board.MovePiece(ballCarrier, empty), Throws.ArgumentException);
         }
 
 
@@ -97,8 +97,8 @@ namespace Diaballik.Tests {
 
             var gb = GameBoard.Create(size, specs);
 
-            Assert.AreEqual(ball1, gb.BallBearer1);
-            Assert.AreEqual(ball2, gb.BallBearer2);
+            Assert.AreEqual(ball1, gb.BallCarrier1);
+            Assert.AreEqual(ball2, gb.BallCarrier2);
         }
 
 
@@ -112,7 +112,7 @@ namespace Diaballik.Tests {
             Assert.IsFalse(board.IsVictoriousPlayer(board.Player1));
             board = board.MovePiece(new Position2D(0, 0), new Position2D(1, 0));
             board = board.MovePiece(new Position2D(size - 1, size - 1), new Position2D(0, 0));
-            board = board.MoveBall(board.BallBearer1, new Position2D(0, 0));
+            board = board.MoveBall(board.BallCarrier1, new Position2D(0, 0));
             Assert.IsTrue(board.IsVictoriousPlayer(board.Player1));
         }
     }

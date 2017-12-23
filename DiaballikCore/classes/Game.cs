@@ -14,13 +14,14 @@ namespace Diaballik.Core {
     /// </summary>
     public sealed class Game {
         private static readonly Random Rng = new Random();
+
+        /// Maximum number of moves per turn
         public const int MaxMovesPerTurn = 3;
 
-
         /// Stores the chain of actions leading to this state
-        /// Equals(Memento.ToGame(), State)
         public GameMemento Memento { get; private set; }
 
+        /// Current state of the game
         public GameState State => Memento.ToGame();
 
         // Only to initialise the game
@@ -37,8 +38,7 @@ namespace Diaballik.Core {
         /// <param name="specs">Board configurations for each player</param>
         /// <param name="isFirstPlayerPlaying">Whether player 1 is the first to start playing or not</param>
         /// <returns>A new game</returns>
-        public static Game Init(int size, FullPlayerSpecPair specs,
-            bool isFirstPlayerPlaying) {
+        public static Game Init(int size, FullPlayerSpecPair specs, bool isFirstPlayerPlaying) {
             return new Game(size, specs, isFirstPlayerPlaying);
         }
 

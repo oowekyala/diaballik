@@ -11,14 +11,11 @@ namespace Diaballik.Core
         Color Color { get; }
         string Name { get; }
 
-        
-
         /// <summary>
-        ///     Returns true if this player is an AI, in which case it
+        ///     Is true if this player is an AI, in which case it
         ///     can be downcast to AiPlayer safely.
         /// </summary>
-        /// <returns>Whether the player is an AI</returns>
-        bool IsAi();
+        bool IsAi { get; }
 
 
         /// <summary>

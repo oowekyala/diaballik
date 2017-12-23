@@ -1,4 +1,9 @@
-﻿namespace Diaballik.Core {
+﻿using System;
+
+namespace Diaballik.Core {
+    using FullPlayerSpecPair = ValueTuple<FullPlayerBoardSpec, FullPlayerBoardSpec>;
+
+
     /// <summary>
     ///     Represents a state in the game. Decorates a GameBoard with logic about the current
     ///     player and number of moves.
@@ -15,8 +20,8 @@
 
 
         // Called to build an initial state
-        private GameState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs, bool isFirstPlayerPlaying)
-            : base(GameBoard.Create(size, specs)) {
+        private GameState(int size, FullPlayerSpecPair specs, bool isFirstPlayerPlaying) 
+            : base( GameBoard.Create(size, specs)) {
             CurrentPlayer = isFirstPlayerPlaying ? Player1 : Player2;
         }
 
@@ -34,11 +39,16 @@
         /// <param name="specs">Player specifications</param>
         /// <param name="isFirstPlayerPlaying">True if the first player will be the first to play</param>
         /// <returns>A new gamestate</returns>
-        public static GameState InitialState(int size, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs,
-            bool isFirstPlayerPlaying) {
+        public static GameState InitialState(int size, FullPlayerSpecPair specs, bool isFirstPlayerPlaying) {
             return new GameState(size, specs, isFirstPlayerPlaying);
         }
 
+
+        private GameState GetNextStateWithBoard(GameBoard board) {
+            var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
+            var nextMovesLeft = NumMovesLeft == 1 ? Game.MaxMovesPerTurn : NumMovesLeft - 1;
+            return new GameState(board, nextPlayer, nextMovesLeft);
+        }
 
         /// <summary>
         ///     Moves a ball from src to dst. Returns the updated state.
@@ -47,9 +57,7 @@
         /// <param name="dst">New position</param>
         /// <returns>The updated state</returns>
         public GameState MoveBall(Position2D src, Position2D dst) {
-            var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
-            var nextMovesLeft = NumMovesLeft == 1 ? 3 : NumMovesLeft - 1;
-            return new GameState(UnderlyingBoard.MoveBall(src, dst), nextPlayer, nextMovesLeft);
+            return GetNextStateWithBoard(UnderlyingBoard.MoveBall(src, dst));
         }
 
         /// <summary>
@@ -59,9 +67,7 @@
         /// <param name="dst">New position</param>
         /// <returns>The updated state</returns>
         public GameState MovePiece(Position2D src, Position2D dst) {
-            var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
-            var nextMovesLeft = NumMovesLeft == 1 ? 3 : NumMovesLeft - 1;
-            return new GameState(UnderlyingBoard.MovePiece(src, dst), nextPlayer, nextMovesLeft);
+            return GetNextStateWithBoard(UnderlyingBoard.MovePiece(src, dst));
         }
 
         /// <summary>
@@ -69,13 +75,14 @@
         /// </summary>
         /// <returns>The updated state</returns>
         public GameState Pass() {
-            return new GameState(UnderlyingBoard, GetOtherPlayer(CurrentPlayer), 3);
+            return new GameState(UnderlyingBoard, GetOtherPlayer(CurrentPlayer), Game.MaxMovesPerTurn);
         }
 
 
         private bool Equals(GameState other) {
-            return UnderlyingBoard.Equals(other.UnderlyingBoard) && NumMovesLeft == other.NumMovesLeft &&
-                   CurrentPlayer.Equals(other.CurrentPlayer);
+            return UnderlyingBoard.Equals(other.UnderlyingBoard) 
+                && NumMovesLeft == other.NumMovesLeft 
+                && CurrentPlayer.Equals(other.CurrentPlayer);
         }
 
 

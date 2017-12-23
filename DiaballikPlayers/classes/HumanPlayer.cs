@@ -3,12 +3,16 @@ using System.Drawing;
 using Diaballik.Core;
 
 namespace Diaballik.Players {
+
+    /// <summary>
+    ///     Human player. Waits for UI events to get the next move.
+    /// </summary>
     public class HumanPlayer : AbstractPlayer {
         public HumanPlayer(Color color, string name) : base(color, name) {
         }
 
 
-        public sealed override bool IsAi() => false;
+        public override bool IsAi { get; } = false;
 
 
         public override PlayerAction GetNextMove(GameBoard board) {

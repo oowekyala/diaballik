@@ -16,7 +16,7 @@ namespace Diaballik.Tests {
             } else {
                 builder.Size = size;
                 var game = builder.Build();
-                Assert.AreEqual(size, game.BoardSize);
+                Assert.AreEqual(size, game.State.BoardSize);
             }
         }
 
@@ -28,7 +28,7 @@ namespace Diaballik.Tests {
                 InitStrategy = new StandardInitStrategy()
             };
             var game = builder.Build();
-            var (p1Pos, p2Pos) = game.PositionsPair.Map(x => x.ToList());
+            var (p1Pos, p2Pos) = game.State.PositionsPair.Map(x => x.ToList());
 
             Assert.AreEqual(size, p1Pos.Count);
             Assert.AreEqual(size, p2Pos.Count);
@@ -36,8 +36,8 @@ namespace Diaballik.Tests {
             p1Pos.ForEach(x => Assert.AreEqual(size - 1, x.X)); // bottom row
             p2Pos.ForEach(x => Assert.AreEqual(0, x.X)); // top row
 
-            // ball bearers are middle pieces
-            game.BallBearerPair.Foreach(x => Assert.AreEqual(size / 2, x.Y));
+            // ball carriers are middle pieces
+            game.State.BallCarrierPair.Foreach(x => Assert.AreEqual(size / 2, x.Y));
         }
 
 
@@ -48,14 +48,14 @@ namespace Diaballik.Tests {
                 InitStrategy = new BallRandomStrategy()
             };
             var game = builder.Build();
-            var (p1Pos, p2Pos) = game.PositionsPair.Map(x => x.ToList());
+            var (p1Pos, p2Pos) = game.State.PositionsPair.Map(x => x.ToList());
 
-            game.PositionsPair.Foreach(ps => Assert.AreEqual(size, ps.Count()));
+            game.State.PositionsPair.Foreach(ps => Assert.AreEqual(size, ps.Count()));
 
             p1Pos.ForEach(x => Assert.AreEqual(size - 1, x.X)); // bottom row
             p2Pos.ForEach(x => Assert.AreEqual(0, x.X)); // top row
 
-            // ball bearers can be any piece in the line
+            // ball carriers can be any piece in the line
         }
 
 
@@ -66,7 +66,7 @@ namespace Diaballik.Tests {
                 InitStrategy = new EnemyAmongUsStrategy()
             };
             var game = builder.Build();
-            var positionsTuple = game.PositionsPair.Map(x => x.ToList());
+            var positionsTuple = game.State.PositionsPair.Map(x => x.ToList());
 
             positionsTuple.Foreach(ps => Assert.AreEqual(size, ps.Count));
 
@@ -77,8 +77,8 @@ namespace Diaballik.Tests {
                     Assert.AreEqual(2, ps.Count(p => p.X == size - 1 - row)); // enemy row
                 });
 
-            // ball bearers are middle pieces, in friend row
-            game.BallBearerPair
+            // ball carriers are middle pieces, in friend row
+            game.State.BallCarrierPair
                 .Zip((size - 1, 0))
                 .Foreach(t => {
                     var (ball, row) = t;

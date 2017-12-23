@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 
 namespace Diaballik.Core {
+    using FullPlayerSpecPair = ValueTuple<FullPlayerBoardSpec, FullPlayerBoardSpec>;
+
+
     /// <summary>
     ///     Represents the chain of states went through by
     ///     a game.
@@ -92,13 +95,15 @@ namespace Diaballik.Core {
         }
     }
 
-
+    /// <summary>
+    ///     Specialises MementoNode for an update action.
+    /// </summary>
     public class ActionMementoNode : MementoNode {
         /// Cached game state
         private GameState _thisGameState;
 
 
-        public ActionMementoNode(GameState thisState, GameMemento previous, UpdateAction action) 
+        public ActionMementoNode(GameState thisState, GameMemento previous, UpdateAction action)
             : base(previous, action) {
             _thisGameState = thisState;
         }
@@ -108,7 +113,6 @@ namespace Diaballik.Core {
         }
 
 
-        // Only works with immutable games
         public override GameState ToGame() {
             return _thisGameState ?? (_thisGameState = ((UpdateAction) Action).UpdateState(Previous.ToGame()));
         }
@@ -119,7 +123,7 @@ namespace Diaballik.Core {
     /// <summary>
     ///     Represents an undo action in the update chain. Special 
     ///     handling because we don't create a new state when undoing, 
-    ///     we delegate the call to ToGame to the previous nodes.
+    ///     we delegate the call to ToGame on a previous node.
     /// </summary>
     public class UndoMementoNode : MementoNode {
         public UndoMementoNode(GameMemento memento, UndoAction undoAction) : base(memento, undoAction) {
@@ -139,7 +143,7 @@ namespace Diaballik.Core {
     public class RootMemento : GameMemento {
         public readonly int BoardSize;
         public readonly bool IsFirstPlayerPlaying;
-        public readonly (FullPlayerBoardSpec, FullPlayerBoardSpec) Specs;
+        public readonly FullPlayerSpecPair Specs;
 
         public IPlayer Player1 => Specs.Item1.Player;
         public IPlayer Player2 => Specs.Item2.Player;
@@ -148,14 +152,12 @@ namespace Diaballik.Core {
         private GameState _initialState;
 
 
-        public RootMemento(GameState initialState, (FullPlayerBoardSpec, FullPlayerBoardSpec) specs)
+        public RootMemento(GameState initialState, FullPlayerSpecPair specs)
             : this(specs, initialState.BoardSize, initialState.CurrentPlayer == specs.Item1.Player) {
             _initialState = initialState;
-            BoardSize = initialState.BoardSize;
-            IsFirstPlayerPlaying = initialState.CurrentPlayer == Player1;
         }
 
-        public RootMemento((FullPlayerBoardSpec, FullPlayerBoardSpec) specs, int boardSize, bool isFirstPlayerPlaying) {
+        public RootMemento(FullPlayerSpecPair specs, int boardSize, bool isFirstPlayerPlaying) {
             IsFirstPlayerPlaying = isFirstPlayerPlaying;
             BoardSize = boardSize;
             Specs = specs;

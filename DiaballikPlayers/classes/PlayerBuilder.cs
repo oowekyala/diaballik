@@ -7,18 +7,10 @@ namespace Diaballik.Players {
     ///     Builds player instances.
     /// </summary>
     public class PlayerBuilder {
-        private static bool _isFirstPlayer;
         private AiLevel _aiLevel;
         private bool _isHuman;
 
-
-        public PlayerBuilder() {
-            _isFirstPlayer = !_isFirstPlayer; // true for the first instantiation, false for the second.
-            Color = _isFirstPlayer ? Color.Blue : Color.Red;
-        }
-
-
-        public Color Color { set; get; }
+        public Color Color { set; get; } = Color.Yellow;
 
         public string Name { set; get; }
 

@@ -85,8 +85,8 @@ namespace Diaballik.Tests {
         private static void AssertMoveBallSucceeded(GameState before, GameState after, MoveBallAction action) {
             CollectionAssert.AreEquivalent(before.PositionsForPlayer(before.CurrentPlayer),
                                            after.PositionsForPlayer(before.CurrentPlayer));
-            Assert.AreEqual(before.BallBearerForPlayer(before.CurrentPlayer), action.Src);
-            Assert.AreEqual(after.BallBearerForPlayer(before.CurrentPlayer), action.Dst);
+            Assert.AreEqual(before.BallCarrierForPlayer(before.CurrentPlayer), action.Src);
+            Assert.AreEqual(after.BallCarrierForPlayer(before.CurrentPlayer), action.Dst);
 
             AssertWhetherPlayerHasChanged(before, after);
         }
@@ -94,7 +94,7 @@ namespace Diaballik.Tests {
         private static void AssertPassSucceeded(GameState before, GameState after) {
             before.PositionsPair.Zip(after.PositionsPair)
                   .Foreach(t => CollectionAssert.AreEquivalent(t.Item1, t.Item2));
-            Assert.AreEqual(before.BallBearerPair, after.BallBearerPair);
+            Assert.AreEqual(before.BallCarrierPair, after.BallCarrierPair);
 
             AssertThatPlayerHasChanged(before, after);
         }
