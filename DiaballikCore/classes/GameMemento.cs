@@ -18,7 +18,12 @@ namespace Diaballik.Core {
         ///     Gets the previous memento. Returns null if this is the root.
         /// </summary>
         /// <returns>The parent memento</returns>
-        public abstract GameMemento GetParent();
+        public GameMemento Parent { get; }
+
+
+        protected GameMemento(GameMemento parent) {
+            Parent = parent;
+        }
 
 
         /// <summary>
@@ -35,18 +40,6 @@ namespace Diaballik.Core {
                 default: throw new ArgumentOutOfRangeException();
             }
         }
-
-
-        /// <summary>
-        ///     Creates a new memento based on this one, caching the already computed state.
-        /// </summary>
-        /// <param name="state">The state obtained after the transition</param>
-        /// <param name="action">The transition from this memento to the result</param>
-        /// <returns>A new memento with this as its parent</returns>
-        public MementoNode Append(GameState state, UpdateAction action) {
-            return new ActionMementoNode(state, this, action);
-        }
-
 
         /// <summary>
         ///     Turns this memento into a GameState.
@@ -65,7 +58,7 @@ namespace Diaballik.Core {
             var cur = this;
             while (cur is MementoNode n) {
                 nodes.Add(n);
-                cur = cur.GetParent();
+                cur = cur.Parent;
             }
             nodes.Reverse();
             return ((RootMemento) cur, nodes);
@@ -76,22 +69,15 @@ namespace Diaballik.Core {
     /// <inheritdoc />
     /// <summary>
     ///     Abstract class for memento nodes that have a parent.
+    ///     They store the transition from the previous state to
+    ///     this one as a PlayerAction.
     /// </summary>
     public abstract class MementoNode : GameMemento {
-        /// Previous memento in the chain
-        protected readonly GameMemento Previous;
-
         /// Action to perform on the previous state to get this state
         public PlayerAction Action { get; }
 
-        protected MementoNode(GameMemento previous, PlayerAction action) {
-            Previous = previous;
+        protected MementoNode(GameMemento previous, PlayerAction action) : base(previous) {
             Action = action;
-        }
-
-
-        public sealed override GameMemento GetParent() {
-            return Previous;
         }
     }
 
@@ -103,18 +89,12 @@ namespace Diaballik.Core {
         private GameState _thisGameState;
 
 
-        public ActionMementoNode(GameState thisState, GameMemento previous, UpdateAction action)
-            : base(previous, action) {
-            _thisGameState = thisState;
-        }
-
-
         public ActionMementoNode(GameMemento previous, UpdateAction action) : base(previous, action) {
         }
 
 
         public override GameState ToGame() {
-            return _thisGameState ?? (_thisGameState = ((UpdateAction) Action).UpdateState(Previous.ToGame()));
+            return _thisGameState ?? (_thisGameState = ((UpdateAction) Action).UpdateState(Parent.ToGame()));
         }
     }
 
@@ -129,9 +109,9 @@ namespace Diaballik.Core {
         public UndoMementoNode(GameMemento memento, UndoAction undoAction) : base(memento, undoAction) {
         }
 
-
+    
         public override GameState ToGame() {
-            return Previous.GetParent().ToGame();
+            return Parent.Parent.ToGame();
         }
     }
 
@@ -148,16 +128,11 @@ namespace Diaballik.Core {
         public IPlayer Player1 => Specs.Item1.Player;
         public IPlayer Player2 => Specs.Item2.Player;
 
-
+        // Cached state
         private GameState _initialState;
 
 
-        public RootMemento(GameState initialState, FullPlayerSpecPair specs)
-            : this(specs, initialState.BoardSize, initialState.CurrentPlayer == specs.Item1.Player) {
-            _initialState = initialState;
-        }
-
-        public RootMemento(FullPlayerSpecPair specs, int boardSize, bool isFirstPlayerPlaying) {
+        public RootMemento(FullPlayerSpecPair specs, int boardSize, bool isFirstPlayerPlaying) : base(null) {
             IsFirstPlayerPlaying = isFirstPlayerPlaying;
             BoardSize = boardSize;
             Specs = specs;
@@ -165,11 +140,6 @@ namespace Diaballik.Core {
 
         public override GameState ToGame() {
             return _initialState ?? (_initialState = GameState.InitialState(BoardSize, Specs, IsFirstPlayerPlaying));
-        }
-
-
-        public override GameMemento GetParent() {
-            return null;
         }
     }
 }

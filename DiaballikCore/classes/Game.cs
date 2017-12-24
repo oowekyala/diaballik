@@ -5,12 +5,12 @@ namespace Diaballik.Core {
     using FullPlayerSpecPair = ValueTuple<FullPlayerBoardSpec, FullPlayerBoardSpec>;
 
     /// <summary>
-    ///    Represents a game. This class is mutable, and maintains a GameState 
-    ///    instance and the memento instance. 
+    ///     Represents a game. This class is mutable, to provide a nice interface
+    ///     to clients.
     /// 
-    ///    This class decouples GameStates from GameMementos, and allows to reuse 
-    ///    the same GameState objects in case of Undo actions while still registering
-    ///    these actions in the memento.
+    ///     Internally it's just a wrapper around a GameMemento, which already 
+    ///     contains all the information about the current and past states of 
+    ///     the game.
     /// </summary>
     public sealed class Game {
         private static readonly Random Rng = new Random();
@@ -22,12 +22,11 @@ namespace Diaballik.Core {
         public GameMemento Memento { get; private set; }
 
         /// Current state of the game
-        public GameState State => Memento.ToGame();
+        public GameState State => Memento.ToGame(); // PlayerAction.UpdateState(GameState) is called lazily in that method
 
         // Only to initialise the game
         private Game(int size, FullPlayerSpecPair specs, bool isFirstPlayerPlaying) {
-            var state = GameState.InitialState(size, specs, isFirstPlayerPlaying);
-            Memento = new RootMemento(state, specs);
+            Memento = new RootMemento(specs, size, isFirstPlayerPlaying);
         }
 
 
@@ -63,17 +62,10 @@ namespace Diaballik.Core {
         ///     If the move is invalid. The action's validity should be verified upstream.
         /// </exception>
         public void Update(PlayerAction action) {
-            if (!action.IsMoveValid(State)) {
+            if (action.IsMoveValid(State)) {
+                Memento = Memento.Append(action);
+            } else {
                 throw new ArgumentException("Invalid move: " + action);
-            }
-
-            switch (action) {
-                case UpdateAction update:
-                    Memento = Memento.Append(update.UpdateState(State), update);
-                    break;
-                case UndoAction undo:
-                    Memento = Memento.Append(undo);
-                    break;
             }
         }
     }

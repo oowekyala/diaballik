@@ -21,7 +21,7 @@ namespace Diaballik.Core {
     ///     </pre>
     ///     By convention, the first player owns the row n-1 (the bottom
     ///     one), and the second player owns the row 0 (the top one).
-    ///     This class is immutable.
+    ///     This class is immutable
     /// </summary>
     public class GameBoard : BoardLike {
         // we could also delegate everything to the previous board

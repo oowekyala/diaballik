@@ -32,7 +32,6 @@ namespace Diaballik.Core {
         ///     defined in <see cref="GameBoard"/>.
         /// </summary>
         /// <param name="size">The size of the board</param>
-        /// <returns></returns>
         protected static (IEnumerable<Position2D>, IEnumerable<Position2D>) InitialPositions(int size)
             => (size - 1, 0).ZipWithPair(Enumerable.Range(0, size), (x, ys) => ys.Select(y => new Position2D(x, y)));
     }
@@ -60,8 +59,8 @@ namespace Diaballik.Core {
             var (pos1, pos2) = InitialPositions(size).Map(ps => ps.ToList());
 
             // swap two positions randomly twice
-            SwapRandom(0, size / 2, pos1, pos2);
-            SwapRandom(1 + size / 2, size, pos1, pos2);
+            SwapRandom(0,            size / 2, pos1, pos2);
+            SwapRandom(1 + size / 2, size,     pos1, pos2);
 
             return (pos1, pos2).Map(ps => new PlayerBoardSpec(ps, size / 2));
         }
