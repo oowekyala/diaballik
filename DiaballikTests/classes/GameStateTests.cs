@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
 using Diaballik.Core.Util;
 using NUnit.Framework;
+using static Diaballik.Tests.TestUtil;
 
 namespace Diaballik.Tests {
     [TestFixture]
@@ -11,7 +13,7 @@ namespace Diaballik.Tests {
         [Test]
         public void TestPlayerIdentity() {
             const int size = 7;
-            var (spec1, spec2) = TestUtil.DummyPlayerSpecPair(size);
+            var (spec1, spec2) = DummyPlayerSpecPair(size);
 
             var g = GameState.InitialState(7, (spec1, spec2), true);
             Assert.AreSame(spec1.Player, g.Player1);
@@ -27,17 +29,21 @@ namespace Diaballik.Tests {
 
         [Test]
         public void TestChangePlayerTransition([Range(7, 15, 2)] int size) {
-            var g0 = TestUtil.WhateverState(size, 2);
-            var move = TestUtil.GetAMove(g0);
+            var g0 = AnyState(size, 1);
+            var move = GetAMove(g0);
             var g1 = move.UpdateState(g0);
             AssertThatPlayerHasChanged(g0, g1);
         }
 
-        [Test]
-        public void TestGameStateTransition([Range(5, 17, 2)] int size) {
-            // get a state with a random history
-            var g0 = TestUtil.WhateverState(size);
 
+        public static IEnumerable<GameState> TestCasesProvider() {
+            // 5 test cases per size, size varies between 5 and 21
+            return Enumerable.Range(5, 16).Where(x => x % 2 != 0).SelectMany(x => Generate(() => AnyState(x)).Take(5));
+        }
+
+
+        [Test, TestCaseSource(sourceName: nameof(TestCasesProvider))] // some kind of invariant testing
+        public void TestGameStateTransition(GameState g0) {
             foreach (var move in GetMoves(g0)) {
                 switch (move) {
                     case MoveBallAction mba:

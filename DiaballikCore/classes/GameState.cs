@@ -110,5 +110,10 @@ namespace Diaballik.Core {
         public static bool operator !=(GameState left, GameState right) {
             return !Equals(left, right);
         }
+
+        public override string ToString() {
+            return $"GameState(numMovesLeft: {NumMovesLeft}, player: {CurrentPlayer}) {{\n{UnderlyingBoard.ToString().PadLeft(4)}\n}}";
+
+        }
     }
 }

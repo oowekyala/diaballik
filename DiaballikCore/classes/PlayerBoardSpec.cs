@@ -20,15 +20,38 @@ namespace Diaballik.Core {
             BallIndex = ballIndex;
         }
 
+        protected bool Equals(PlayerBoardSpec other) {
+            return _positions.SequenceEqual(other._positions) && BallIndex == other.BallIndex;
+        }
 
-        /// <summary>
-        ///     The positions of all the pieces
-        /// </summary>
+        // equality members
+
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((PlayerBoardSpec) obj);
+        }
+
+        public override int GetHashCode() {
+            unchecked {
+                return (_positions.GetHashCode() * 397) ^ BallIndex;
+            }
+        }
+
+        public static bool operator ==(PlayerBoardSpec left, PlayerBoardSpec right) {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(PlayerBoardSpec left, PlayerBoardSpec right) {
+            return !Equals(left, right);
+        }
+
+
+        /// The positions of all the pieces
         public IList<Position2D> Positions => _positions;
 
-        /// <summary>
-        ///     The index of the piece which carries the ball in the positions
-        /// </summary>
+        /// The index of the piece which carries the ball in the positions
         public int BallIndex { get; }
     }
 
@@ -49,7 +72,34 @@ namespace Diaballik.Core {
         }
 
 
-        /// The player.
+        /// The player
         public IPlayer Player { get; }
+
+        // equality members
+
+        protected bool Equals(FullPlayerBoardSpec other) {
+            return base.Equals(other) && Player.Equals(other.Player);
+        }
+
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((FullPlayerBoardSpec) obj);
+        }
+
+        public override int GetHashCode() {
+            unchecked {
+                return (base.GetHashCode() * 397) ^ Player.GetHashCode();
+            }
+        }
+
+        public static bool operator ==(FullPlayerBoardSpec left, FullPlayerBoardSpec right) {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(FullPlayerBoardSpec left, FullPlayerBoardSpec right) {
+            return !Equals(left, right);
+        }
     }
 }

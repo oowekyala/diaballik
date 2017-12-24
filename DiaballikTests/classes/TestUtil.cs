@@ -76,7 +76,7 @@ namespace Diaballik.Tests {
 
         public static IPlayer DummyPlayer() => new NoobAiPlayer(RandomColor(), "dummy" + Rng.Next(100));
 
-
+        /// Gets a valid move to perform on the state. Returns a PassAction only if no move can be played.
         public static UpdateAction GetAMove(GameState state) {
             var ps = state.PositionsForPlayer(state.CurrentPlayer);
 
@@ -90,20 +90,43 @@ namespace Diaballik.Tests {
             return new PassAction();
         }
 
-        public static GameState WhateverState(int size) {
-            return WhateverState(size, Rng.Next() % 20);
-        }
-
-        public static GameState WhateverState(int size, int historySize) {
+        /// Gets a state with the given number of moves left.
+        /// Effectively gets a random state.
+        public static GameState AnyState(int size, int movesLeftCount) {
             var specs = DummyPlayerSpecPair(size);
             var cur = GameState.InitialState(size, specs, true);
 
-            while (historySize-- > 0) {
-                var move = GetAMove(cur);
-                cur = move.UpdateState(cur);
+            while (cur.NumMovesLeft != movesLeftCount) {
+                cur = GetAMove(cur).UpdateState(cur);
             }
 
             return cur;
+        }
+
+        public static GameState AnyState(int size) {
+            return AnyState(size, Rng.Next(1, Game.MaxMovesPerTurn + 1));
+        }
+
+        public static Game AnyGame(int size) {
+            return AnyGame(size, Rng.Next(0, 20));
+        }
+
+        /// Constructs a game from a random initial state and updating it with valid moves
+        /// Moves don't contain Undo actions
+        public static Game AnyGame(int size, int historySize) {
+            var specs = DummyPlayerSpecPair(size);
+            var game = Game.Init(size, specs);
+
+            while (historySize-- > 0) {
+                var move = GetAMove(game.State);
+                game.Update(move);
+            }
+
+            return game;
+        }
+
+        public static IEnumerable<T> Generate<T>(Func<T> f) {
+            while (true) yield return f();
         }
     }
 }

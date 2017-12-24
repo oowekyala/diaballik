@@ -4,7 +4,9 @@ using System.Drawing;
 namespace Diaballik.Core
 {
     /// <summary>
-    ///     Immutable player.
+    ///     Player of a game. Immutability must be preserved, because
+    ///     players are composed into several other important immutable 
+    ///     classes.
     /// </summary>
     public interface IPlayer
     {
@@ -20,7 +22,7 @@ namespace Diaballik.Core
 
         /// <summary>
         ///     Gets the next move of this player. If the player is human,
-        ///     may block until the player has committed their action.
+        ///     may block until the player has committed to their decision.
         /// </summary>
         /// <param name="board">The board of the game</param>
         /// <returns>The next move of this player</returns>

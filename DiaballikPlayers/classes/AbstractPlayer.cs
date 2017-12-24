@@ -28,6 +28,10 @@ namespace Diaballik.Players {
             Name = Name
         };
 
+        public override string ToString() {
+            return $"Player(type: {GetType().Name}, color: {ColorTranslator.ToHtml(Color)}, name: {Name})";
+        }
+
         protected bool Equals(AbstractPlayer other) {
             return Color.Equals(other.Color) && string.Equals(Name, other.Name);
         }

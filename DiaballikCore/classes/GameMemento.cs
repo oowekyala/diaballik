@@ -12,6 +12,11 @@ namespace Diaballik.Core {
     ///     They can be converted to the game they represent, 
     ///     and be serialized to and deserialized from XML 
     ///     using Diaballik.Players.MementoSerializationUtil.
+    /// 
+    ///     Equality between two GameMementos takes their full
+    ///     ancestry into account. In the unlikely case that
+    ///     proves unpractical, we could take shortcuts using 
+    ///     hashes (think Git commit hash).
     /// </summary>
     public abstract class GameMemento {
         /// <summary>
@@ -45,7 +50,7 @@ namespace Diaballik.Core {
         ///     Turns this memento into a GameState.
         /// </summary>
         /// <returns>A game corresponding to this memento</returns>
-        public abstract GameState ToGame();
+        public abstract GameState ToState();
 
 
         /// <summary>
@@ -63,6 +68,26 @@ namespace Diaballik.Core {
             nodes.Reverse();
             return ((RootMemento) cur, nodes);
         }
+
+        protected bool Equals(GameMemento other) {
+            return Equals(Parent, other.Parent);
+        }
+
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((GameMemento) obj);
+        }
+
+        public override int GetHashCode() {
+            return (Parent != null ? Parent.GetHashCode() : 0);
+        }
+
+        /// Returns a description of this memento and its parents, if any.
+        public string FullAncestryString() {
+            return $"{this}\n{Parent?.ToString() ?? ""}";
+        }
     }
 
 
@@ -79,6 +104,25 @@ namespace Diaballik.Core {
         protected MementoNode(GameMemento previous, PlayerAction action) : base(previous) {
             Action = action;
         }
+
+        protected bool Equals(MementoNode other) {
+            return Action.Equals(other.Action) && base.Equals(other);
+        }
+
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((MementoNode) obj);
+        }
+
+        public override int GetHashCode() {
+            return Action.GetHashCode();
+        }
+
+        public override string ToString() {
+            return $"MementoNode({Action})"; // displaying all the parents was cumbersome
+        }
     }
 
     /// <summary>
@@ -93,8 +137,8 @@ namespace Diaballik.Core {
         }
 
 
-        public override GameState ToGame() {
-            return _thisGameState ?? (_thisGameState = ((UpdateAction) Action).UpdateState(Parent.ToGame()));
+        public override GameState ToState() {
+            return _thisGameState ?? (_thisGameState = ((UpdateAction) Action).UpdateState(Parent.ToState()));
         }
     }
 
@@ -103,15 +147,15 @@ namespace Diaballik.Core {
     /// <summary>
     ///     Represents an undo action in the update chain. Special 
     ///     handling because we don't create a new state when undoing, 
-    ///     we delegate the call to ToGame on a previous node.
+    ///     we delegate the call to ToState on a previous node.
     /// </summary>
     public class UndoMementoNode : MementoNode {
         public UndoMementoNode(GameMemento memento, UndoAction undoAction) : base(memento, undoAction) {
         }
 
-    
-        public override GameState ToGame() {
-            return Parent.Parent.ToGame();
+
+        public override GameState ToState() {
+            return Parent.Parent.ToState();
         }
     }
 
@@ -138,8 +182,37 @@ namespace Diaballik.Core {
             Specs = specs;
         }
 
-        public override GameState ToGame() {
+
+        public override GameState ToState() {
             return _initialState ?? (_initialState = GameState.InitialState(BoardSize, Specs, IsFirstPlayerPlaying));
+        }
+
+        // equality members
+
+        protected bool Equals(RootMemento other) {
+            return BoardSize == other.BoardSize
+                   && IsFirstPlayerPlaying == other.IsFirstPlayerPlaying
+                   && Specs.Equals(other.Specs);
+        }
+
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((RootMemento) obj);
+        }
+
+        public override int GetHashCode() {
+            unchecked {
+                var hashCode = BoardSize;
+                hashCode = (hashCode * 397) ^ IsFirstPlayerPlaying.GetHashCode();
+                hashCode = (hashCode * 397) ^ Specs.GetHashCode();
+                return hashCode;
+            }
+        }
+
+        public override string ToString() {
+            return "Root Memento";
         }
     }
 }

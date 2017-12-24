@@ -6,7 +6,8 @@ using Diaballik.Core.Util;
 namespace Diaballik.Core {
     /// <summary>
     ///     Object that has the characteristics of a board. Enriches the interface of GameBoard
-    ///     using few abstract methods.
+    ///     using few abstract methods. Allows to sharee functionality between GameBoard and GameState
+    ///     without breaking encapsulation.
     /// </summary>
     public abstract class BoardLike {
         public abstract int BoardSize { get; }
@@ -108,7 +109,6 @@ namespace Diaballik.Core {
                     : throw new ArgumentException("Unknown player");
         }
 
-        // TODO Move this into the C++ lib
         /// <summary>
         ///     Returns true if there is a piece-free vertical, horizontal, or diagonal line
         ///     between the two positions on the Board.
@@ -166,8 +166,8 @@ namespace Diaballik.Core {
     }
 
     /// <summary>
-    ///     Abstract class for board like decorators. It's a means of sharing functionality between
-    ///     GameState and GameBoard without breaking encapsulation.
+    ///     Abstract class for board like decorators. Mainly used to extract all that boilerplate
+    ///     from GameState.
     /// </summary>
     /// <typeparam name="T">Concrete type of board this decorator decorates</typeparam>
     public abstract class BoardLikeDecorator<T> : BoardLike where T : BoardLike {

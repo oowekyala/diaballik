@@ -55,60 +55,60 @@ namespace Diaballik.Players {
                 var (mementoRoot, nodes) = memento.Deconstruct();
 
                 return new XDocument(new XElement(DocElement,
-                    RootToElement(mementoRoot),
-                    new XElement(MoveHistoryElement,
-                        nodes.ZipWithIndex(NodeToElement))));
+                                                  RootToElement(mementoRoot),
+                                                  new XElement(MoveHistoryElement,
+                                                               nodes.ZipWithIndex(NodeToElement))));
             }
 
 
-            private static XElement PlayerSpecToXml(FullPlayerBoardSpec spec, int id) {
+            private static XElement PlayerSpecToElement(FullPlayerBoardSpec spec, int id) {
                 return new XElement(PlayerBoardSpecElement,
-                    PlayerToXml(spec.Player, id),
-                    new XAttribute("idx", id),
-                    new XElement(BoardSpecElement,
-                        new XAttribute("ballIndex", spec.BallIndex),
-                        new XElement(SpecPositionsElement,
-                            spec.Positions.ZipWithIndex(PositionToElement)
-                        )));
+                                    PlayerToElement(spec.Player, id),
+                                    new XAttribute("idx", id),
+                                    new XElement(BoardSpecElement,
+                                                 new XAttribute("ballIndex", spec.BallIndex),
+                                                 new XElement(SpecPositionsElement,
+                                                              spec.Positions.ZipWithIndex(PositionToElement)
+                                                 )));
             }
 
-            private static XElement PlayerToXml(IPlayer player, int id) {
+            private static XElement PlayerToElement(IPlayer player, int id) {
                 return new XElement(PlayerElement,
-                    new XAttribute("color", player.Color.ToArgb()),
-                    new XAttribute("name", player.Name),
-                    new XAttribute("type", player is AiPlayer ai1 ? AiTypes[ai1.Level] : "human")
+                                    new XAttribute("color", player.Color.ToArgb()),
+                                    new XAttribute("name", player.Name),
+                                    new XAttribute("type", player is AiPlayer ai1 ? AiTypes[ai1.Level] : "human")
                 );
             }
 
             private static XElement PositionToElement(Position2D p, int idx) {
                 return new XElement(PositionElement,
-                    new XAttribute("x", p.X),
-                    new XAttribute("y", p.Y),
-                    new XAttribute("idx", idx));
+                                    new XAttribute("x", p.X),
+                                    new XAttribute("y", p.Y),
+                                    new XAttribute("idx", idx));
             }
 
             private static XElement RootToElement(RootMemento memento) {
-                var specs = memento.Specs.Zip((1, 2), PlayerSpecToXml);
+                var specs = memento.Specs.Zip((1, 2), PlayerSpecToElement);
                 return new XElement(RootMementoElement,
-                    new XAttribute("boardSize", memento.BoardSize),
-                    new XAttribute("firstPlayer", memento.IsFirstPlayerPlaying),
-                    new XElement(PlayersElement,
-                        specs.Item1,
-                        specs.Item2));
+                                    new XAttribute("boardSize", memento.BoardSize),
+                                    new XAttribute("firstPlayer", memento.IsFirstPlayerPlaying),
+                                    new XElement(PlayersElement,
+                                                 specs.Item1,
+                                                 specs.Item2));
             }
 
 
             private static XElement NodeToElement(MementoNode node, int idx) {
                 var elem = new XElement(MoveElement,
-                    new XAttribute("type", ActionTypes[node.Action.GetType()]),
-                    new XAttribute("idx", idx)
+                                        new XAttribute("type", ActionTypes[node.Action.GetType()]),
+                                        new XAttribute("idx", idx)
                 );
 
                 if (node.Action is MoveAction move) {
                     elem.Add(new XElement(MoveParamsElement,
-                        PositionToElement(move.Src, 0),
-                        PositionToElement(move.Dst, 1)
-                    ));
+                                          PositionToElement(move.Src, 0),
+                                          PositionToElement(move.Dst, 1)
+                             ));
                 }
                 return elem;
             }
@@ -164,7 +164,8 @@ namespace Diaballik.Players {
             private static RootMemento RootFromElement(XElement rootElem) {
                 var isFirstPlayerPlaying = bool.Parse(rootElem.Attribute("firstPlayer").Value);
                 var boardSize = int.Parse(rootElem.Attribute("boardSize").Value);
-                var boardSpecs = rootElem.Elements(PlayerBoardSpecElement)
+                var boardSpecs = rootElem.Element(PlayersElement)
+                                         .Elements(PlayerBoardSpecElement)
                                          .Select(PlayerSpecFromElement)
                                          .SortAndUnzip().ToTuple();
                 return new RootMemento(boardSpecs, boardSize, isFirstPlayerPlaying);

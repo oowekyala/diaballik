@@ -22,7 +22,7 @@ namespace Diaballik.Core {
         public GameMemento Memento { get; private set; }
 
         /// Current state of the game
-        public GameState State => Memento.ToGame(); // PlayerAction.UpdateState(GameState) is called lazily in that method
+        public GameState State => Memento.ToState(); // PlayerAction.UpdateState(GameState) is called lazily in that method
 
         // Only to initialise the game
         private Game(int size, FullPlayerSpecPair specs, bool isFirstPlayerPlaying) {
@@ -62,7 +62,7 @@ namespace Diaballik.Core {
         ///     If the move is invalid. The action's validity should be verified upstream.
         /// </exception>
         public void Update(PlayerAction action) {
-            if (action.IsMoveValid(State)) {
+            if (action.IsValidOn(State)) {
                 Memento = Memento.Append(action);
             } else {
                 throw new ArgumentException("Invalid move: " + action);

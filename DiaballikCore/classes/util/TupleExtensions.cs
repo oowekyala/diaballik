@@ -13,6 +13,7 @@ namespace Diaballik.Core.Util {
 
         public static (A, A) ToTuple<A>(this IEnumerable<A> l) {
             var it = l.GetEnumerator();
+            it.MoveNext();
             var a0 = it.Current;
             it.MoveNext();
             var a1 = it.Current;
