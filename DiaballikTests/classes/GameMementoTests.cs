@@ -61,5 +61,10 @@ namespace Diaballik.Tests {
 
             Assert.AreEqual(memento, deserializer.FromDocument(serializer.ToXml(memento)));
         }
+
+        [TearDown]
+        public void PrintStats() {
+            TestUtil.PrintStats();
+        }
     }
 }

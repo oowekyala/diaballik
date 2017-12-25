@@ -71,11 +71,11 @@ namespace Diaballik.Tests {
             positionsTuple.Foreach(ps => Assert.AreEqual(size, ps.Count));
 
             positionsTuple.Zip((size - 1, 0))
-                .Foreach(t => {
-                    var (ps, row) = t;
-                    Assert.AreEqual(size - 2, ps.Count(p => p.X == row)); // friend row
-                    Assert.AreEqual(2, ps.Count(p => p.X == size - 1 - row)); // enemy row
-                });
+                          .Foreach(t => {
+                              var (ps, row) = t;
+                              Assert.AreEqual(size - 2, ps.Count(p => p.X == row)); // friend row
+                              Assert.AreEqual(2, ps.Count(p => p.X == size - 1 - row)); // enemy row
+                          });
 
             // ball carriers are middle pieces, in friend row
             game.State.BallCarrierPair

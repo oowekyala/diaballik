@@ -53,7 +53,8 @@ namespace Diaballik.Tests {
         /// <param name="board">The board described by the test case</param>
         /// <param name="expectedp1">Expected reachable positions of the player 1's ball</param>
         /// <param name="expectedp2">Expected reachable positions of the player 2's ball</param>
-        private static void TestCaseAssert(GameBoard board, IList<Position2D> expectedp1, IList<Position2D> expectedp2) {
+        private static void TestCaseAssert(GameBoard board, IList<Position2D> expectedp1,
+            IList<Position2D> expectedp2) {
             board.BallCarrierPair
                  .Map(board.MovesForBall)
                  .Zip((expectedp1, expectedp2))

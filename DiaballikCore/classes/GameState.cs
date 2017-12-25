@@ -20,8 +20,8 @@ namespace Diaballik.Core {
 
 
         // Called to build an initial state
-        private GameState(int size, FullPlayerSpecPair specs, bool isFirstPlayerPlaying) 
-            : base( GameBoard.Create(size, specs)) {
+        private GameState(int size, FullPlayerSpecPair specs, bool isFirstPlayerPlaying)
+            : base(GameBoard.Create(size, specs)) {
             CurrentPlayer = isFirstPlayerPlaying ? Player1 : Player2;
         }
 
@@ -80,9 +80,9 @@ namespace Diaballik.Core {
 
 
         private bool Equals(GameState other) {
-            return UnderlyingBoard.Equals(other.UnderlyingBoard) 
-                && NumMovesLeft == other.NumMovesLeft 
-                && CurrentPlayer.Equals(other.CurrentPlayer);
+            return UnderlyingBoard.Equals(other.UnderlyingBoard)
+                   && NumMovesLeft == other.NumMovesLeft
+                   && CurrentPlayer.Equals(other.CurrentPlayer);
         }
 
 
@@ -112,8 +112,11 @@ namespace Diaballik.Core {
         }
 
         public override string ToString() {
-            return $"GameState(numMovesLeft: {NumMovesLeft}, player: {CurrentPlayer}) {{\n{UnderlyingBoard.ToString().PadLeft(4)}\n}}";
+            return $"GameState(numMovesLeft: {NumMovesLeft}, player: {CurrentPlayer})";
+        }
 
+        public string FullDescription() {
+            return $"{this} {{\n{UnderlyingBoard.ToString().PadLeft(4)}\n}}";
         }
     }
 }

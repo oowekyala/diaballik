@@ -104,5 +104,10 @@ namespace Diaballik.Tests {
 
             AssertThatPlayerHasChanged(before, after);
         }
+
+        [TearDown]
+        public void PrintStats() {
+            TestUtil.PrintStats();
+        }
     }
 }

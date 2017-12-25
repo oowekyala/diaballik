@@ -52,8 +52,5 @@ namespace Diaballik.Core {
             return new Position2D(x, y);
         }
 
-        public (int, int) ToTuple() {
-            return (X, Y);
-        }
     }
 }
