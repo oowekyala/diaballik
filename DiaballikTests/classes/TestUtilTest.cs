@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using static Diaballik.Tests.TestUtil;
+using static Diaballik.Tests.MockUtil;
 
 namespace Diaballik.Tests {
     // Not intended as extensive tests, mainly for debugging

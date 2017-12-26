@@ -10,6 +10,8 @@ namespace Diaballik.Core {
     ///     without breaking encapsulation.
     /// </summary>
     public abstract class BoardLike {
+        #region Abstract members
+
         public abstract int BoardSize { get; }
 
         public abstract IPlayer Player1 { get; }
@@ -34,13 +36,9 @@ namespace Diaballik.Core {
         /// <returns>The player, or null</returns>
         public abstract IPlayer PlayerOn(Position2D p);
 
-        /// <summary>
-        ///     Returns true if the position is on the board.
-        /// </summary>
-        public bool IsOnBoard(Position2D p) {
-            return p.X >= 0 && p.X < BoardSize
-                   && p.Y >= 0 && p.Y < BoardSize;
-        }
+        #endregion
+
+        #region Added properties
 
         /// <summary>
         ///     An ordered pair of the positions of the pieces of each player.
@@ -53,41 +51,49 @@ namespace Diaballik.Core {
         /// </summary>
         public (Position2D, Position2D) BallCarrierPair => (BallCarrier1, BallCarrier2);
 
+        #endregion
 
-        /// <summary>
-        ///     Returns the opponent of the specified player.
-        /// </summary>
-        /// <exception cref="ArgumentException">If the player is unknown</exception>
-        public IPlayer GetOtherPlayer(IPlayer player) {
+        #region Properties depending on the player
+
+        private T GetPlayerProperty<T>(IPlayer player, (T, T) choices) {
             return player == Player1
-                ? Player2
+                ? choices.Item1
                 : player == Player2
-                    ? Player1
+                    ? choices.Item2
                     : throw new ArgumentException("Unknown player");
         }
-
-
-        /// <summary>
-        ///     Returns true if the position is that of one of the
-        ///     ball carriers.
-        /// </summary>
-        public bool HasBall(Position2D p) {
-            return p == BallCarrier1 || p == BallCarrier2;
-        }
-
 
         /// <summary>
         ///     Gets the positions of the pieces of a player.
         /// </summary>
         /// <exception cref="ArgumentException">If the player is unknown</exception>
         public IEnumerable<Position2D> PositionsForPlayer(IPlayer player) {
-            return player == Player1
-                ? Player1Positions
-                : player == Player2
-                    ? Player2Positions
-                    : throw new ArgumentException("Unknown player");
+            return GetPlayerProperty(player, PositionsPair);
         }
 
+
+        /// <summary>
+        ///     Gets the position of the piece carrying the ball of a player.
+        /// </summary>
+        /// <exception cref="ArgumentException">If the player is not recognised</exception>
+        public Position2D BallCarrierForPlayer(IPlayer player) {
+            return GetPlayerProperty(player, BallCarrierPair);
+        }
+
+
+        /// <summary>
+        ///     Returns the opponent of the specified player.
+        /// </summary>
+        /// <exception cref="ArgumentException">If the player is unknown</exception>
+        public IPlayer GetOtherPlayer(IPlayer player) {
+            return GetPlayerProperty(player, (Player2, Player1));
+        }
+
+
+        // Gets the index of the starting row of a player. Used to check for victory
+        protected int GetRowIndexOfInitialLine(IPlayer player) {
+            return GetPlayerProperty(player, (BoardSize - 1, 0));
+        }
 
         /// <summary>
         ///     Returns true if the given player is victorious in the current
@@ -99,15 +105,26 @@ namespace Diaballik.Core {
                 .Any(i => BoardSize - 1 - GetRowIndexOfInitialLine(player) == i);
         }
 
+        #endregion
 
-        // Gets the index of the starting row of a player. Used to check for victory
-        protected int GetRowIndexOfInitialLine(IPlayer player) {
-            return player == Player1
-                ? BoardSize - 1
-                : player == Player2
-                    ? 0
-                    : throw new ArgumentException("Unknown player");
+        #region Other methods
+
+        /// <summary>
+        ///     Returns true if the position is on the board.
+        /// </summary>
+        public bool IsOnBoard(Position2D p) {
+            return p.X >= 0 && p.X < BoardSize
+                   && p.Y >= 0 && p.Y < BoardSize;
         }
+
+        /// <summary>
+        ///     Returns true if the position is that of one of the
+        ///     ball carriers.
+        /// </summary>
+        public bool HasBall(Position2D p) {
+            return p == BallCarrier1 || p == BallCarrier2;
+        }
+
 
         /// <summary>
         ///     Returns true if there is a piece-free vertical, horizontal, or diagonal line
@@ -151,18 +168,7 @@ namespace Diaballik.Core {
             return deltaX == deltaY && xs.Zip(dX * dY > 0 ? ys : ys.Reverse(), Position2D.New).All(IsFree); // diagonal
         }
 
-
-        /// <summary>
-        ///     Gets the position of the piece carrying the ball of a player.
-        /// </summary>
-        /// <exception cref="ArgumentException">If the player is not recognised</exception>
-        public Position2D BallCarrierForPlayer(IPlayer player) {
-            return player == Player1
-                ? BallCarrier1
-                : player == Player2
-                    ? BallCarrier2
-                    : throw new ArgumentException("Unknown player");
-        }
+        #endregion
     }
 
     /// <summary>
@@ -171,7 +177,21 @@ namespace Diaballik.Core {
     /// </summary>
     /// <typeparam name="T">Concrete type of board this decorator decorates</typeparam>
     public abstract class BoardLikeDecorator<T> : BoardLike where T : BoardLike {
+        #region Protected property
+
         protected readonly T UnderlyingBoard;
+
+        #endregion
+
+        #region Constructor
+
+        protected BoardLikeDecorator(T underlyingBoard) {
+            UnderlyingBoard = underlyingBoard;
+        }
+
+        #endregion
+
+        #region Delegated members
 
         public override IEnumerable<Position2D> Player1Positions => UnderlyingBoard.Player1Positions;
         public override IEnumerable<Position2D> Player2Positions => UnderlyingBoard.Player2Positions;
@@ -183,8 +203,6 @@ namespace Diaballik.Core {
         public override bool IsFree(Position2D p) => UnderlyingBoard.IsFree(p);
         public override IPlayer PlayerOn(Position2D p) => UnderlyingBoard.PlayerOn(p);
 
-        protected BoardLikeDecorator(T underlyingBoard) {
-            UnderlyingBoard = underlyingBoard;
-        }
+        #endregion
     }
 }

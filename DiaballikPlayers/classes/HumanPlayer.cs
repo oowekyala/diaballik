@@ -15,7 +15,7 @@ namespace Diaballik.Players {
         public override bool IsAi { get; } = false;
 
 
-        public override PlayerAction GetNextMove(GameBoard board) {
+        public override IPlayerAction GetNextMove(GameBoard board) {
             throw new NotImplementedException();
         }
 

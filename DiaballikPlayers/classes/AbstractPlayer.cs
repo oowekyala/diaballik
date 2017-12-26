@@ -2,17 +2,11 @@
 using Diaballik.Core;
 
 namespace Diaballik.Players {
-
     /// <summary>
     ///     Base class for players.
     /// </summary>
     public abstract class AbstractPlayer : IPlayer {
-
-        protected AbstractPlayer(Color color, string name) {
-            Color = color;
-            Name = name;
-        }
-
+        #region Overridden properties
 
         public Color Color { get; }
 
@@ -20,7 +14,20 @@ namespace Diaballik.Players {
 
         public abstract bool IsAi { get; }
 
-        public abstract PlayerAction GetNextMove(GameBoard board);
+        #endregion
+
+        #region Base constructor
+
+        protected AbstractPlayer(Color color, string name) {
+            Color = color;
+            Name = name;
+        }
+
+        #endregion
+
+        #region Methods
+
+        public abstract IPlayerAction GetNextMove(GameBoard board);
 
         // Partial implementation, to be completed by derived classes
         public virtual PlayerBuilder ToBuilder() => new PlayerBuilder {
@@ -31,6 +38,10 @@ namespace Diaballik.Players {
         public override string ToString() {
             return $"Player(type: {GetType().Name}, color: {ColorTranslator.ToHtml(Color)}, name: {Name})";
         }
+
+        #endregion
+
+        #region Equality members
 
         protected bool Equals(AbstractPlayer other) {
             return Color.Equals(other.Color) && string.Equals(Name, other.Name);
@@ -56,5 +67,7 @@ namespace Diaballik.Players {
         public static bool operator !=(AbstractPlayer left, AbstractPlayer right) {
             return !Equals(left, right);
         }
+
+        #endregion
     }
 }

@@ -6,7 +6,7 @@ using Diaballik.AlgoLib;
 using Diaballik.Core;
 using Diaballik.Core.Util;
 using NUnit.Framework;
-using static Diaballik.Tests.TestUtil;
+using static Diaballik.Tests.MockUtil;
 
 namespace Diaballik.Tests {
     [TestFixture]
@@ -47,6 +47,27 @@ namespace Diaballik.Tests {
             return neighbours.Where(board.IsOnBoard).Where(board.IsFree);
         }
 
+
+        [Test]
+        // this is not so much a reference benchmark as a way to check that IsLineFreeBetween and MovesForBall are in sync.
+        public void TestMovesForBall([Range(3, 17)] int size) {
+            var specs = DummyPlayerSpecPair(size);
+            var board = GameBoard.Create(size, specs);
+
+            // Console.WriteLine(board); // to generate test cases
+            // Console.WriteLine(GenerateTestCase(size, specs.Map(s => s.Positions)));
+
+            board.BallCarrierPair
+                 .Foreach(p => CollectionAssert.AreEquivalent(MovesForBallReference(board, p).ToList(),
+                                                              board.MovesForBall(p).ToList(), "{0}\n{1}", p));
+        }
+
+        private static IEnumerable<Position2D> MovesForBallReference(GameBoard board, Position2D src) {
+            return board.PositionsForPlayer(board.PlayerOn(src))
+                        .Where(dst => src != dst)
+                        .Where(dst => board.IsLineFreeBetween(src, dst));
+        }
+
         /// <summary>
         ///    Assertions for a generated test case. Called by the test case when it's done constructing the board.
         /// </summary>
@@ -64,6 +85,9 @@ namespace Diaballik.Tests {
                  .Zip((expectedp1, expectedp2))
                  .Foreach(t => CollectionAssert.AreEquivalent(t.Item2, t.Item1, "MovesForBallReference failed"));
         }
+
+
+        #region Generated test cases for MoveBall tests
 
         //     0  1  2  3  4  5  6
         //  0        o  x         
@@ -393,26 +417,7 @@ namespace Diaballik.Tests {
             TestCaseAssert(board, expectedp1, expectedp2);
         }
 
-
-        [Test]
-        // this is not so much a reference benchmark as a way to check that IsLineFreeBetween and MovesForBall are in sync.
-        public void TestMovesForBall([Range(3, 17)] int size) {
-            var specs = DummyPlayerSpecPair(size);
-            var board = GameBoard.Create(size, specs);
-
-            // Console.WriteLine(board); // to generate test cases
-            // Console.WriteLine(GenerateTestCase(size, specs.Map(s => s.Positions)));
-
-            board.BallCarrierPair
-                 .Foreach(p => CollectionAssert.AreEquivalent(MovesForBallReference(board, p).ToList(),
-                                                              board.MovesForBall(p).ToList(), "{0}\n{1}", p));
-        }
-
-        private static IEnumerable<Position2D> MovesForBallReference(GameBoard board, Position2D src) {
-            return board.PositionsForPlayer(board.PlayerOn(src))
-                        .Where(dst => src != dst)
-                        .Where(dst => board.IsLineFreeBetween(src, dst));
-        }
+        #endregion
 
 
         // Generates the code for a complete test case using 
@@ -420,7 +425,7 @@ namespace Diaballik.Tests {
         private static string GenerateTestCase(int size, (IList<Position2D>, IList<Position2D>) specs) {
             var sb = new StringBuilder();
             sb.AppendLine("[Test]")
-              .Append("public void TestMoveBallScenario").Append(TestUtil.Rng.Next()).AppendLine("(){")
+              .Append("public void TestMoveBallScenario").Append(MockUtil.Rng.Next()).AppendLine("(){")
               .Append("const int size = ").Append(size).AppendLine(";")
               .AppendLine("var p1 = new List<Position2D> {");
 

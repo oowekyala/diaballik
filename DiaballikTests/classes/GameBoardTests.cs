@@ -2,7 +2,7 @@
 using Diaballik.Core;
 using Diaballik.Core.Util;
 using NUnit.Framework;
-using static Diaballik.Tests.TestUtil;
+using static Diaballik.Tests.MockUtil;
 
 namespace Diaballik.Tests {
     [TestFixture]

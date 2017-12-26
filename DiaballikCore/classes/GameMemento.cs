@@ -19,38 +19,50 @@ namespace Diaballik.Core {
     ///     hashes (think Git commit hash).
     /// </summary>
     public abstract class GameMemento {
+        #region Properties
+
         /// <summary>
         ///     Gets the previous memento. Returns null if this is the root.
         /// </summary>
         /// <returns>The parent memento</returns>
         public GameMemento Parent { get; }
 
+        #endregion
+
+        #region Base constructor
 
         protected GameMemento(GameMemento parent) {
             Parent = parent;
         }
 
+        #endregion
 
-        /// <summary>
-        ///     Gets a new memento based on this one.
-        /// </summary>
-        /// <param name="action">The transition from this memento to the result</param>
-        /// <returns>A new memento with this as its parent</returns>
-        public MementoNode Append(PlayerAction action) {
-            switch (action) {
-                case UndoAction undo:
-                    return new UndoMementoNode(this, undo);
-                case UpdateAction up:
-                    return new ActionMementoNode(this, up);
-                default: throw new ArgumentOutOfRangeException();
-            }
-        }
+        #region Abstract members
 
         /// <summary>
         ///     Turns this memento into a GameState.
         /// </summary>
         /// <returns>A game corresponding to this memento</returns>
         public abstract GameState ToState();
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        ///     Gets a new memento based on this one.
+        /// </summary>
+        /// <param name="action">The transition from this memento to the result</param>
+        /// <returns>A new memento with this as its parent</returns>
+        public MementoNode Append(IPlayerAction action) {
+            switch (action) {
+                case UndoAction undo:
+                    return new UndoMementoNode(this, undo);
+                case IUpdateAction up:
+                    return new ActionMementoNode(this, up);
+                default: throw new ArgumentOutOfRangeException();
+            }
+        }
 
 
         /// <summary>
@@ -69,6 +81,15 @@ namespace Diaballik.Core {
             return ((RootMemento) cur, nodes);
         }
 
+        /// Returns a description of this memento and its parents, if any.
+        public string FullAncestryString() {
+            return $"{this}\n{Parent?.ToString() ?? ""}";
+        }
+
+        #endregion
+
+        #region Equality members
+
         protected bool Equals(GameMemento other) {
             return Equals(Parent, other.Parent);
         }
@@ -81,13 +102,18 @@ namespace Diaballik.Core {
         }
 
         public override int GetHashCode() {
-            return (Parent != null ? Parent.GetHashCode() : 0);
+            return Parent != null ? Parent.GetHashCode() : 0;
         }
 
-        /// Returns a description of this memento and its parents, if any.
-        public string FullAncestryString() {
-            return $"{this}\n{Parent?.ToString() ?? ""}";
+        public static bool operator ==(GameMemento left, GameMemento right) {
+            return Equals(left, right);
         }
+
+        public static bool operator !=(GameMemento left, GameMemento right) {
+            return !Equals(left, right);
+        }
+
+        #endregion
     }
 
 
@@ -98,12 +124,30 @@ namespace Diaballik.Core {
     ///     this one as a PlayerAction.
     /// </summary>
     public abstract class MementoNode : GameMemento {
-        /// Action to perform on the previous state to get this state
-        public PlayerAction Action { get; }
+        #region Properties
 
-        protected MementoNode(GameMemento previous, PlayerAction action) : base(previous) {
+        /// Action to perform on the previous state to get this state
+        public IPlayerAction Action { get; }
+
+        #endregion
+
+        #region Constructor
+
+        protected MementoNode(GameMemento previous, IPlayerAction action) : base(previous) {
             Action = action;
         }
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString() {
+            return $"MementoNode({Action})"; // displaying all the parents was cumbersome
+        }
+
+        #endregion
+
+        #region Equality members
 
         protected bool Equals(MementoNode other) {
             return Action.Equals(other.Action) && base.Equals(other);
@@ -120,26 +164,45 @@ namespace Diaballik.Core {
             return Action.GetHashCode();
         }
 
-        public override string ToString() {
-            return $"MementoNode({Action})"; // displaying all the parents was cumbersome
+        public static bool operator ==(MementoNode left, MementoNode right) {
+            return Equals(left, right);
         }
+
+        public static bool operator !=(MementoNode left, MementoNode right) {
+            return !Equals(left, right);
+        }
+
+        #endregion
     }
 
     /// <summary>
     ///     Specialises MementoNode for an update action.
     /// </summary>
-    public class ActionMementoNode : MementoNode {
+    public sealed class ActionMementoNode : MementoNode {
+        #region Properties
+
+        public new IUpdateAction Action => (IUpdateAction) base.Action;
+
+        #endregion
+
+        #region Constructor
+
+        public ActionMementoNode(GameMemento previous, IUpdateAction action) : base(previous, action) {
+        }
+
+        #endregion
+
+        #region Methods
+
         /// Cached game state
         private GameState _thisGameState;
 
 
-        public ActionMementoNode(GameMemento previous, UpdateAction action) : base(previous, action) {
-        }
-
-
         public override GameState ToState() {
-            return _thisGameState ?? (_thisGameState = ((UpdateAction) Action).UpdateState(Parent.ToState()));
+            return _thisGameState ?? (_thisGameState = Action.UpdateState(Parent.ToState()));
         }
+
+        #endregion
     }
 
 
@@ -149,14 +212,27 @@ namespace Diaballik.Core {
     ///     handling because we don't create a new state when undoing, 
     ///     we delegate the call to ToState on a previous node.
     /// </summary>
-    public class UndoMementoNode : MementoNode {
+    public sealed class UndoMementoNode : MementoNode {
+        #region Properties
+
+        public new UndoAction Action => (UndoAction) base.Action;
+
+        #endregion
+
+        #region Constructor
+
         public UndoMementoNode(GameMemento memento, UndoAction undoAction) : base(memento, undoAction) {
         }
 
+        #endregion
+
+        #region Methods
 
         public override GameState ToState() {
             return Parent.Parent.ToState();
         }
+
+        #endregion
     }
 
 
@@ -164,17 +240,19 @@ namespace Diaballik.Core {
     /// <summary>
     ///     Contains enough info to build the initial state of the game. Has no parent.
     /// </summary>
-    public class RootMemento : GameMemento {
-        public readonly int BoardSize;
-        public readonly bool IsFirstPlayerPlaying;
-        public readonly FullPlayerSpecPair Specs;
+    public sealed class RootMemento : GameMemento {
+        #region Properties
+
+        public int BoardSize { get; }
+        public bool IsFirstPlayerPlaying { get; }
+        public FullPlayerSpecPair Specs { get; }
 
         public IPlayer Player1 => Specs.Item1.Player;
         public IPlayer Player2 => Specs.Item2.Player;
 
-        // Cached state
-        private GameState _initialState;
+        #endregion
 
+        #region Constructor
 
         public RootMemento(FullPlayerSpecPair specs, int boardSize, bool isFirstPlayerPlaying) : base(null) {
             IsFirstPlayerPlaying = isFirstPlayerPlaying;
@@ -182,12 +260,24 @@ namespace Diaballik.Core {
             Specs = specs;
         }
 
+        #endregion
+
+        #region Methods
+
+        // Cached state
+        private GameState _initialState;
 
         public override GameState ToState() {
             return _initialState ?? (_initialState = GameState.InitialState(BoardSize, Specs, IsFirstPlayerPlaying));
         }
 
-        // equality members
+        public override string ToString() {
+            return "Root Memento";
+        }
+
+        #endregion
+
+        #region Equality members
 
         protected bool Equals(RootMemento other) {
             return BoardSize == other.BoardSize
@@ -211,8 +301,14 @@ namespace Diaballik.Core {
             }
         }
 
-        public override string ToString() {
-            return "Root Memento";
+        public static bool operator ==(RootMemento left, RootMemento right) {
+            return Equals(left, right);
         }
+
+        public static bool operator !=(RootMemento left, RootMemento right) {
+            return !Equals(left, right);
+        }
+
+        #endregion
     }
 }

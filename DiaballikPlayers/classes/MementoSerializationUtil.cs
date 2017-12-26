@@ -14,6 +14,8 @@ namespace Diaballik.Players {
     ///    Reader and writer are kept together for encapsulation and better maintainability.
     /// </summary>
     public static class MementoSerializationUtil {
+        #region XML name constants
+
         private const string DocElement = "game";
         private const string MoveHistoryElement = "history";
         private const string MoveElement = "action";
@@ -31,6 +33,9 @@ namespace Diaballik.Players {
         private const string PassToken = "pass";
         private const string UndoToken = "undo";
 
+        #endregion
+
+        #region Name dictionaries
 
         // decouples class name from xml representation
         private static readonly Dictionary<Type, string> ActionTypes = new Dictionary<Type, string> {
@@ -47,10 +52,15 @@ namespace Diaballik.Players {
                 {AiLevel.Progressive, "progressiveAi"},
             };
 
+        #endregion
+
+
         /// <summary>
         ///     Serializes GameMemento into an XML document.
         /// </summary>
         public class Serializer {
+            #region Public interface
+
             public XDocument ToXml(GameMemento memento) {
                 var (mementoRoot, nodes) = memento.Deconstruct();
 
@@ -60,6 +70,9 @@ namespace Diaballik.Players {
                                                                nodes.ZipWithIndex(NodeToElement))));
             }
 
+            #endregion
+
+            #region Private conversion methods
 
             private static XElement PlayerSpecToElement(FullPlayerBoardSpec spec, int id) {
                 return new XElement(PlayerBoardSpecElement,
@@ -112,6 +125,8 @@ namespace Diaballik.Players {
                 }
                 return elem;
             }
+
+            #endregion
         }
 
         /// <summary>
@@ -119,6 +134,8 @@ namespace Diaballik.Players {
         ///     into an equivalent GameMemento.
         /// </summary>
         public class Deserializer {
+            #region Public interface
+
             public GameMemento FromDocument(XDocument doc) {
                 var root = RootFromElement(doc.Element(DocElement).Element(RootMementoElement));
                 return doc.Element(DocElement)
@@ -128,10 +145,14 @@ namespace Diaballik.Players {
                           .Aggregate((GameMemento) root, NodeFromElement);
             }
 
+            #endregion
+
+            #region Private conversion methods
+
             private static MementoNode NodeFromElement(GameMemento previous, XElement element) {
                 var type = element.Attribute("type").Value;
 
-                PlayerAction action;
+                IPlayerAction action;
                 switch (type) {
                     case MoveBallToken: {
                         var (src, dst) = MoveActionParamsFromElement(element.Element(MoveParamsElement));
@@ -208,6 +229,8 @@ namespace Diaballik.Players {
                 var idx = int.Parse(element.Attribute("idx").Value);
                 return (new Position2D(x, y), idx);
             }
+
+            #endregion
         }
     }
 }

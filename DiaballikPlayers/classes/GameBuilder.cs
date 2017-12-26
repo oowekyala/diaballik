@@ -8,9 +8,15 @@ namespace Diaballik.Players {
     ///     Builds a game, enforcing the correctness of its arguments throughout the process.
     /// </summary>
     public class GameBuilder {
+        #region Private fields
+
         private readonly PlayerBuilder _playerBuilder1 = new PlayerBuilder();
         private readonly PlayerBuilder _playerBuilder2 = new PlayerBuilder();
         private int _size = 7;
+
+        #endregion
+
+        #region Properties and setters
 
         /// Determines where the pieces of each player will be initialised.
         public IInitStrategy InitStrategy { get; set; } = new StandardInitStrategy();
@@ -29,6 +35,9 @@ namespace Diaballik.Players {
             return this;
         }
 
+        #endregion
+
+        #region Build method
 
         /// <summary>
         ///     Builds and returns the game specified by this builder.
@@ -41,5 +50,7 @@ namespace Diaballik.Players {
 
             return Game.Init(Size, specs);
         }
+
+        #endregion
     }
 }

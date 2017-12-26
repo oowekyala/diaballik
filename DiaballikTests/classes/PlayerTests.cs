@@ -22,7 +22,7 @@ namespace Diaballik.Tests {
         [Test]
         public void TestIPlayerMembers() {
             // tests that the members of *IPlayer* are correctly set
-            var player = TestUtil.DummyPlayer(Color.Aqua, "dummy");
+            var player = MockUtil.DummyPlayer(Color.Aqua, "dummy");
             Assert.AreEqual(player.Color, Color.Aqua);
             Assert.AreEqual(player.Name, "dummy");
         }

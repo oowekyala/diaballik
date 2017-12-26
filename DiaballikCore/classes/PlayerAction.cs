@@ -5,14 +5,14 @@ namespace Diaballik.Core {
     /// <summary>
     ///     Represents an action the player can carry out during their turn.
     /// </summary>
-    public abstract class PlayerAction {
+    public interface IPlayerAction {
         /// <summary>
         ///     Returns true if the move is valid, in the context of 
         ///     the specified state.
         /// </summary>
         /// <param name="state">The context of the move</param>
         /// <returns>True if the move is valid</returns>
-        public abstract bool IsValidOn(GameState state);
+        bool IsValidOn(GameState state);
     }
 
 
@@ -21,13 +21,13 @@ namespace Diaballik.Core {
     ///     Action that can update the game's state. Undo is excluded from this
     ///     category, as it's implemented by state switch in Game.
     /// </summary>
-    public abstract class UpdateAction : PlayerAction {
+    public interface IUpdateAction : IPlayerAction {
         /// <summary>
         ///     Updates the given current state with this action.
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
-        public abstract GameState UpdateState(GameState state);
+        GameState UpdateState(GameState state);
     }
 
 
@@ -35,10 +35,15 @@ namespace Diaballik.Core {
     /// <summary>
     ///     Base class for MovePiece and MoveBall.
     /// </summary>
-    public abstract class MoveAction : UpdateAction {
+    public abstract class MoveAction : IUpdateAction {
+        #region Properties
+
         public Position2D Src { get; }
         public Position2D Dst { get; }
 
+        #endregion
+
+        #region Base constructor
 
         protected MoveAction(Position2D src, Position2D dst) {
             if (src == dst) throw new ArgumentException("Illegal: cannot move to the same piece");
@@ -46,10 +51,25 @@ namespace Diaballik.Core {
             Dst = dst;
         }
 
+        #endregion
 
-        public abstract override GameState UpdateState(GameState state);
+        #region Unimplemented interface methods
 
-        public abstract override bool IsValidOn(GameState state);
+        public abstract GameState UpdateState(GameState state);
+
+        public abstract bool IsValidOn(GameState state);
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString() {
+            return $"{GetType().Name}(src: {Src}, dst: {Dst})";
+        }
+
+        #endregion
+
+        #region Equality members
 
         protected bool Equals(MoveAction other) {
             return Src.Equals(other.Src) && Dst.Equals(other.Dst);
@@ -68,10 +88,15 @@ namespace Diaballik.Core {
             }
         }
 
-
-        public override string ToString() {
-            return $"{GetType().Name}(src: {Src}, dst: {Dst})";
+        public static bool operator ==(MoveAction left, MoveAction right) {
+            return Equals(left, right);
         }
+
+        public static bool operator !=(MoveAction left, MoveAction right) {
+            return !Equals(left, right);
+        }
+
+        #endregion
     }
 
 
@@ -80,8 +105,19 @@ namespace Diaballik.Core {
     ///     Move the ball to another piece.
     /// </summary>
     public class MoveBallAction : MoveAction {
+        #region Constructor and factory
+
         private MoveBallAction(Position2D src, Position2D dst) : base(src, dst) {
         }
+
+        // can be used as method group
+        public static MoveBallAction New(Position2D src, Position2D dst) {
+            return new MoveBallAction(src, dst);
+        }
+
+        #endregion
+
+        #region Overridden methods
 
         // [R21_9_GAMEPLAY_MOVE_BALL]
         // A ball carried by a piece shall be moved to another piece 
@@ -99,10 +135,7 @@ namespace Diaballik.Core {
             return state.MoveBall(Src, Dst);
         }
 
-        // can be used as method group
-        public static MoveBallAction New(Position2D src, Position2D dst) {
-            return new MoveBallAction(src, dst);
-        }
+        #endregion
     }
 
 
@@ -111,8 +144,19 @@ namespace Diaballik.Core {
     ///     Move a piece to a new location.
     /// </summary>
     public class MovePieceAction : MoveAction {
+        #region Constructor and factory
+
         private MovePieceAction(Position2D src, Position2D dst) : base(src, dst) {
         }
+
+        // can be used as method group
+        public static MovePieceAction New(Position2D src, Position2D dst) {
+            return new MovePieceAction(src, dst);
+        }
+
+        #endregion
+
+        #region Overridden methods
 
         // [R21_11_GAMEPLAY_MOVE_PIECE_WITH_BALL]
         // A piece shall not move if it carries the ball.
@@ -134,33 +178,7 @@ namespace Diaballik.Core {
             return state.MovePiece(Src, Dst);
         }
 
-        // can be used as method group
-        public static MovePieceAction New(Position2D src, Position2D dst) {
-            return new MovePieceAction(src, dst);
-        }
-    }
-
-
-    /// <inheritdoc />
-    /// <summary>
-    ///     Undo the last action of the player.
-    /// </summary>
-    public class UndoAction : PlayerAction {
-        public override bool IsValidOn(GameState state) {
-            return state.NumMovesLeft < Game.MaxMovesPerTurn; // can only undo actions the player has played himself
-        }
-
-        public override string ToString() {
-            return "UndoAction";
-        }
-
-        public override bool Equals(object obj) {
-            return null != obj && obj.GetType() == GetType();
-        }
-
-        public override int GetHashCode() {
-            return GetType().GetHashCode();
-        }
+        #endregion
     }
 
 
@@ -168,21 +186,27 @@ namespace Diaballik.Core {
     /// <summary>
     ///     End the turn and give initiative to the other player prematurely.
     /// </summary>
-    public class PassAction : UpdateAction {
+    public class PassAction : IUpdateAction {
+        #region Overridden methods
+
         // [R21_8_GAMEPLAY_ACTIONS]
         // A player shall do one to three actions per turn.
-        public override bool IsValidOn(GameState state) {
+        public bool IsValidOn(GameState state) {
             return state.NumMovesLeft < Game.MaxMovesPerTurn; // at least one move has been played
         }
 
 
-        public override GameState UpdateState(GameState state) {
+        public GameState UpdateState(GameState state) {
             return state.Pass();
         }
 
         public override string ToString() {
             return "PassAction";
         }
+
+        #endregion
+
+        #region Equality members
 
         protected bool Equals(PassAction other) {
             return true;
@@ -195,5 +219,57 @@ namespace Diaballik.Core {
         public override int GetHashCode() {
             return GetType().GetHashCode();
         }
+
+        public static bool operator ==(PassAction left, PassAction right) {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(PassAction left, PassAction right) {
+            return !Equals(left, right);
+        }
+
+        #endregion
+    }
+
+    /// <inheritdoc />
+    /// <summary>
+    ///     Undo the last action of the player.
+    /// </summary>
+    public class UndoAction : IPlayerAction {
+        #region Overridden methods
+
+        public bool IsValidOn(GameState state) {
+            return state.NumMovesLeft < Game.MaxMovesPerTurn; // can only undo actions the player has played himself
+        }
+
+        public override string ToString() {
+            return "UndoAction";
+        }
+
+        #endregion
+
+        #region Equality members
+
+        protected bool Equals(PassAction other) {
+            return true;
+        }
+
+        public override bool Equals(object obj) {
+            return null != obj && obj.GetType() == GetType();
+        }
+
+        public override int GetHashCode() {
+            return GetType().GetHashCode();
+        }
+
+        public static bool operator ==(UndoAction left, UndoAction right) {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(UndoAction left, UndoAction right) {
+            return !Equals(left, right);
+        }
+
+        #endregion
     }
 }

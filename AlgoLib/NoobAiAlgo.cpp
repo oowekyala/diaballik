@@ -7,7 +7,7 @@ namespace Diaballik::AlgoLib {
 
 	
 
-	PlayerAction^ NoobAiAlgo::NextMove(GameBoard^ board, IPlayer^ player)
+	IPlayerAction^ NoobAiAlgo::NextMove(GameBoard^ board, IPlayer^ player)
 	{
 		List<Position2D>^ ps = Enumerable::ToList(board->PositionsForPlayer(player));
 		int i = 0;

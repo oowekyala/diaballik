@@ -9,8 +9,8 @@ namespace Diaballik.Core {
     ///     player and number of moves.
     /// </summary>
     public sealed class GameState : BoardLikeDecorator<GameBoard> {
-        /* Core state of the game */
-        // The gameboard is decorated by this.
+
+        #region Added properties
 
         /// Number of moves left to the current player before automatic player change.
         public int NumMovesLeft { get; } = Game.MaxMovesPerTurn;
@@ -18,6 +18,9 @@ namespace Diaballik.Core {
         /// Current player of the game
         public IPlayer CurrentPlayer { get; }
 
+        #endregion
+
+        #region Constructors
 
         // Called to build an initial state
         private GameState(int size, FullPlayerSpecPair specs, bool isFirstPlayerPlaying)
@@ -32,6 +35,10 @@ namespace Diaballik.Core {
             NumMovesLeft = numMoves;
         }
 
+        #endregion
+
+        #region Factory method
+
         /// <summary>
         ///     Creates an initial state, with the given board size and player specifications.
         /// </summary>
@@ -43,6 +50,9 @@ namespace Diaballik.Core {
             return new GameState(size, specs, isFirstPlayerPlaying);
         }
 
+        #endregion
+
+        #region Update methods
 
         private GameState GetNextStateWithBoard(GameBoard board) {
             var nextPlayer = NumMovesLeft == 1 ? GetOtherPlayer(CurrentPlayer) : CurrentPlayer;
@@ -78,38 +88,9 @@ namespace Diaballik.Core {
             return new GameState(UnderlyingBoard, GetOtherPlayer(CurrentPlayer), Game.MaxMovesPerTurn);
         }
 
+        #endregion
 
-        private bool Equals(GameState other) {
-            return UnderlyingBoard.Equals(other.UnderlyingBoard)
-                   && NumMovesLeft == other.NumMovesLeft
-                   && CurrentPlayer.Equals(other.CurrentPlayer);
-        }
-
-
-        public override bool Equals(object obj) {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((GameState) obj);
-        }
-
-
-        public override int GetHashCode() {
-            unchecked {
-                var hashCode = UnderlyingBoard.GetHashCode();
-                hashCode = (hashCode * 397) ^ NumMovesLeft;
-                hashCode = (hashCode * 397) ^ CurrentPlayer.GetHashCode();
-                return hashCode;
-            }
-        }
-
-        public static bool operator ==(GameState left, GameState right) {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(GameState left, GameState right) {
-            return !Equals(left, right);
-        }
+        #region Other methods
 
         public override string ToString() {
             return $"GameState(numMovesLeft: {NumMovesLeft}, player: {CurrentPlayer})";
@@ -118,5 +99,50 @@ namespace Diaballik.Core {
         public string FullDescription() {
             return $"{this} {{\n{UnderlyingBoard.ToString().PadLeft(4)}\n}}";
         }
+
+        #endregion
+
+        #region Equality members
+
+        private bool Equals(GameState other)
+        {
+            return UnderlyingBoard.Equals(other.UnderlyingBoard)
+                   && NumMovesLeft == other.NumMovesLeft
+                   && CurrentPlayer.Equals(other.CurrentPlayer);
+        }
+
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((GameState)obj);
+        }
+
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = UnderlyingBoard.GetHashCode();
+                hashCode = (hashCode * 397) ^ NumMovesLeft;
+                hashCode = (hashCode * 397) ^ CurrentPlayer.GetHashCode();
+                return hashCode;
+            }
+        }
+
+        public static bool operator ==(GameState left, GameState right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(GameState left, GameState right)
+        {
+            return !Equals(left, right);
+        }
+
+        #endregion
+
     }
 }

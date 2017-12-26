@@ -7,8 +7,23 @@ namespace Diaballik.Core {
     ///     Summarises the initial config of the pieces of a player.
     /// </summary>
     public class PlayerBoardSpec {
+        #region Private fields
+
         private readonly List<Position2D> _positions;
 
+        #endregion
+
+        #region Properties
+
+        /// The ordered positions of the player's pieces
+        public IList<Position2D> Positions => _positions;
+
+        /// The index of the piece which carries the ball in the positions
+        public int BallIndex { get; }
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         ///     Create a new spec.
@@ -20,11 +35,14 @@ namespace Diaballik.Core {
             BallIndex = ballIndex;
         }
 
+        #endregion
+
+        #region Equality members
+
         protected bool Equals(PlayerBoardSpec other) {
             return _positions.SequenceEqual(other._positions) && BallIndex == other.BallIndex;
         }
 
-        // equality members
 
         public override bool Equals(object obj) {
             if (ReferenceEquals(null, obj)) return false;
@@ -47,12 +65,7 @@ namespace Diaballik.Core {
             return !Equals(left, right);
         }
 
-
-        /// The positions of all the pieces
-        public IList<Position2D> Positions => _positions;
-
-        /// The index of the piece which carries the ball in the positions
-        public int BallIndex { get; }
+        #endregion
     }
 
 
@@ -61,6 +74,15 @@ namespace Diaballik.Core {
     ///     A board spec bound to its player.
     /// </summary>
     public class FullPlayerBoardSpec : PlayerBoardSpec {
+        #region Properties
+
+        /// The player
+        public IPlayer Player { get; }
+
+        #endregion
+
+        #region Constructors
+
         public FullPlayerBoardSpec(IPlayer player, IEnumerable<Position2D> positions, int ballIndex) :
             base(positions, ballIndex) {
             Player = player;
@@ -71,11 +93,9 @@ namespace Diaballik.Core {
             this(player, spec.Positions, spec.BallIndex) {
         }
 
+        #endregion
 
-        /// The player
-        public IPlayer Player { get; }
-
-        // equality members
+        #region Equality members
 
         protected bool Equals(FullPlayerBoardSpec other) {
             return base.Equals(other) && Player.Equals(other.Player);
@@ -101,5 +121,7 @@ namespace Diaballik.Core {
         public static bool operator !=(FullPlayerBoardSpec left, FullPlayerBoardSpec right) {
             return !Equals(left, right);
         }
+
+        #endregion
     }
 }

@@ -5,15 +5,36 @@ namespace Diaballik.Core {
     ///     Utility datatype to store a position.
     /// </summary>
     public struct Position2D {
+        #region Properties
+
         public int X { get; }
         public int Y { get; }
 
+        #endregion
+
+        #region Constructor and factory
 
         public Position2D(int x, int y) {
             X = x;
             Y = y;
         }
 
+        // to be used as method group
+        public static Position2D New(int x, int y) {
+            return new Position2D(x, y);
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString() {
+            return "(" + X + ", " + Y + ")";
+        }
+
+        #endregion
+
+        #region Equality members
 
         public bool Equals(Position2D other) {
             return X == other.X && Y == other.Y;
@@ -42,15 +63,6 @@ namespace Diaballik.Core {
             return !(a == b);
         }
 
-
-        public override string ToString() {
-            return "(" + X + ", " + Y + ")";
-        }
-
-
-        public static Position2D New(int x, int y) {
-            return new Position2D(x, y);
-        }
-
+        #endregion
     }
 }

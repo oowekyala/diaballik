@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.ExceptionServices;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
 using Diaballik.Core.Util;
@@ -10,11 +9,10 @@ using Diaballik.Players;
 
 namespace Diaballik.Tests {
     /// <summary>
-    ///     Utility methods to mock objects.
+    ///     Utility methods to mock model objects.
     /// </summary>
-    public static class TestUtil {
-        public static readonly Random Rng = new Random();
-
+    public static class MockUtil {
+        #region Position mocking
 
         public static IEnumerable<Position2D> RandomPositions(int n, int boardSize) {
             var pos = OrderedPositionsPool(boardSize).ToList();
@@ -56,6 +54,9 @@ namespace Diaballik.Tests {
             }
         }
 
+        #endregion
+
+        #region Player mocking
 
         public static Color RandomColor() => Color.FromArgb(Rng.Next(256), Rng.Next(256), Rng.Next(256));
 
@@ -87,9 +88,12 @@ namespace Diaballik.Tests {
             return new ProgressiveAiPlayer(c, name);
         }
 
+        #endregion
+
+        #region Move mocking
 
         /// Tries to get a valid MovePiece.
-        private static UpdateAction TryGetAMovePiece(GameState state, IEnumerable<Position2D> ps,
+        private static IUpdateAction TryGetAMovePiece(GameState state, IEnumerable<Position2D> ps,
             Position2D ballCarrier) {
             foreach (var p in ps.Where(p => p != ballCarrier)) {
                 var movePieces = state.AvailableMoves(p).ToList();
@@ -101,7 +105,7 @@ namespace Diaballik.Tests {
         }
 
         /// Tries to get a valid MoveBall, falling back on a MovePiece if none is available
-        private static UpdateAction TryGetAMoveBall(GameState state, IEnumerable<Position2D> ps,
+        private static IUpdateAction TryGetAMoveBall(GameState state, IEnumerable<Position2D> ps,
             Position2D ballCarrier) {
             var moveBalls = state.AvailableMoves(ballCarrier).ToList();
             return moveBalls.Any() ? moveBalls.First() : TryGetAMovePiece(state, ps, ballCarrier);
@@ -115,7 +119,7 @@ namespace Diaballik.Tests {
         ///     proportion is about 50% MovePiece, 30% MoveBall, 
         ///     and 20% Pass, because the returned move must be valid.
         /// </summary>
-        public static UpdateAction GetAMove(GameState state) {
+        public static IUpdateAction GetAMove(GameState state) {
             var ps = state.PositionsForPlayer(state.CurrentPlayer);
             var ballCarrier = state.BallCarrierForPlayer(state.CurrentPlayer);
 
@@ -140,13 +144,15 @@ namespace Diaballik.Tests {
             return (pass.IsValidOn(state) ? pass : TryGetAMovePiece(state, ps, ballCarrier)).UpdateStatisticsAndPass();
         }
 
+        #region Statistics collection
+
         public static int MoveBalls;
         public static int MovePieces;
         public static int Passes;
 
 
         /// Updates the creation statistics of moves
-        private static UpdateAction UpdateStatisticsAndPass(this UpdateAction action) {
+        private static IUpdateAction UpdateStatisticsAndPass(this IUpdateAction action) {
             switch (action) {
                 case MoveBallAction moveBallAction:
                     MoveBalls++;
@@ -167,6 +173,12 @@ namespace Diaballik.Tests {
             Console.WriteLine($"Passes: {Passes}");
         }
 
+        #endregion
+
+        #endregion
+
+        #region State mocking
+
         /// Gets a state with the given number of moves left.
         /// Effectively gets a random state.
         public static GameState AnyState(int size, int movesLeftCount) {
@@ -183,6 +195,10 @@ namespace Diaballik.Tests {
         public static GameState AnyState(int size) {
             return AnyState(size, Rng.Next(1, Game.MaxMovesPerTurn + 1));
         }
+
+        #endregion
+
+        #region Game mocking
 
         public static Game AnyGame(int size) {
             return AnyGame(size, Rng.Next(0, 20));
@@ -202,9 +218,18 @@ namespace Diaballik.Tests {
             return game;
         }
 
+        #endregion
+
+        #region Miscellaneous utilities
+
+        public static readonly Random Rng = new Random();
+
+
         /// Generates an infinite sequence from a generator function.
         public static IEnumerable<T> Generate<T>(Func<T> f) {
             while (true) yield return f();
         }
+
+        #endregion
     }
 }

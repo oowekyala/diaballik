@@ -4,7 +4,7 @@ using System.Linq;
 using Diaballik.Core;
 using Diaballik.Players;
 using NUnit.Framework;
-using static Diaballik.Tests.TestUtil;
+using static Diaballik.Tests.MockUtil;
 
 namespace Diaballik.Tests {
     public class GameMementoTest {
@@ -43,7 +43,7 @@ namespace Diaballik.Tests {
                     case ActionMementoNode action:
                         pred2 = pred1;
                         pred1 = st;
-                        st = ((UpdateAction) action.Action).UpdateState(st);
+                        st = ((IUpdateAction) action.Action).UpdateState(st);
                         break;
                     case UndoMementoNode undo:
                         st = pred1;
@@ -64,7 +64,7 @@ namespace Diaballik.Tests {
 
         [TearDown]
         public void PrintStats() {
-            TestUtil.PrintStats();
+            MockUtil.PrintStats();
         }
     }
 }

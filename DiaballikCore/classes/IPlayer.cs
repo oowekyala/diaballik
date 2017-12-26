@@ -1,15 +1,15 @@
 ﻿using System.CodeDom;
 using System.Drawing;
 
-namespace Diaballik.Core
-{
+namespace Diaballik.Core {
     /// <summary>
     ///     Player of a game. Immutability must be preserved, because
     ///     players are composed into several other important immutable 
     ///     classes.
     /// </summary>
-    public interface IPlayer
-    {
+    public interface IPlayer {
+        #region Properties
+
         Color Color { get; }
         string Name { get; }
 
@@ -19,6 +19,9 @@ namespace Diaballik.Core
         /// </summary>
         bool IsAi { get; }
 
+        #endregion
+
+        #region Methods
 
         /// <summary>
         ///     Gets the next move of this player. If the player is human,
@@ -26,15 +29,14 @@ namespace Diaballik.Core
         /// </summary>
         /// <param name="board">The board of the game</param>
         /// <returns>The next move of this player</returns>
-        PlayerAction GetNextMove(GameBoard board);
+        IPlayerAction GetNextMove(GameBoard board);
 
+        #endregion
     }
 
-    public enum AiLevel
-    {
+    public enum AiLevel {
         Noob,
         Starting,
         Progressive
     }
-
 }

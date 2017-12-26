@@ -13,22 +13,36 @@ namespace Diaballik.Core {
     ///     the game.
     /// </summary>
     public sealed class Game {
+        #region Constants
+
         private static readonly Random Rng = new Random();
 
         /// Maximum number of moves per turn
         public const int MaxMovesPerTurn = 3;
 
+        #endregion
+
+        #region Properties
+
         /// Stores the chain of actions leading to this state
         public GameMemento Memento { get; private set; }
 
         /// Current state of the game
-        public GameState State => Memento.ToState(); // PlayerAction.UpdateState(GameState) is called lazily in that method
+        public GameState State =>
+            Memento.ToState(); // PlayerAction.UpdateState(GameState) is called lazily in that method
+
+        #endregion
+
+        #region Constructors
 
         // Only to initialise the game
         private Game(int size, FullPlayerSpecPair specs, bool isFirstPlayerPlaying) {
             Memento = new RootMemento(specs, size, isFirstPlayerPlaying);
         }
 
+        #endregion
+
+        #region Factory methods
 
         /// <summary>
         ///     Creates a new game, initialised with the given player specs. 
@@ -53,6 +67,9 @@ namespace Diaballik.Core {
             return new Game(size, specs, Rng.Next(0, 1) == 1);
         }
 
+        #endregion
+
+        #region Behavior
 
         /// <summary>
         ///     Updates the state of the game with the current action.
@@ -61,12 +78,40 @@ namespace Diaballik.Core {
         /// <exception cref="ArgumentException">
         ///     If the move is invalid. The action's validity should be verified upstream.
         /// </exception>
-        public void Update(PlayerAction action) {
+        public void Update(IPlayerAction action) {
             if (action.IsValidOn(State)) {
                 Memento = Memento.Append(action);
             } else {
                 throw new ArgumentException("Invalid move: " + action);
             }
         }
+
+        #endregion
+
+        #region Equality members
+
+        private bool Equals(Game other) {
+            return Equals(Memento, other.Memento);
+        }
+
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is Game && Equals((Game) obj);
+        }
+
+        public override int GetHashCode() {
+            return (Memento != null ? Memento.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(Game left, Game right) {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Game left, Game right) {
+            return !Equals(left, right);
+        }
+
+        #endregion
     }
 }

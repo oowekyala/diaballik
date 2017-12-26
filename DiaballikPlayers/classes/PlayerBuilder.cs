@@ -7,12 +7,18 @@ namespace Diaballik.Players {
     ///     Builds player instances.
     /// </summary>
     public class PlayerBuilder {
+        #region Internal state
+
         private AiLevel _aiLevel;
         private bool _isHuman;
 
         public Color Color { set; get; } = Color.Yellow;
 
         public string Name { set; get; }
+
+        #endregion
+
+        #region State manipulation methods
 
         // for fluent interface
         public PlayerBuilder SetName(string n) {
@@ -51,6 +57,9 @@ namespace Diaballik.Players {
             return this;
         }
 
+        #endregion
+
+        #region Build method
 
         /// <summary>
         ///     Builds a player with the specified configuration.
@@ -72,5 +81,7 @@ namespace Diaballik.Players {
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        #endregion
     }
 }

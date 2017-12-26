@@ -5,7 +5,7 @@ using Diaballik.AlgoLib;
 using Diaballik.Core;
 using Diaballik.Core.Util;
 using NUnit.Framework;
-using static Diaballik.Tests.TestUtil;
+using static Diaballik.Tests.MockUtil;
 
 namespace Diaballik.Tests {
     [TestFixture]
@@ -20,10 +20,10 @@ namespace Diaballik.Tests {
             Assert.AreSame(spec2.Player, g.Player2);
         }
 
-        private static IEnumerable<UpdateAction> GetMoves(GameState b) {
+        private static IEnumerable<IUpdateAction> GetMoves(GameState b) {
             return b.PositionsForPlayer(b.CurrentPlayer)
                     .SelectMany(b.AvailableMoves)
-                    .Cast<UpdateAction>()
+                    .Cast<IUpdateAction>()
                     .Union(new[] {new PassAction()});
         }
 
@@ -107,7 +107,7 @@ namespace Diaballik.Tests {
 
         [TearDown]
         public void PrintStats() {
-            TestUtil.PrintStats();
+            MockUtil.PrintStats();
         }
     }
 }

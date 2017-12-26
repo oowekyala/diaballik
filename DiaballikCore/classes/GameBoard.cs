@@ -23,14 +23,16 @@ namespace Diaballik.Core {
     ///     one), and the second player owns the row 0 (the top one).
     ///     This class is immutable.
     /// </summary>
-    public class GameBoard : BoardLike {
-        // we could also delegate everything to the previous board
-        // taking care to avoid delegation chains.
+    public sealed class GameBoard : BoardLike {
+        #region Fields
 
         private readonly ImmutableDictionary<Position2D, IPlayer> _boardLookup;
-
         private readonly ImmutableHashSet<Position2D> _player1Positions;
         private readonly ImmutableHashSet<Position2D> _player2Positions;
+
+        #endregion
+
+        #region BoardLike properties
 
         public override IPlayer Player1 { get; }
         public override IPlayer Player2 { get; }
@@ -41,8 +43,11 @@ namespace Diaballik.Core {
         public override IEnumerable<Position2D> Player1Positions => _player1Positions;
         public override IEnumerable<Position2D> Player2Positions => _player2Positions;
 
-
         public override int BoardSize { get; }
+
+        #endregion
+
+        #region Constructors
 
         // Performs full consistency checks, only the first time
         private GameBoard(int boardSize, FullPlayerSpecPair specs) {
@@ -88,6 +93,9 @@ namespace Diaballik.Core {
             _player2Positions = previous._player2Positions;
         }
 
+        #endregion
+
+        #region Factory methods
 
         /// <summary>
         ///     Creates a new gameBoard.
@@ -119,25 +127,22 @@ namespace Diaballik.Core {
             return new GameBoard(size, specs);
         }
 
-#if DEBUG
-        private static void CheckPieces(int size, (List<Position2D>, List<Position2D>) positions) {
-            DiaballikUtil.Assert(positions.Map(l => l.Count).Forall(i => i == size),
-                                 "One or more players have an incorrect number of pieces");
+        #endregion
 
-            var (p1List, p2List) = positions;
-
-            DiaballikUtil.Assert(p1List.Distinct().Count() == p1List.Count
-                                 && p2List.Distinct().Count() == p2List.Count
-                                 && !p1List.Intersect(p2List).Any(),
-                                 "One or more players have duplicate pieces");
-        }
-#endif
-
+        #region BoardLike methods
 
         public override bool IsFree(Position2D pos) {
             return !_boardLookup.ContainsKey(pos);
         }
 
+        public override IPlayer PlayerOn(Position2D pos) {
+            var ok = _boardLookup.TryGetValue(pos, out var player);
+            return ok ? player : null;
+        }
+
+        #endregion
+
+        #region Update methods
 
         /// <summary>
         ///     Moves a piece to a new location. This method cannot move the piece which carries the ball.
@@ -195,20 +200,34 @@ namespace Diaballik.Core {
                 : new GameBoard(this, (BallCarrier1, dst));
         }
 
+        #endregion
 
-        public override IPlayer PlayerOn(Position2D pos) {
-            var ok = _boardLookup.TryGetValue(pos, out var player);
-            return ok ? player : null;
+        #region Debug assertions
+
+#if DEBUG
+        private static void CheckPieces(int size, (List<Position2D>, List<Position2D>) positions) {
+            DiaballikUtil.Assert(positions.Map(l => l.Count).Forall(i => i == size),
+                                 "One or more players have an incorrect number of pieces");
+
+            var (p1List, p2List) = positions;
+
+            DiaballikUtil.Assert(p1List.Distinct().Count() == p1List.Count
+                                 && p2List.Distinct().Count() == p2List.Count
+                                 && !p1List.Intersect(p2List).Any(),
+                                 "One or more players have duplicate pieces");
         }
 
 
-#if DEBUG
         private void CheckPositionIsValid(Position2D p) {
             if (!IsOnBoard(p)) {
                 throw new ArgumentException("Illegal: position is out of the board " + p);
             }
         }
 #endif
+
+        #endregion
+
+        #region Inherited System.Object members
 
         public override string ToString() {
             var sb = new StringBuilder();
@@ -288,5 +307,7 @@ namespace Diaballik.Core {
         public static bool operator !=(GameBoard left, GameBoard right) {
             return !Equals(left, right);
         }
+
+        #endregion
     }
 }
