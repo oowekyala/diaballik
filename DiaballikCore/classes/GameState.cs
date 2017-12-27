@@ -8,7 +8,7 @@ namespace Diaballik.Core {
     ///     Represents a state in the game. Decorates a GameBoard with logic about the current
     ///     player and number of moves.
     /// </summary>
-    public sealed class GameState : BoardLikeDecorator<GameBoard> {
+    public class GameState : BoardLikeDecorator<GameBoard> {
 
         #region Added properties
 

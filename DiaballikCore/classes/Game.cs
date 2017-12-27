@@ -28,8 +28,15 @@ namespace Diaballik.Core {
         public GameMemento Memento { get; private set; }
 
         /// Current state of the game
-        public GameState State =>
-            Memento.ToState(); // PlayerAction.UpdateState(GameState) is called lazily in that method
+        public GameState State => Memento.ToState();
+
+        /// True if <see cref="Undo"/> can be executed.
+        /// A player can only undo actions they have played themselves.
+        public bool CanUndo => Memento.CanUndo;
+
+        /// True if <see cref="Redo"/> can be executed.
+        /// A player can only call Redo if the last action taken was to call Undo.
+        public bool CanRedo => Memento.CanRedo;
 
         #endregion
 
@@ -78,11 +85,27 @@ namespace Diaballik.Core {
         /// <exception cref="ArgumentException">
         ///     If the move is invalid. The action's validity should be verified upstream.
         /// </exception>
-        public void Update(IPlayerAction action) {
+        public void Update(IUpdateAction action) {
             if (action.IsValidOn(State)) {
-                Memento = Memento.Append(action);
+                Memento = Memento.Update(action);
             } else {
                 throw new ArgumentException("Invalid move: " + action);
+            }
+        }
+
+        public void Undo() {
+            if (CanUndo) {
+                Memento = Memento.Undo();
+            } else {
+                throw new ArgumentException("Cannot undo");
+            }
+        }
+
+        public void Redo() {
+            if (CanRedo) {
+                Memento = Memento.Redo();
+            } else {
+                throw new ArgumentException("Nothing to redo");
             }
         }
 

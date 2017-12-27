@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Diaballik.Core.Util;
 
 namespace Diaballik.Core {
     using FullPlayerSpecPair = ValueTuple<FullPlayerBoardSpec, FullPlayerBoardSpec>;
@@ -26,6 +29,29 @@ namespace Diaballik.Core {
         /// </summary>
         /// <returns>The parent memento</returns>
         public GameMemento Parent { get; }
+
+        /// True if <see cref="Undo"/> can be executed.
+        /// A player can only undo actions they have played themselves.
+        public bool CanUndo => ToState().NumMovesLeft < Game.MaxMovesPerTurn;
+
+        /// True if <see cref="Redo"/> can be executed.
+        /// A player can only call Redo if the last action taken was to call Undo.
+        public bool CanRedo => this is UndoMementoNode;
+
+
+        /// <summary>
+        ///     Gets a lazy enumeration of all the parents of this memento.
+        /// </summary>
+        /// <returns>A lazy enumeration of the parents</returns>
+        protected IEnumerable<GameMemento> Parents {
+            get {
+                var cur = Parent;
+                while (cur != null) {
+                    yield return cur;
+                    cur = cur.Parent;
+                }
+            }
+        }
 
         #endregion
 
@@ -54,14 +80,26 @@ namespace Diaballik.Core {
         /// </summary>
         /// <param name="action">The transition from this memento to the result</param>
         /// <returns>A new memento with this as its parent</returns>
-        public MementoNode Append(IPlayerAction action) {
-            switch (action) {
-                case UndoAction undo:
-                    return new UndoMementoNode(this, undo);
-                case IUpdateAction up:
-                    return new ActionMementoNode(this, up);
-                default: throw new ArgumentOutOfRangeException();
-            }
+        public UpdateActionNode Update(IUpdateAction action) {
+            return new UpdateActionNode(this, action);
+        }
+
+        public UndoMementoNode Undo() {
+            return new UndoMementoNode(this, new UndoAction());
+        }
+
+        public RedoMementoNode Redo() {
+            return new RedoMementoNode(this, new RedoAction());
+        }
+
+        /// <summary>
+        ///     Gets the nth parent of this memento. Indices start at 0, 
+        ///     e.g. <code>m.GetNthParent(0) == m.Parent</code>.
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public GameMemento GetNthParent(int n) {
+            return Parents.ElementAt(n);
         }
 
 
@@ -81,9 +119,13 @@ namespace Diaballik.Core {
             return ((RootMemento) cur, nodes);
         }
 
+        public override string ToString() {
+            return $"{GetType().Name} <{GetHashCode()}>";
+        }
+
         /// Returns a description of this memento and its parents, if any.
         public string FullAncestryString() {
-            return $"{this}\n{Parent?.ToString() ?? ""}";
+            return $"{this}\n{Parent?.FullAncestryString() ?? ""}";
         }
 
         #endregion
@@ -101,9 +143,7 @@ namespace Diaballik.Core {
             return Equals((GameMemento) obj);
         }
 
-        public override int GetHashCode() {
-            return Parent != null ? Parent.GetHashCode() : 0;
-        }
+        public abstract override int GetHashCode();
 
         public static bool operator ==(GameMemento left, GameMemento right) {
             return Equals(left, right);
@@ -139,13 +179,6 @@ namespace Diaballik.Core {
 
         #endregion
 
-        #region Methods
-
-        public override string ToString() {
-            return $"MementoNode({Action})"; // displaying all the parents was cumbersome
-        }
-
-        #endregion
 
         #region Equality members
 
@@ -161,7 +194,7 @@ namespace Diaballik.Core {
         }
 
         public override int GetHashCode() {
-            return Action.GetHashCode();
+            return Action.GetHashCode() * 31 + Parent.GetHashCode();
         }
 
         public static bool operator ==(MementoNode left, MementoNode right) {
@@ -178,7 +211,7 @@ namespace Diaballik.Core {
     /// <summary>
     ///     Specialises MementoNode for an update action.
     /// </summary>
-    public sealed class ActionMementoNode : MementoNode {
+    public sealed class UpdateActionNode : MementoNode {
         #region Properties
 
         public new IUpdateAction Action => (IUpdateAction) base.Action;
@@ -187,7 +220,7 @@ namespace Diaballik.Core {
 
         #region Constructor
 
-        public ActionMementoNode(GameMemento previous, IUpdateAction action) : base(previous, action) {
+        public UpdateActionNode(GameMemento previous, IUpdateAction action) : base(previous, action) {
         }
 
         #endregion
@@ -205,23 +238,79 @@ namespace Diaballik.Core {
         #endregion
     }
 
+    /// <inheritdoc />
+    /// <summary>
+    ///     Represents an <see cref="T:Diaballik.Core.IHistoryAction" /> 
+    ///     in the update chain. Shares functionality across Undo and Redo 
+    ///     actions. 
+    /// 
+    ///     Both these classes get a previously computed state, jumping 
+    ///     over same type nodes to allow repeating the action several times.
+    /// </summary>
+    public abstract class HistoryActionNode : MementoNode {
+        #region Properties
+
+        public new IHistoryAction Action => (IHistoryAction) base.Action;
+
+        public abstract GameMemento IndirectionTarget { get; }
+
+        #endregion
+
+        #region Base constructor
+
+        protected HistoryActionNode(GameMemento previous, IHistoryAction action) : base(previous, action) {
+//            var previousSameTypeNodes = Parents.TakeWhile(m => GetType().IsInstanceOfType(m)).Count();
+//             we have to jump over same type nodes
+//            _restoredMemento = GetNthParent(2 * previousSameTypeNodes + 1);
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString() {
+            return $"{base.ToString()}, IndirectionTarget: {IndirectionTarget}";
+        }
+
+        #endregion
+    }
 
     /// <inheritdoc />
     /// <summary>
-    ///     Represents an undo action in the update chain. Special 
-    ///     handling because we don't create a new state when undoing, 
-    ///     we delegate the call to ToState on a previous node.
+    ///     Represents an Undo action. See the superclass.
     /// </summary>
-    public sealed class UndoMementoNode : MementoNode {
+    public sealed class UndoMementoNode : HistoryActionNode {
         #region Properties
 
         public new UndoAction Action => (UndoAction) base.Action;
+
+        public override GameMemento IndirectionTarget { get; }
+        public GameMemento StateTarget { get; }
 
         #endregion
 
         #region Constructor
 
-        public UndoMementoNode(GameMemento memento, UndoAction undoAction) : base(memento, undoAction) {
+        public UndoMementoNode(GameMemento previous, UndoAction undoAction) : base(previous, undoAction) {
+            switch (previous) {
+                case UndoMementoNode undoMementoNode:
+                    IndirectionTarget = undoMementoNode.IndirectionTarget.Parent;
+                    break;
+                case RedoMementoNode redoMementoNode:
+                    IndirectionTarget = redoMementoNode.IndirectionTarget;
+                    break;
+                case var otherMementoType:
+                    IndirectionTarget = otherMementoType;
+                    break;
+            }
+
+            // resolve indirection
+            var cur = IndirectionTarget.Parent;
+            while (cur is UndoMementoNode u) {
+                cur = u.IndirectionTarget.Parent;
+            }
+            StateTarget = cur;
+            if (StateTarget == null) throw new ArgumentException("Cannot undo on the root");
         }
 
         #endregion
@@ -229,12 +318,51 @@ namespace Diaballik.Core {
         #region Methods
 
         public override GameState ToState() {
-            return Parent.Parent.ToState();
+            return StateTarget.ToState();
+        }
+
+        public override string ToString() {
+            return $"{base.ToString()}, StateTarget: {IndirectionTarget.Parent}";
         }
 
         #endregion
     }
 
+    /// <summary>
+    ///     Represents a Redo action. See the superclass.
+    /// </summary>
+    public sealed class RedoMementoNode : HistoryActionNode {
+        #region Properties
+
+        public new RedoAction Action => (RedoAction) base.Action;
+
+        public override GameMemento IndirectionTarget { get; }
+
+        #endregion
+
+        #region Constructor
+
+        public RedoMementoNode(GameMemento previous, RedoAction action) : base(previous, action) {
+            switch (previous) {
+                case HistoryActionNode historyAction:
+                    IndirectionTarget = historyAction.IndirectionTarget;
+                    break;
+                case var otherMementoType:
+                    IndirectionTarget = otherMementoType;
+                    break;
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override GameState ToState() {
+            return IndirectionTarget.ToState();
+        }
+
+        #endregion
+    }
 
     /// <inheritdoc />
     /// <summary>
@@ -271,15 +399,11 @@ namespace Diaballik.Core {
             return _initialState ?? (_initialState = GameState.InitialState(BoardSize, Specs, IsFirstPlayerPlaying));
         }
 
-        public override string ToString() {
-            return "Root Memento";
-        }
-
         #endregion
 
         #region Equality members
 
-        protected bool Equals(RootMemento other) {
+        public bool Equals(RootMemento other) {
             return BoardSize == other.BoardSize
                    && IsFirstPlayerPlaying == other.IsFirstPlayerPlaying
                    && Specs.Equals(other.Specs);

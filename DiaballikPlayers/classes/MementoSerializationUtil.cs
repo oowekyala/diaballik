@@ -32,6 +32,7 @@ namespace Diaballik.Players {
         private const string MovePieceToken = "movepiece";
         private const string PassToken = "pass";
         private const string UndoToken = "undo";
+        private const string RedoToken = "redo";
 
         #endregion
 
@@ -42,7 +43,8 @@ namespace Diaballik.Players {
             {typeof(MoveBallAction), MoveBallToken},
             {typeof(MovePieceAction), MovePieceToken},
             {typeof(PassAction), PassToken},
-            {typeof(UndoAction), UndoToken}
+            {typeof(UndoAction), UndoToken},
+            {typeof(RedoAction), RedoToken}
         };
 
         private static readonly Dictionary<AiLevel, string> AiTypes =
@@ -152,7 +154,7 @@ namespace Diaballik.Players {
             private static MementoNode NodeFromElement(GameMemento previous, XElement element) {
                 var type = element.Attribute("type").Value;
 
-                IPlayerAction action;
+                IUpdateAction action;
                 switch (type) {
                     case MoveBallToken: {
                         var (src, dst) = MoveActionParamsFromElement(element.Element(MoveParamsElement));
@@ -168,11 +170,12 @@ namespace Diaballik.Players {
                         action = new PassAction();
                         break;
                     case UndoToken:
-                        action = new UndoAction();
-                        break;
+                        return previous.Undo();
+                    case RedoToken:
+                        return previous.Redo();
                     default: throw new ArgumentOutOfRangeException();
                 }
-                return previous.Append(action);
+                return previous.Update(action);
             }
 
             private static (Position2D, Position2D) MoveActionParamsFromElement(XElement elements) {

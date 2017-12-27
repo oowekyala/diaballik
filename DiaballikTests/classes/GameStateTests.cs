@@ -10,6 +10,11 @@ using static Diaballik.Tests.MockUtil;
 namespace Diaballik.Tests {
     [TestFixture]
     public class GameStateTests {
+        [OneTimeTearDown]
+        public void TearDown() {
+            MockUtil.PrintStats(nameof(GameStateTests));
+        }
+
         [Test]
         public void TestPlayerIdentity() {
             const int size = 7;
@@ -103,11 +108,6 @@ namespace Diaballik.Tests {
             Assert.AreEqual(before.BallCarrierPair, after.BallCarrierPair);
 
             AssertThatPlayerHasChanged(before, after);
-        }
-
-        [TearDown]
-        public void PrintStats() {
-            MockUtil.PrintStats();
         }
     }
 }

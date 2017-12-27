@@ -107,12 +107,72 @@ namespace Diaballik.Tests {
             return MoveDecisionAlgo.NextMove(state, state.CurrentPlayer).UpdateStatisticsAndPass();
         }
 
+
+        /// Updates a game with a single move, including undo and redo.
+        public static void UpdateWithAMockMove(this Game game) {
+            const int undoProportion = 20;
+            const int redoProportion = 10;
+            // the rest is regular actions
+            var random = Rng.Next(100);
+
+            if (game.CanUndo && random < undoProportion) {
+                game.Undo();
+                Undos++;
+            } else if (game.CanRedo && random < undoProportion + redoProportion) {
+                game.Redo();
+                Redos++;
+            } else {
+                game.Update(GetAMove(game.State));
+            }
+        }
+
+        /// Appends a single undo or redo if possible.
+        public static GameMemento UndoOrRedo(this GameMemento game) {
+            if (game.CanUndo) {
+                Undos++;
+                return game.Undo();
+            }
+            if (game.CanRedo) {
+                Redos++;
+                return game.Redo();
+            }
+
+            return game;
+        }
+
+        public static IEnumerable<GameMemento> ChainedUndos(int i) {
+            return Generate(AnyGame).Select(g => g.Memento).ChainedUndosHelper(i);
+        }
+
+        private static IEnumerable<GameMemento> ChainedUndosHelper(this IEnumerable<GameMemento> stream, int i) {
+            if (i == 0) return stream;
+
+            return stream.Where(g => g.CanUndo)
+                         .Select(g => g.Undo())
+                         .ChainedUndosHelper(i - 1);
+        }
+
+
+        /// Infinite stream of mementos ending with a chain of i undos/ redos
+        public static IEnumerable<GameMemento> ChainedUndoRedos(int i) {
+            return Generate(AnyGame).Select(g => g.Memento).ChainedUndoRedosHelper(i);
+        }
+
+        private static IEnumerable<GameMemento> ChainedUndoRedosHelper(this IEnumerable<GameMemento> stream, int i) {
+            if (i == 0) return stream;
+
+            return stream.Where(g => g.CanUndo || g.CanRedo)
+                         .Select(UndoOrRedo)
+                         .ChainedUndoRedosHelper(i - 1);
+        }
+
         #region Statistics collection
 
         public static int MoveBalls;
         public static int MovePieces;
         public static int Passes;
-
+        public static int Undos;
+        public static int Redos;
 
         /// Updates the creation statistics of moves
         private static IUpdateAction UpdateStatisticsAndPass(this IUpdateAction action) {
@@ -130,10 +190,18 @@ namespace Diaballik.Tests {
             return action;
         }
 
-        public static void PrintStats() {
+
+        public static void ResetStats() {
+            MoveBalls = MovePieces = Passes = Undos = Redos = 0;
+        }
+
+        public static void PrintStats(string title) {
+            Console.WriteLine($"Stats for {title}:");
             Console.WriteLine($"MovePieces: {MovePieces}");
             Console.WriteLine($"MoveBalls: {MoveBalls}");
             Console.WriteLine($"Passes: {Passes}");
+            Console.WriteLine($"Undos: {Undos}");
+            Console.WriteLine($"Redos: {Redos}");
         }
 
         #endregion
@@ -163,22 +231,47 @@ namespace Diaballik.Tests {
 
         #region Game mocking
 
+        public static Game AnyGame() {
+            var rand = Rng.Next(5, 25);
+            return AnyGame(rand % 2 == 0 ? rand + 1 : rand);
+        }
+
         public static Game AnyGame(int size) {
-            return AnyGame(size, Rng.Next(0, 20));
+            return AnyGame(size, Rng.Next(0, 40));
         }
 
 
         /// Constructs a game from a random initial state and updating it with valid moves
-        /// Moves don't contain Undo actions
+        /// The history can contain Undo or Redo actions.
         public static Game AnyGame(int size, int historySize) {
+            return AnyGameHelper(size, historySize, g => g.UpdateWithAMockMove());
+        }
+
+
+        private static Game AnyGameHelper(int size, int historySize, Action<Game> updateAction) {
             var specs = DummyPlayerSpecPair(size);
             var game = Game.Init(size, specs);
 
             while (historySize-- > 0) {
-                game.Update(GetAMove(game.State));
+                updateAction(game);
             }
 
             return game;
+        }
+
+
+        public static Game AnySimpleGame() {
+            var rand = Rng.Next(5, 25);
+            return AnySimpleGame(rand % 2 == 0 ? rand + 1 : rand);
+        }
+
+        public static Game AnySimpleGame(int size) {
+            return AnySimpleGame(size, Rng.Next(0, 40));
+        }
+
+        /// Gets a game whose history doesn't contain undo or redo
+        public static Game AnySimpleGame(int size, int historySize) {
+            return AnyGameHelper(size, historySize, g => g.Update(GetAMove(g.State)));
         }
 
         #endregion

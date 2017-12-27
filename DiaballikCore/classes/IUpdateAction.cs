@@ -2,26 +2,20 @@
 
 
 namespace Diaballik.Core {
+    /// <inheritdoc />
     /// <summary>
-    ///     Represents an action the player can carry out during their turn.
+    ///     Represents an action that can update the game's state. Undo is excluded from this
+    ///     category, as it's implemented by state switch in Game.
     /// </summary>
-    public interface IPlayerAction {
+    public interface IUpdateAction : IPlayerAction {
         /// <summary>
         ///     Returns true if the move is valid, in the context of 
         ///     the specified state.
         /// </summary>
-        /// <param name="state">The context of the move</param>
+        /// <param name="state">The context</param>
         /// <returns>True if the move is valid</returns>
         bool IsValidOn(GameState state);
-    }
 
-
-    /// <inheritdoc />
-    /// <summary>
-    ///     Action that can update the game's state. Undo is excluded from this
-    ///     category, as it's implemented by state switch in Game.
-    /// </summary>
-    public interface IUpdateAction : IPlayerAction {
         /// <summary>
         ///     Updates the given current state with this action.
         /// </summary>
@@ -30,6 +24,7 @@ namespace Diaballik.Core {
         GameState UpdateState(GameState state);
     }
 
+    #region Derived classes
 
     /// <inheritdoc />
     /// <summary>
@@ -231,45 +226,5 @@ namespace Diaballik.Core {
         #endregion
     }
 
-    /// <inheritdoc />
-    /// <summary>
-    ///     Undo the last action of the player.
-    /// </summary>
-    public class UndoAction : IPlayerAction {
-        #region Overridden methods
-
-        public bool IsValidOn(GameState state) {
-            return state.NumMovesLeft < Game.MaxMovesPerTurn; // can only undo actions the player has played himself
-        }
-
-        public override string ToString() {
-            return "UndoAction";
-        }
-
-        #endregion
-
-        #region Equality members
-
-        protected bool Equals(PassAction other) {
-            return true;
-        }
-
-        public override bool Equals(object obj) {
-            return null != obj && obj.GetType() == GetType();
-        }
-
-        public override int GetHashCode() {
-            return GetType().GetHashCode();
-        }
-
-        public static bool operator ==(UndoAction left, UndoAction right) {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(UndoAction left, UndoAction right) {
-            return !Equals(left, right);
-        }
-
-        #endregion
-    }
+    #endregion
 }
