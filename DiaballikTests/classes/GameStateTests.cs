@@ -42,8 +42,8 @@ namespace Diaballik.Tests {
 
 
         public static IEnumerable<GameState> TestCasesProvider() {
-            // 5 test cases per size, size varies between 5 and 21
-            return Enumerable.Range(5, 16).Where(x => x % 2 != 0).SelectMany(x => Generate(() => AnyState(x)).Take(5));
+            // 10 test cases per size, size varies between 5 and 21
+            return Enumerable.Range(5, 16).Where(x => x % 2 != 0).SelectMany(x => Generate(() => AnyState(x)).Take(10));
         }
 
 
