@@ -31,8 +31,6 @@ namespace Diaballik.Players {
         private const string MoveBallToken = "moveball";
         private const string MovePieceToken = "movepiece";
         private const string PassToken = "pass";
-        private const string UndoToken = "undo";
-        private const string RedoToken = "redo";
 
         #endregion
 
@@ -43,8 +41,6 @@ namespace Diaballik.Players {
             {typeof(MoveBallAction), MoveBallToken},
             {typeof(MovePieceAction), MovePieceToken},
             {typeof(PassAction), PassToken},
-            {typeof(UndoAction), UndoToken},
-            {typeof(RedoAction), RedoToken}
         };
 
         private static readonly Dictionary<AiLevel, string> AiTypes =
@@ -169,10 +165,6 @@ namespace Diaballik.Players {
                     case PassToken:
                         action = new PassAction();
                         break;
-                    case UndoToken:
-                        return previous.Undo();
-                    case RedoToken:
-                        return previous.Redo();
                     default: throw new ArgumentOutOfRangeException();
                 }
                 return previous.Update(action);

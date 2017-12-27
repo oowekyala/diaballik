@@ -29,7 +29,7 @@ namespace Diaballik.Players {
 
         #region Methods
 
-        public abstract IPlayerAction GetNextMove(StateWithHistory board);
+        public abstract IUpdateAction GetNextMove(StateWithHistory board);
 
         // Partial implementation, to be completed by derived classes
         public virtual PlayerBuilder ToBuilder() => new PlayerBuilder {

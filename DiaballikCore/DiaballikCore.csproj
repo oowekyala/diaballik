@@ -47,10 +47,8 @@
     <Compile Include="classes\GameState.cs" />
     <Compile Include="classes\GameBoard.cs" />
     <Compile Include="classes\GameMemento.cs" />
-    <Compile Include="classes\IHistoryAction.cs" />
     <Compile Include="classes\InitStrategy.cs" />
     <Compile Include="classes\IPlayer.cs" />
-    <Compile Include="classes\IPlayerAction.cs" />
     <Compile Include="classes\IUpdateAction.cs" />
     <Compile Include="classes\PlayerBoardSpec.cs" />
     <Compile Include="classes\util\DiaballikUtil.cs" />

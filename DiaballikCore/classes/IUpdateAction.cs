@@ -2,12 +2,13 @@
 
 
 namespace Diaballik.Core {
-    /// <inheritdoc />
     /// <summary>
-    ///     Represents an action that can update the game's state. Undo is excluded from this
-    ///     category, as it's implemented by state switch in Game.
+    ///     Represents an action that can update the game's state.
+    ///     Such an action doesn't explicitly contain info about the
+    ///     player which does the action, it's taken to be the state's
+    ///     current player for simplicity.
     /// </summary>
-    public interface IUpdateAction : IPlayerAction {
+    public interface IUpdateAction {
         /// <summary>
         ///     Returns true if the move is valid, in the context of 
         ///     the specified state.

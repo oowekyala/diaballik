@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 
 namespace Diaballik.Core {
@@ -8,9 +10,11 @@ namespace Diaballik.Core {
     ///     Represents a game. This class is mutable, to provide a nice interface
     ///     to clients.
     /// 
-    ///     Internally it's just a wrapper around a GameMemento, which already 
+    ///     Internally it wraps around a GameMemento, which already 
     ///     contains all the information about the current and past states of 
-    ///     the game.
+    ///     the game. 
+    /// 
+    ///     It adds the necessary logic to undo and redo actions.
     /// </summary>
     public sealed class Game {
         #region Constants
@@ -32,11 +36,15 @@ namespace Diaballik.Core {
 
         /// True if <see cref="Undo"/> can be executed.
         /// A player can only undo actions they have played themselves.
-        public bool CanUndo => Memento.CanUndo;
+        public bool CanUndo => Memento.Parent != null && State.NumMovesLeft < MaxMovesPerTurn;
 
         /// True if <see cref="Redo"/> can be executed.
         /// A player can only call Redo if the last action taken was to call Undo.
-        public bool CanRedo => Memento.CanRedo;
+        public bool CanRedo => _breadCrumbs.Any();
+
+        /// Stores the mementos we just undid to return to them.
+        /// Cleared whenever another action is taken.
+        private readonly Stack<GameMemento> _breadCrumbs = new Stack<GameMemento>();
 
         #endregion
 
@@ -45,6 +53,11 @@ namespace Diaballik.Core {
         // Only to initialise the game
         private Game(int size, FullPlayerSpecPair specs, bool isFirstPlayerPlaying) {
             Memento = new RootMemento(specs, size, isFirstPlayerPlaying);
+        }
+
+        // Only when loading an existing memento
+        private Game(GameMemento memento) {
+            Memento = memento;
         }
 
         #endregion
@@ -74,6 +87,15 @@ namespace Diaballik.Core {
             return new Game(size, specs, Rng.Next(0, 1) == 1);
         }
 
+        /// <summary>
+        ///     Returns a new game corresponding to the given memento.
+        /// </summary>
+        /// <param name="memento"></param>
+        /// <returns></returns>
+        public static Game FromMemento(GameMemento memento) {
+            return new Game(memento);
+        }
+
         #endregion
 
         #region Behavior
@@ -88,6 +110,7 @@ namespace Diaballik.Core {
         public void Update(IUpdateAction action) {
             if (action.IsValidOn(State)) {
                 Memento = Memento.Update(action);
+                _breadCrumbs.Clear();
             } else {
                 throw new ArgumentException("Invalid move: " + action);
             }
@@ -95,7 +118,8 @@ namespace Diaballik.Core {
 
         public void Undo() {
             if (CanUndo) {
-                Memento = Memento.Undo();
+                _breadCrumbs.Push(Memento);
+                Memento = Memento.Parent;
             } else {
                 throw new ArgumentException("Cannot undo");
             }
@@ -103,7 +127,7 @@ namespace Diaballik.Core {
 
         public void Redo() {
             if (CanRedo) {
-                Memento = Memento.Redo();
+                Memento = _breadCrumbs.Pop();
             } else {
                 throw new ArgumentException("Nothing to redo");
             }

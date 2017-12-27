@@ -36,7 +36,7 @@ namespace Diaballik.Players {
 
         #region Methods
 
-        public override IPlayerAction GetNextMove(StateWithHistory context) {
+        public override IUpdateAction GetNextMove(StateWithHistory context) {
             return _algo.NextMove(context.ToState(), this);
         }
 

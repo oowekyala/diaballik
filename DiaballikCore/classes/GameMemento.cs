@@ -30,14 +30,6 @@ namespace Diaballik.Core {
         /// <returns>The parent memento</returns>
         public GameMemento Parent { get; }
 
-        /// True if <see cref="Undo"/> can be executed.
-        /// A player can only undo actions they have played themselves.
-        public bool CanUndo => ToState().NumMovesLeft < Game.MaxMovesPerTurn;
-
-        /// True if <see cref="Redo"/> can be executed.
-        /// A player can only call Redo if the last action taken was to call Undo.
-        public bool CanRedo => this is UndoMementoNode;
-
 
         /// <summary>
         ///     Gets a lazy enumeration of all the parents of this memento.
@@ -80,16 +72,8 @@ namespace Diaballik.Core {
         /// </summary>
         /// <param name="action">The transition from this memento to the result</param>
         /// <returns>A new memento with this as its parent</returns>
-        public UpdateActionNode Update(IUpdateAction action) {
-            return new UpdateActionNode(this, action);
-        }
-
-        public UndoMementoNode Undo() {
-            return new UndoMementoNode(this, new UndoAction());
-        }
-
-        public RedoMementoNode Redo() {
-            return new RedoMementoNode(this, new RedoAction());
+        public MementoNode Update(IUpdateAction action) {
+            return new MementoNode(this, action);
         }
 
         /// <summary>
@@ -143,8 +127,12 @@ namespace Diaballik.Core {
             return Equals((GameMemento) obj);
         }
 
+
         public abstract override int GetHashCode();
 
+        /// <summary>
+        ///     Specialises MementoNode for an update action.
+        /// </summary>
         public static bool operator ==(GameMemento left, GameMemento right) {
             return Equals(left, right);
         }
@@ -163,64 +151,18 @@ namespace Diaballik.Core {
     ///     They store the transition from the previous state to
     ///     this one as a PlayerAction.
     /// </summary>
-    public abstract class MementoNode : GameMemento {
+    public class MementoNode : GameMemento {
         #region Properties
 
         /// Action to perform on the previous state to get this state
-        public IPlayerAction Action { get; }
+        public IUpdateAction Action { get; }
 
         #endregion
 
         #region Constructor
 
-        protected MementoNode(GameMemento previous, IPlayerAction action) : base(previous) {
+        public MementoNode(GameMemento previous, IUpdateAction action) : base(previous) {
             Action = action;
-        }
-
-        #endregion
-
-
-        #region Equality members
-
-        protected bool Equals(MementoNode other) {
-            return Action.Equals(other.Action) && base.Equals(other);
-        }
-
-        public override bool Equals(object obj) {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((MementoNode) obj);
-        }
-
-        public override int GetHashCode() {
-            return Action.GetHashCode() * 31 + Parent.GetHashCode();
-        }
-
-        public static bool operator ==(MementoNode left, MementoNode right) {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(MementoNode left, MementoNode right) {
-            return !Equals(left, right);
-        }
-
-        #endregion
-    }
-
-    /// <summary>
-    ///     Specialises MementoNode for an update action.
-    /// </summary>
-    public sealed class UpdateActionNode : MementoNode {
-        #region Properties
-
-        public new IUpdateAction Action => (IUpdateAction) base.Action;
-
-        #endregion
-
-        #region Constructor
-
-        public UpdateActionNode(GameMemento previous, IUpdateAction action) : base(previous, action) {
         }
 
         #endregion
@@ -236,129 +178,37 @@ namespace Diaballik.Core {
         }
 
         #endregion
-    }
 
-    /// <inheritdoc />
-    /// <summary>
-    ///     Represents an <see cref="T:Diaballik.Core.IHistoryAction" /> 
-    ///     in the update chain. Shares functionality across Undo and Redo 
-    ///     actions. 
-    /// 
-    ///     Both these classes get a previously computed state, jumping 
-    ///     over same type nodes to allow repeating the action several times.
-    /// </summary>
-    public abstract class HistoryActionNode : MementoNode {
-        #region Properties
+        #region Equality members
 
-        public new IHistoryAction Action => (IHistoryAction) base.Action;
-
-        public abstract GameMemento IndirectionTarget { get; }
-
-        #endregion
-
-        #region Base constructor
-
-        protected HistoryActionNode(GameMemento previous, IHistoryAction action) : base(previous, action) {
-//            var previousSameTypeNodes = Parents.TakeWhile(m => GetType().IsInstanceOfType(m)).Count();
-//             we have to jump over same type nodes
-//            _restoredMemento = GetNthParent(2 * previousSameTypeNodes + 1);
+        protected bool Equals(MementoNode other) {
+            return Action.Equals(other.Action) && base.Equals(other);
         }
 
-        #endregion
-
-        #region Methods
-
-        public override string ToString() {
-            return $"{base.ToString()}, IndirectionTarget: {IndirectionTarget}";
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((MementoNode) obj);
         }
 
-        #endregion
-    }
+        private int _hashCode;
+        private bool _hashCodeIsValid;
 
-    /// <inheritdoc />
-    /// <summary>
-    ///     Represents an Undo action. See the superclass.
-    /// </summary>
-    public sealed class UndoMementoNode : HistoryActionNode {
-        #region Properties
-
-        public new UndoAction Action => (UndoAction) base.Action;
-
-        public override GameMemento IndirectionTarget { get; }
-        public GameMemento StateTarget { get; }
-
-        #endregion
-
-        #region Constructor
-
-        public UndoMementoNode(GameMemento previous, UndoAction undoAction) : base(previous, undoAction) {
-            switch (previous) {
-                case UndoMementoNode undoMementoNode:
-                    IndirectionTarget = undoMementoNode.IndirectionTarget.Parent;
-                    break;
-                case RedoMementoNode redoMementoNode:
-                    IndirectionTarget = redoMementoNode.IndirectionTarget;
-                    break;
-                case var otherMementoType:
-                    IndirectionTarget = otherMementoType;
-                    break;
+        public override int GetHashCode() {
+            if (_hashCodeIsValid) {
+                return _hashCode;
             }
-
-            // resolve indirection
-            var cur = IndirectionTarget.Parent;
-            while (cur is UndoMementoNode u) {
-                cur = u.IndirectionTarget.Parent;
-            }
-            StateTarget = cur;
-            if (StateTarget == null) throw new ArgumentException("Cannot undo on the root");
+            _hashCodeIsValid = true;
+            return _hashCode = Action.GetHashCode() * 31 + Parent.GetHashCode();
         }
 
-        #endregion
-
-        #region Methods
-
-        public override GameState ToState() {
-            return StateTarget.ToState();
+        public static bool operator ==(MementoNode left, MementoNode right) {
+            return Equals(left, right);
         }
 
-        public override string ToString() {
-            return $"{base.ToString()}, StateTarget: {IndirectionTarget.Parent}";
-        }
-
-        #endregion
-    }
-
-    /// <summary>
-    ///     Represents a Redo action. See the superclass.
-    /// </summary>
-    public sealed class RedoMementoNode : HistoryActionNode {
-        #region Properties
-
-        public new RedoAction Action => (RedoAction) base.Action;
-
-        public override GameMemento IndirectionTarget { get; }
-
-        #endregion
-
-        #region Constructor
-
-        public RedoMementoNode(GameMemento previous, RedoAction action) : base(previous, action) {
-            switch (previous) {
-                case HistoryActionNode historyAction:
-                    IndirectionTarget = historyAction.IndirectionTarget;
-                    break;
-                case var otherMementoType:
-                    IndirectionTarget = otherMementoType;
-                    break;
-            }
-        }
-
-        #endregion
-
-        #region Methods
-
-        public override GameState ToState() {
-            return IndirectionTarget.ToState();
+        public static bool operator !=(MementoNode left, MementoNode right) {
+            return !Equals(left, right);
         }
 
         #endregion

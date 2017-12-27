@@ -12,7 +12,7 @@ namespace Diaballik.Tests {
     public class GameStateTests {
         [OneTimeTearDown]
         public void TearDown() {
-            MockUtil.PrintStats(nameof(GameStateTests));
+            PrintStats(nameof(GameStateTests));
         }
 
         [Test]

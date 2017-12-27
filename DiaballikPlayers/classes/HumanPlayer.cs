@@ -16,7 +16,7 @@ namespace Diaballik.Players {
         public override bool IsAi { get; } = false;
 
 
-        public override IPlayerAction GetNextMove(StateWithHistory board) {
+        public override IUpdateAction GetNextMove(StateWithHistory board) {
             throw new NotImplementedException();
         }
 
