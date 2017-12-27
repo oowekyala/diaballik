@@ -2,6 +2,8 @@
 using Diaballik.Core;
 
 namespace Diaballik.Players {
+    using StateWithHistory = GameMemento;
+
     /// <summary>
     ///     Base class for players.
     /// </summary>
@@ -27,7 +29,7 @@ namespace Diaballik.Players {
 
         #region Methods
 
-        public abstract IPlayerAction GetNextMove(GameBoard board);
+        public abstract IPlayerAction GetNextMove(StateWithHistory board);
 
         // Partial implementation, to be completed by derived classes
         public virtual PlayerBuilder ToBuilder() => new PlayerBuilder {

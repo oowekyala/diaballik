@@ -5,25 +5,47 @@ using namespace System::Linq;
 
 namespace Diaballik::AlgoLib {
 
+
 	
+	
+	/// Tries to get a valid MovePiece.
+	IUpdateAction^ NoobAiAlgo::TryGetAMovePiece(GameState^ state, IEnumerable<Position2D>^ ps, Position2D ballCarrier) {
+		auto ls = Enumerable::ToList(ps);
+		ls->Remove(ballCarrier);
+		for each(auto p in ls) {
+			auto movePieces = Enumerable::ToList(BoardAnalysis::AvailableMoves(state, p));
+			if (movePieces->Count > 0) return movePieces[0];
+		}
+		// We make the assumption that this line is never reached,
+		// which is confirmed by coverage analysis.
+		return gcnew PassAction();
+	}
 
-	IPlayerAction^ NoobAiAlgo::NextMove(GameBoard^ board, IPlayer^ player)
+
+
+	/// Tries to get a valid MoveBall, falling back on a MovePiece if none is available
+	IUpdateAction^ NoobAiAlgo::TryGetAMoveBall(GameState^ state, IEnumerable<Position2D>^ ps, Position2D ballCarrier) {
+		auto moveBalls = Enumerable::ToList(BoardAnalysis::AvailableMoves(state, ballCarrier));
+		return moveBalls->Count > 0 ? moveBalls[0] : TryGetAMovePiece(state, ps, ballCarrier);
+	}
+
+
+	IUpdateAction^ NoobAiAlgo::NextMove(GameState^ state, IPlayer^ player)
 	{
-		List<Position2D>^ ps = Enumerable::ToList(board->PositionsForPlayer(player));
-		int i = 0;
+		auto ps = state->PositionsForPlayer(player);
+		auto ballCarrier = state->BallCarrierForPlayer(player);
 
-		IEnumerable<MoveAction^>^ actions = BoardAnalysis::AvailableMoves(board, ps[i]);
+		const int movePieceProportion = 40; 
+		const int moveBallProportion = 40;
+		auto random = NoobAiAlgo::Rng->Next(100);
 
-		while (i < ps->Count && !Enumerable::Any(actions))
-		{
-			actions = BoardAnalysis::AvailableMoves(board, ps[++i]);
+		if (random < movePieceProportion) {
+			return TryGetAMovePiece(state, ps, ballCarrier);
 		}
-
-		if (!Enumerable::Any(actions)) // cannot do anything
-		{
-			return gcnew PassAction();
+		if (random < movePieceProportion + moveBallProportion) {
+			return TryGetAMoveBall(state, ps, ballCarrier);
 		}
-
-		return Enumerable::ElementAt(actions, 0);
+		auto pass = gcnew PassAction();
+		return pass->IsValidOn(state) ? pass : TryGetAMovePiece(state, ps, ballCarrier);
 	}
 }

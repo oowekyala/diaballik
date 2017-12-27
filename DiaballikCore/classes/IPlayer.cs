@@ -2,6 +2,9 @@
 using System.Drawing;
 
 namespace Diaballik.Core {
+    // clarifies intent
+    using StateWithHistory = GameMemento;
+
     /// <summary>
     ///     Player of a game. Immutability must be preserved, because
     ///     players are composed into several other important immutable 
@@ -29,7 +32,7 @@ namespace Diaballik.Core {
         /// </summary>
         /// <param name="board">The board of the game</param>
         /// <returns>The next move of this player</returns>
-        IPlayerAction GetNextMove(GameBoard board);
+        IPlayerAction GetNextMove(StateWithHistory board);
 
         #endregion
     }

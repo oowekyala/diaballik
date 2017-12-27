@@ -92,56 +92,19 @@ namespace Diaballik.Tests {
 
         #region Move mocking
 
-        /// Tries to get a valid MovePiece.
-        private static IUpdateAction TryGetAMovePiece(GameState state, IEnumerable<Position2D> ps,
-            Position2D ballCarrier) {
-            foreach (var p in ps.Where(p => p != ballCarrier)) {
-                var movePieces = state.AvailableMoves(p).ToList();
-                if (movePieces.Any()) return movePieces.First();
-            }
-            // We make the assumption that this line is never reached,
-            // which is confirmed by coverage analysis.
-            return new PassAction();
-        }
-
-        /// Tries to get a valid MoveBall, falling back on a MovePiece if none is available
-        private static IUpdateAction TryGetAMoveBall(GameState state, IEnumerable<Position2D> ps,
-            Position2D ballCarrier) {
-            var moveBalls = state.AvailableMoves(ballCarrier).ToList();
-            return moveBalls.Any() ? moveBalls.First() : TryGetAMovePiece(state, ps, ballCarrier);
-        }
+        /// Used as source for randomly chosen moves.
+        private static readonly NoobAiAlgo MoveDecisionAlgo = new NoobAiAlgo();
 
         /// <summary>
-        ///     Gets a valid move to perform on the state.
+        ///     Gets a random move that's valid on the given state.
         /// 
-        ///     Tries to return a proportion of 40% MovePiece, 
-        ///     40% MoveBall, and 20% Pass. In reality, the 
-        ///     proportion is about 50% MovePiece, 30% MoveBall, 
-        ///     and 20% Pass, because the returned move must be valid.
+        ///     The distribution of moves is tweaked to reduce bias towards MovePiece action
+        ///     and represent each type of move realistically, if not evenly. 
+        /// 
+        ///     See the implementation in NoobAiAlgo.cpp
         /// </summary>
         public static IUpdateAction GetAMove(GameState state) {
-            var ps = state.PositionsForPlayer(state.CurrentPlayer);
-            var ballCarrier = state.BallCarrierForPlayer(state.CurrentPlayer);
-
-            const int movePieceProportion = 40; // 40%
-            const int moveBallProportion = 40; // 40%
-            var random = Rng.Next(100);
-
-            // type of the action to return
-            var expectedType = random < movePieceProportion
-                ? typeof(MovePieceAction)
-                : random < movePieceProportion + moveBallProportion
-                    ? typeof(MoveBallAction)
-                    : typeof(PassAction);
-
-            if (random < movePieceProportion) {
-                return TryGetAMovePiece(state, ps, ballCarrier).UpdateStatisticsAndPass();
-            }
-            if (random < movePieceProportion + moveBallProportion) {
-                return TryGetAMoveBall(state, ps, ballCarrier).UpdateStatisticsAndPass();
-            }
-            var pass = new PassAction();
-            return (pass.IsValidOn(state) ? pass : TryGetAMovePiece(state, ps, ballCarrier)).UpdateStatisticsAndPass();
+            return MoveDecisionAlgo.NextMove(state, state.CurrentPlayer).UpdateStatisticsAndPass();
         }
 
         #region Statistics collection

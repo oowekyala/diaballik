@@ -270,7 +270,7 @@ namespace Diaballik.Core {
         }
 
 
-        protected bool Equals(GameBoard other) {
+        public bool Equals(GameBoard other) {
             return _player1Positions.SetEquals(other._player1Positions)
                    && _player2Positions.SetEquals(other._player2Positions)
                    && Player1.Equals(other.Player1)

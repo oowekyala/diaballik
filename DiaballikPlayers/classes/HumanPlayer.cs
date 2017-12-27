@@ -3,6 +3,7 @@ using System.Drawing;
 using Diaballik.Core;
 
 namespace Diaballik.Players {
+    using StateWithHistory = GameMemento;
 
     /// <summary>
     ///     Human player. Waits for UI events to get the next move.
@@ -15,7 +16,7 @@ namespace Diaballik.Players {
         public override bool IsAi { get; } = false;
 
 
-        public override IPlayerAction GetNextMove(GameBoard board) {
+        public override IPlayerAction GetNextMove(StateWithHistory board) {
             throw new NotImplementedException();
         }
 

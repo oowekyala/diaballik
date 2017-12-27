@@ -7,7 +7,7 @@ namespace Diaballik::AlgoLib {
 	public ref class StartingAiAlgo : public AiDecisionAlgo
 	{
 	public:
-		IPlayerAction^ NextMove(GameBoard^ board, IPlayer^ player) override;
+		IUpdateAction^ NextMove(GameState^ board, IPlayer^ player) override;
 	};
 
 }

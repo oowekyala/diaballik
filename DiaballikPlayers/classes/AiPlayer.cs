@@ -5,6 +5,8 @@ using Diaballik.Core;
 
 
 namespace Diaballik.Players {
+    using StateWithHistory = GameMemento;
+
     /// <summary>
     ///     Base class for Ai players. They're backed by a strategy object which 
     ///     conditions which move the player will choose given a gamestate.
@@ -34,8 +36,8 @@ namespace Diaballik.Players {
 
         #region Methods
 
-        public override IPlayerAction GetNextMove(GameBoard board) {
-            return _algo.NextMove(board, this);
+        public override IPlayerAction GetNextMove(StateWithHistory context) {
+            return _algo.NextMove(context.ToState(), this);
         }
 
         public sealed override PlayerBuilder ToBuilder() {
@@ -114,7 +116,7 @@ namespace Diaballik.Players {
 
         #region Overridden methods
 
-        public override IPlayerAction NextMove(GameBoard board, IPlayer player) {
+        public override IUpdateAction NextMove(GameState board, IPlayer player) {
             return _nbMoves++ < 10 ? _noob.NextMove(board, player) : _starting.NextMove(board, player);
         }
 
