@@ -89,7 +89,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\ColorDimmer.cs" />
-    <Compile Include="Converters\PositionToTileFill.cs" />
+    <Compile Include="Converters\ConvertUtil.cs" />
+    <Compile Include="Converters\TileFillConverter.cs" />
     <Compile Include="Converters\RatioConverter.cs" />
     <Compile Include="Converters\StringToInitStrategy.cs" />
     <Compile Include="ViewModel\DockWindowViewModel.cs" />

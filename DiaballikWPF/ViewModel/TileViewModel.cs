@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Diagnostics;
+using System.Windows.Media;
 using Diaballik.Core;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -11,92 +12,85 @@ namespace DiaballikWPF.ViewModel {
         #region Properties
 
         private BoardViewModel BoardVm { get; }
+
         public Position2D Position { get; }
+
+        #region HasPiece
 
         private bool _hasPiece;
 
-
         public bool HasPiece {
             get => _hasPiece;
-            set {
-                if (value != HasPiece) {
-                    _hasPiece = value;
-                    RaisePropertyChanged("HasPiece");
-                }
-            }
+            set => Set(ref _hasPiece, value, "HasPiece");
         }
+
+        #endregion
+
+        #region HasBall
 
         private bool _hasBall;
 
-
         public bool HasBall {
             get => _hasBall;
-            set {
-                if (value != HasBall) {
-                    _hasBall = value;
-                    RaisePropertyChanged("HasBall");
-                }
-            }
+            set => Set(ref _hasBall, value, "HasBall");
         }
+
+        #endregion
+
+        #region PieceColor
 
         private Color _color;
 
         public Color PieceColor {
             get => _color;
-            set {
-                if (value != PieceColor) {
-                    _color = value;
-                    RaisePropertyChanged("PieceColor");
-                }
-            }
+            set => Set(ref _color, value, propertyName: "PieceColor");
         }
 
+        #endregion
+
+        #region IsMarked
 
         private bool _isMarked;
 
         /// Marked because of available move
         public bool IsMarked {
             get => _isMarked;
-            set {
-                if (_isMarked != value) {
-                    _isMarked = value;
-                    RaisePropertyChanged("IsMarked");
-                }
-            }
+            set => Set(ref _isMarked, value, propertyName: "IsMarked");
         }
 
-        private bool _isSelected;
+        #endregion
 
+        #region IsSelected
+
+        private bool _isSelected;
 
         public bool IsSelected {
             get => _isSelected;
             set {
                 if (_isSelected != value) {
                     _isSelected = value;
-                    BoardVm.SelectedTile = this;
+                    Debug.WriteLine($"{Position} thinks it's selected");
+                    if (IsSelected) {
+                        BoardVm.SelectedTile = this;
+                    }
+
                     RaisePropertyChanged("IsSelected");
                 }
             }
         }
 
-        public void OnLeftClick() {
-        }
+        #endregion
 
-        public bool IsEven => Position.X % 2 == Position.Y % 2;
-
+        #region IsSelectable
 
         private bool _isSelectable;
 
-
         public bool IsSelectable {
             get => _isSelectable;
-            set {
-                if (_isSelectable != value) {
-                    _isSelectable = value;
-                    RaisePropertyChanged("IsSelectable");
-                }
-            }
+            set => Set(ref _isSelectable, value, "IsSelectable");
         }
+
+        #endregion
 
         #endregion
 

@@ -11,12 +11,23 @@
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance viewModel:TileViewModel}">
 
     <UserControl.Resources>
-        <converters:PositionToTileFill x:Key="TileBrushConverter" />
-        <converters:ColorDimmer x:Key="SelectedColorConverter" Percent="70" />
-        <converters:ColorDimmer x:Key="BallColorConverter" Percent="50" />
+        <converters:TileFillConverter x:Key="TileBrushConverter" />
+        <converters:ColorDimmer x:Key="SelectedColorConverter" Ratio="70" />
+        <converters:ColorDimmer x:Key="BallColorConverter" Ratio="50" />
         <converters:RatioConverter x:Key="BallSizeConverter" Ratio="60" />
         <converters:BoolToVisibility x:Key="BoolToVisibility" />
 
+        <!-- Style for the base of the tile, always visible -->
+        <Style x:Key="TileStyle" TargetType="Grid">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <MultiBinding Converter="{StaticResource TileBrushConverter}">
+                        <Binding Path="Position" />
+                        <Binding Path="IsMarked" />
+                    </MultiBinding>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <Style x:Key="PieceStyle" TargetType="Ellipse">
             <Style.Triggers>
@@ -42,6 +53,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
+
             </Style.Triggers>
             <Setter Property="Stroke" Value="Black" />
             <Setter Property="StrokeThickness" Value="2" />
@@ -71,32 +83,32 @@
         </Style>
 
     </UserControl.Resources>
-        <Grid
-            Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:TileView}}, Path=ActualHeight}"
-            Background="{Binding Position, Converter={StaticResource TileBrushConverter}}">
+    <Grid
+        Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:TileView}}, Path=ActualHeight}"
+        Style="{StaticResource TileStyle}">
 
-            <!-- The button changes color when it's selected. -->
-            <!-- It's disabled when the current player is the opponent. -->
-            <!-- The ball is just an ellipse overlayed on the button's graphic, -->
-            <!-- that is set to visible only when the tile carries the ball. -->
-            <RadioButton
-                Visibility="{Binding HasPiece, Converter={StaticResource BoolToVisibility}}"
-                IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                GroupName="Pieces"
-                IsEnabled="{Binding IsSelectable}">
-                <RadioButton.Template>
-                    <ControlTemplate>
-                        <Grid>
-                            <Ellipse Style="{StaticResource PieceStyle}" />
-                            <Ellipse
-                                Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={StaticResource BallSizeConverter}}"
-                                Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualHeight, Converter={StaticResource BallSizeConverter}}"
-                                Style="{StaticResource BallStyle}" />
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Grid>
-                    </ControlTemplate>
-                </RadioButton.Template>
+        <!-- The button changes color when it's selected. -->
+        <!-- It's disabled when the current player is the opponent. -->
+        <!-- The ball is just an ellipse overlayed on the button's graphic, -->
+        <!-- that is set to visible only when the tile carries the ball. -->
+        <RadioButton
+            Visibility="{Binding HasPiece, Converter={StaticResource BoolToVisibility}}"
+            IsChecked="{Binding IsSelected}"
+            GroupName="Pieces"
+            IsEnabled="{Binding IsSelectable}">
+            <RadioButton.Template>
+                <ControlTemplate>
+                    <Grid>
+                        <Ellipse Style="{StaticResource PieceStyle}" />
+                        <Ellipse
+                            Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={StaticResource BallSizeConverter}}"
+                            Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualHeight, Converter={StaticResource BallSizeConverter}}"
+                            Style="{StaticResource BallStyle}" />
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </RadioButton.Template>
 
-            </RadioButton>
-        </Grid>
+        </RadioButton>
+    </Grid>
 </UserControl>

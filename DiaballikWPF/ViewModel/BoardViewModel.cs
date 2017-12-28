@@ -45,7 +45,11 @@ namespace DiaballikWPF.ViewModel {
             set {
                 if (_selectedTile != value) {
                     _selectedTile = value;
-                    SuggestMoves(SelectedTile);
+                    Debug.WriteLine($"{_selectedTile.Position} isSelected");
+                    if (SelectedTile != null) {
+                        SuggestMoves(SelectedTile);
+                    }
+
                     RaisePropertyChanged("SelectedTile");
                 }
             }
@@ -68,10 +72,15 @@ namespace DiaballikWPF.ViewModel {
                 tile.IsMarked = false;
             }
 
+            _markedTiles.Clear();
+
             var moves = Game.State.AvailableMoves(sourceTile.Position);
 
             foreach (var move in moves) {
-                TileAt(move.Dst).IsMarked = true;
+                var target = TileAt(move.Dst);
+                target.IsMarked = true;
+                Debug.WriteLine($"{move.Dst} isMarked");
+                _markedTiles.Add(target);
             }
         }
 
