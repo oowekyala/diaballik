@@ -14,8 +14,12 @@
     </UserControl.Resources>
 
 
-    <ItemsControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                  ItemsSource="{Binding Tiles}">
+    <!-- Grid containing the tiles -->
+    <ItemsControl
+        Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        ItemsSource="{Binding Tiles}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
                 <UniformGrid Columns="{Binding BoardSize}"
@@ -26,9 +30,11 @@
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
+            <!-- Template for individual TileViewModel -->
             <DataTemplate DataType="{x:Type viewModel:TileViewModel}">
                 <gamePlay:TileView DataContext="{Binding}" />
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>
+
 </UserControl>

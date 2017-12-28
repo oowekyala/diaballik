@@ -9,7 +9,7 @@
              mc:Ignorable="d"
              Background="#FFAD8FD8" d:DataContext="{d:DesignInstance viewModel:PlayGameScreenViewModel}">
     <DockPanel>
-       
+
         <StackPanel DockPanel.Dock="Right" VerticalAlignment="Stretch">
             <StackPanel.Resources>
                 <Style TargetType="{x:Type Button}">
@@ -23,11 +23,11 @@
             <Button Content="Quit" />
             <Label Content="Player 1" />
         </StackPanel>
-
-        <view:BoardView HorizontalAlignment="Stretch" 
-                        VerticalAlignment="Stretch" 
-                        DataContext="{Binding BoardViewModel}" />
-
+<!--        <Viewbox Stretch="Uniform">-->
+            <view:BoardView HorizontalAlignment="Left"
+                            VerticalAlignment="Stretch"
+                            DataContext="{Binding BoardViewModel}" />
+<!--        </Viewbox>-->
     </DockPanel>
 
 </UserControl>

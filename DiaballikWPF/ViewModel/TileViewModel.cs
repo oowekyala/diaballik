@@ -1,7 +1,5 @@
-﻿using System;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using Diaballik.Core;
-using DiaballikWPF.Converters;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -62,8 +60,7 @@ namespace DiaballikWPF.ViewModel {
             set {
                 if (_isMarked != value) {
                     _isMarked = value;
-
-                    RaisePropertyChanged($"Background");
+                    RaisePropertyChanged("IsMarked");
                 }
             }
         }
@@ -76,8 +73,8 @@ namespace DiaballikWPF.ViewModel {
             set {
                 if (_isSelected != value) {
                     _isSelected = value;
-
-                    RaisePropertyChanged($"Background");
+                    BoardVm.SelectedTile = this;
+                    RaisePropertyChanged("IsSelected");
                 }
             }
         }
@@ -86,6 +83,20 @@ namespace DiaballikWPF.ViewModel {
         }
 
         public bool IsEven => Position.X % 2 == Position.Y % 2;
+
+
+        private bool _isSelectable;
+
+
+        public bool IsSelectable {
+            get => _isSelectable;
+            set {
+                if (_isSelectable != value) {
+                    _isSelectable = value;
+                    RaisePropertyChanged("IsSelectable");
+                }
+            }
+        }
 
         #endregion
 

@@ -6,34 +6,97 @@
              xmlns:local="clr-namespace:DiaballikWPF.View.GamePlay"
              xmlns:converters="clr-namespace:DiaballikWPF.Converters"
              xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance viewModel:TileViewModel}">
 
     <UserControl.Resources>
-        <converters:PositionToTileFillConverter x:Key="TileBrushConverter" />
+        <converters:PositionToTileFill x:Key="TileBrushConverter" />
+        <converters:ColorDimmer x:Key="SelectedColorConverter" Percent="70" />
+        <converters:ColorDimmer x:Key="BallColorConverter" Percent="50" />
+        <converters:RatioConverter x:Key="BallSizeConverter" Ratio="60" />
         <converters:BoolToVisibility x:Key="BoolToVisibility" />
-        <Style x:Key="PieceStyle" TargetType="StackPanel" />
+
+
+        <Style x:Key="PieceStyle" TargetType="Ellipse">
+            <Style.Triggers>
+
+                <!-- Selected -->
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter Property="Fill">
+                        <Setter.Value>
+                            <SolidColorBrush>
+                                <SolidColorBrush.Color>
+                                    <Binding Path="PieceColor" Converter="{StaticResource SelectedColorConverter}" />
+                                </SolidColorBrush.Color>
+                            </SolidColorBrush>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+
+                <!-- Default style -->
+                <DataTrigger Binding="{Binding IsSelected}" Value="False">
+                    <Setter Property="Fill">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding PieceColor}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+            </Style.Triggers>
+            <Setter Property="Stroke" Value="Black" />
+            <Setter Property="StrokeThickness" Value="2" />
+        </Style>
+
+        <Style x:Key="BallStyle" TargetType="Ellipse">
+
+            <Style.Triggers>
+                <!-- Visible ball -->
+                <DataTrigger Binding="{Binding HasBall}" Value="True">
+                    <Setter Property="Stroke" Value="Black" />
+                    <Setter Property="Fill">
+                        <Setter.Value>
+                            <SolidColorBrush
+                                Color="{Binding PieceColor, Converter={StaticResource BallColorConverter}}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+
+                <!-- No ball -> invisible -->
+                <DataTrigger Binding="{Binding HasBall}" Value="False">
+                    <Setter Property="Stroke" Value="Transparent" />
+                    <Setter Property="Fill" Value="Transparent" />
+                </DataTrigger>
+            </Style.Triggers>
+
+        </Style>
+
     </UserControl.Resources>
-    <StackPanel Style="{StaticResource PieceStyle}"
-                Background="{Binding Position, Converter={StaticResource TileBrushConverter}}">
+        <Grid
+            Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:TileView}}, Path=ActualHeight}"
+            Background="{Binding Position, Converter={StaticResource TileBrushConverter}}">
 
-        <Button Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type StackPanel}}, Path=ActualHeight}"
-                Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type StackPanel}}, Path=ActualWidth}"
-                Visibility="{Binding HasPiece, Converter={StaticResource BoolToVisibility}}">
-            <Button.Template>
-                <ControlTemplate>
-                    <Grid>
-                        <Ellipse Stroke="Black" StrokeThickness="2">
-                            <Ellipse.Fill>
-                                <SolidColorBrush x:Name="PieceBrush" Color="{Binding PieceColor}" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Grid>
-                </ControlTemplate>
-            </Button.Template>
+            <!-- The button changes color when it's selected. -->
+            <!-- It's disabled when the current player is the opponent. -->
+            <!-- The ball is just an ellipse overlayed on the button's graphic, -->
+            <!-- that is set to visible only when the tile carries the ball. -->
+            <RadioButton
+                Visibility="{Binding HasPiece, Converter={StaticResource BoolToVisibility}}"
+                IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                GroupName="Pieces"
+                IsEnabled="{Binding IsSelectable}">
+                <RadioButton.Template>
+                    <ControlTemplate>
+                        <Grid>
+                            <Ellipse Style="{StaticResource PieceStyle}" />
+                            <Ellipse
+                                Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={StaticResource BallSizeConverter}}"
+                                Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualHeight, Converter={StaticResource BallSizeConverter}}"
+                                Style="{StaticResource BallStyle}" />
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                    </ControlTemplate>
+                </RadioButton.Template>
 
-        </Button>
-    </StackPanel>
-
+            </RadioButton>
+        </Grid>
 </UserControl>
