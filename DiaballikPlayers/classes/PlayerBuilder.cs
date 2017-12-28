@@ -6,19 +6,18 @@ namespace Diaballik.Players {
     /// <summary>
     ///     Builds player instances.
     /// </summary>
-    public class PlayerBuilder {
-        #region Internal state
-
-        private AiLevel _aiLevel;
-        private bool _isHuman;
+    public sealed class PlayerBuilder {
+        #region Properties
 
         public Color Color { set; get; } = Color.Yellow;
 
         public string Name { set; get; }
 
+        public PlayerType SelectedPlayerType { get; set; }
+
         #endregion
 
-        #region State manipulation methods
+        #region Fluent interface methods
 
         // for fluent interface
         public PlayerBuilder SetName(string n) {
@@ -32,28 +31,9 @@ namespace Diaballik.Players {
             return this;
         }
 
-
-        /// <summary>
-        ///     Specify that the current player is an Ai.
-        ///     This overrides previous calls to setIsAi
-        ///     and setIsHuman.
-        /// </summary>
-        /// <param name="level">The difficulty level of the AI</param>
-        /// <returns>The same builder</returns>
-        public PlayerBuilder SetIsAi(AiLevel level) {
-            _aiLevel = level;
-            _isHuman = false;
-            return this;
-        }
-
-
-        /// <summary>
-        ///     Specify that the current player is a human.
-        ///     This overrides previous calls to setIsAi.
-        /// </summary>
-        /// <returns>The same builder</returns>
-        public PlayerBuilder SetIsHuman() {
-            _isHuman = true;
+        // for fluent interface
+        public PlayerBuilder SetPlayerType(PlayerType t) {
+            SelectedPlayerType = t;
             return this;
         }
 
@@ -66,16 +46,14 @@ namespace Diaballik.Players {
         /// </summary>
         /// <returns>A new player</returns>
         public IPlayer Build() {
-            if (_isHuman) {
-                return new HumanPlayer(Color, Name);
-            }
-
-            switch (_aiLevel) {
-                case AiLevel.Noob:
+            switch (SelectedPlayerType) {
+                case PlayerType.Human:
+                    return new HumanPlayer(Color, Name);
+                case PlayerType.NoobAi:
                     return new NoobAiPlayer(Color, Name);
-                case AiLevel.Starting:
+                case PlayerType.StartingAi:
                     return new StartingAiPlayer(Color, Name);
-                case AiLevel.Progressive:
+                case PlayerType.ProgressiveAi:
                     return new ProgressiveAiPlayer(Color, Name);
                 default:
                     throw new ArgumentOutOfRangeException();

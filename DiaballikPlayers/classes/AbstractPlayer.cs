@@ -31,10 +31,11 @@ namespace Diaballik.Players {
 
         public abstract IUpdateAction GetNextMove(StateWithHistory board);
 
-        // Partial implementation, to be completed by derived classes
+        /// call base implementation if overriding
         public virtual PlayerBuilder ToBuilder() => new PlayerBuilder {
             Color = Color,
-            Name = Name
+            Name = Name,
+            SelectedPlayerType = PlayerTypes.FromPlayer(this)
         };
 
         public override string ToString() {

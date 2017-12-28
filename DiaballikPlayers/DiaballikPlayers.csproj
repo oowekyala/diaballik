@@ -48,6 +48,7 @@
     <Compile Include="classes\HumanPlayer.cs" />
     <Compile Include="classes\MementoSerializationUtil.cs" />
     <Compile Include="classes\PlayerBuilder.cs" />
+    <Compile Include="classes\PlayerType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

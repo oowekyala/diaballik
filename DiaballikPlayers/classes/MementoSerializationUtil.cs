@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Diaballik.Core;
 using Diaballik.Core.Util;
+using static Diaballik.Players.PlayerBuilder;
 
 // ReSharper disable PossibleNullReferenceException
 
@@ -43,12 +44,14 @@ namespace Diaballik.Players {
             {typeof(PassAction), PassToken},
         };
 
-        private static readonly Dictionary<AiLevel, string> AiTypes =
-            new Dictionary<AiLevel, string> {
-                {AiLevel.Noob, "noobAi"},
-                {AiLevel.Starting, "startingAi"},
-                {AiLevel.Progressive, "progressiveAi"},
+        private static readonly Dictionary<PlayerType, string> PlayerTypesToString =
+            new Dictionary<PlayerType, string> {
+                {PlayerType.Human, "human"},
+                {PlayerType.NoobAi, "noobAi"},
+                {PlayerType.StartingAi, "startingAi"},
+                {PlayerType.ProgressiveAi, "progressiveAi"},
             };
+
 
         #endregion
 
@@ -87,7 +90,7 @@ namespace Diaballik.Players {
                 return new XElement(PlayerElement,
                                     new XAttribute("color", player.Color.ToArgb()),
                                     new XAttribute("name", player.Name),
-                                    new XAttribute("type", player is AiPlayer ai1 ? AiTypes[ai1.Level] : "human")
+                                    new XAttribute("type", PlayerTypesToString[PlayerTypes.FromPlayer(player)])
                 );
             }
 
@@ -206,16 +209,9 @@ namespace Diaballik.Players {
                 var color = Color.FromArgb(int.Parse(element.Attribute("color").Value));
                 var type = element.Attribute("type").Value;
 
-                var playerBuilder = new PlayerBuilder().SetColor(color).SetName(name);
-                switch (type) {
-                    case "human":
-                        playerBuilder.SetIsHuman();
-                        break;
-                    default:
-                        playerBuilder.SetIsAi(AiTypes.First(x => x.Value == type).Key);
-                        break;
-                }
-                return playerBuilder.Build();
+                var playerType = PlayerTypesToString.First(x => x.Value == type).Key;
+
+                return new PlayerBuilder().SetColor(color).SetName(name).SetPlayerType(playerType).Build();
             }
 
             private static (Position2D, int) PositionFromElement(XElement element) {

@@ -10,22 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Diaballik.Core;
 
-namespace DiaballikWPF
+namespace DiaballikWPF.View
 {
     /// <summary>
-    /// Logique d'interaction pour Window2.xaml
+    /// Logique d'interaction pour UserControl1.xaml
     /// </summary>
-    public partial class Window2 : Window
+    public partial class PlayerBuilderView : UserControl
     {
-        GameBoard gb;
-        public Window2()
+        public PlayerBuilderView()
         {
             InitializeComponent();
-            board.Rows = gb.BoardSize;
-            board.Columns = gb.BoardSize;
         }
     }
 }

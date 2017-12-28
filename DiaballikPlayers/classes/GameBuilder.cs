@@ -10,29 +10,37 @@ namespace Diaballik.Players {
     public class GameBuilder {
         #region Private fields
 
-        private readonly PlayerBuilder _playerBuilder1 = new PlayerBuilder();
-        private readonly PlayerBuilder _playerBuilder2 = new PlayerBuilder();
-        private int _size = 7;
-
         #endregion
 
         #region Properties and setters
 
-        /// Determines where the pieces of each player will be initialised.
-        public IInitStrategy InitStrategy { get; set; } = new StandardInitStrategy();
+        public PlayerBuilder PlayerBuilder1 { get; } = new PlayerBuilder();
 
-        public int Size {
-            get => _size;
-            set => _size = value % 2 == 1 && value > 1
-                ? value
-                : throw new ArgumentException("The size of the board must be odd and > 1");
+        public PlayerBuilder PlayerBuilder2 { get; } = new PlayerBuilder();
+
+
+        private IInitStrategy InitStrategy => StrategyFromScenario(Scenario);
+
+        public int BoardSize { get; set; } = 7;
+
+
+        /// Determines where the pieces of each player will be initialised.
+        public GameScenario Scenario { get; set; } = GameScenario.Standard;
+
+        public enum GameScenario {
+            Standard,
+            BallRandom,
+            EnemyAmongUs
         }
 
-
-        public GameBuilder PlayerColors(Color c1, Color c2) {
-            _playerBuilder1.Color = c1;
-            _playerBuilder2.Color = c2;
-            return this;
+        public static IInitStrategy StrategyFromScenario(GameScenario scenario) {
+            switch (scenario) {
+                case GameScenario.Standard: return new StandardInitStrategy();
+                case GameScenario.BallRandom: return new BallRandomStrategy();
+                case GameScenario.EnemyAmongUs: return new EnemyAmongUsStrategy();
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
         }
 
         #endregion
@@ -44,11 +52,13 @@ namespace Diaballik.Players {
         /// </summary>
         /// <returns>A new game</returns>
         public Game Build() {
-            var players = (_playerBuilder1, _playerBuilder2).Map(x => x.Build());
-            var specs = InitStrategy.InitPositions(Size)
+            DiaballikUtil.Assert(BoardSize % 2 == 1 && BoardSize > 1, "The size of the board must be odd and > 1");
+
+            var players = (PlayerBuilder1, PlayerBuilder2).Map(x => x.Build());
+            var specs = InitStrategy.InitPositions(BoardSize)
                                     .Zip(players, (spec, player) => new FullPlayerBoardSpec(player, spec));
 
-            return Game.Init(Size, specs);
+            return Game.Init(BoardSize, specs);
         }
 
         #endregion

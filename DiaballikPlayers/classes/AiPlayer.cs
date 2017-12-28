@@ -39,11 +39,7 @@ namespace Diaballik.Players {
         public override IUpdateAction GetNextMove(StateWithHistory context) {
             return _algo.NextMove(context.ToState(), this);
         }
-
-        public sealed override PlayerBuilder ToBuilder() {
-            return base.ToBuilder().SetIsAi(Level);
-        }
-
+        
         #endregion
     }
 

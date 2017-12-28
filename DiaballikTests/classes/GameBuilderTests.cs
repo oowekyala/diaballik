@@ -12,7 +12,10 @@ namespace Diaballik.Tests {
             var builder = new GameBuilder();
 
             if (size % 2 == 0 || size < 2) {
-                Assert.That(() => builder.Size = size, Throws.ArgumentException);
+                Assert.That(() => {
+                    builder.Size = size;
+                    builder.Build();
+                }, Throws.ArgumentException);
             } else {
                 builder.Size = size;
                 var game = builder.Build();

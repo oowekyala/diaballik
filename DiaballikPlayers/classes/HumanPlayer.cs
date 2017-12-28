@@ -19,8 +19,5 @@ namespace Diaballik.Players {
         public override IUpdateAction GetNextMove(StateWithHistory board) {
             throw new NotImplementedException();
         }
-
-
-        public override PlayerBuilder ToBuilder() => base.ToBuilder().SetIsHuman();
     }
 }
