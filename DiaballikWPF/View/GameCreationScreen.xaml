@@ -6,7 +6,7 @@
              xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
              xmlns:view="clr-namespace:DiaballikWPF.View"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance viewModel:GameCreationViewModel}"
+             d:DataContext="{d:DesignInstance viewModel:GameCreationScreenViewModel}"
              Background="#FFAD8FD8">
 
 

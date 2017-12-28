@@ -32,7 +32,7 @@ namespace DiaballikWPF.ViewModel {
         #region Methods
 
         private void NewGame() {
-            var vm = new GameCreationViewModel(new GameBuilder());
+            var vm = new GameCreationScreenViewModel(_dock);
             var view = new GameCreationScreen {
                 DataContext = vm
             };

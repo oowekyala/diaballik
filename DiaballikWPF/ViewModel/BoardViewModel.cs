@@ -1,34 +1,67 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Diaballik.Core;
 using GalaSoft.MvvmLight;
 
 namespace DiaballikWPF.ViewModel {
     public class BoardViewModel : ViewModelBase {
-        #region Private attributes
+        #region Constructor
 
-        private readonly Game _game;
+        public BoardViewModel(Game game) {
+            Game = game;
+
+            var range = Enumerable.Range(0, BoardSize).ToList();
+            var tiles = range.Select(x => range.Select(y => new TileViewModel(this, Position2D.New(x, y))))
+                             .SelectMany(r => r);
+
+            foreach (var tile in tiles) {
+                Tiles.Add(tile);
+            }
+        }
 
         #endregion
 
         #region Properties
 
-        public IList<TileViewModel> Tiles { get; }
+        public Game Game { get; }
 
-        private TileViewModel SelectedTile { get; set; }
+        /// Stores the tiles linearly. Use TileAt to retrieve one.
+        public ObservableCollection<TileViewModel> Tiles { get; } = new ObservableCollection<TileViewModel>();
+
+
+        private TileViewModel _selectedTile;
+
+        public TileViewModel SelectedTile {
+            get => _selectedTile;
+            set {
+                if (_selectedTile != value) {
+                    _selectedTile = value;
+                    RaisePropertyChanged("SelectedTile");
+                }
+            }
+        }
+
+
+        public GameMemento Memento => Game.Memento;
+        public int BoardSize => Game.State.BoardSize;
 
         #endregion
 
-        #region Constructor
+        #region Methods
 
-        public BoardViewModel(Game game) {
-            _game = game;
+        public TileViewModel TileAt(Position2D p) {
+            return Tiles[p.X * BoardSize + p.Y];
+        }
 
-            var ps = from x in Enumerable.Range(0, game.State.BoardSize)
-                from y in Enumerable.Range(0, game.State.BoardSize)
-                select new Position2D(x, y);
-
-            Tiles = ps.Select(p => new TileViewModel(game, this, p)).ToList();
+        // Updates the underlying game and the tiles.
+        private void Update(IUpdateAction action) {
+            Game.Update(action);
+            if (action is MoveAction m) {
+                TileAt(m.Dst).Update(Game.State);
+                TileAt(m.Src).Update(Game.State);
+            }
         }
 
         #endregion

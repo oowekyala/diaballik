@@ -34,6 +34,10 @@ namespace Diaballik.Core {
         /// Current state of the game
         public GameState State => Memento.ToState();
 
+        /// Size of the board
+        public int BoardSize => State.BoardSize;
+
+
         /// True if <see cref="Undo"/> can be executed.
         /// A player can only undo actions they have played themselves.
         public bool CanUndo => Memento.Parent != null && State.NumMovesLeft < MaxMovesPerTurn;
@@ -42,7 +46,7 @@ namespace Diaballik.Core {
         /// A player can only call Redo if the last action taken was to call Undo.
         public bool CanRedo => _breadCrumbs.Any();
 
-        /// Stores the mementos we just undid to return to them.
+        /// Stores the mementos we just undid to go back with Redo.
         /// Cleared whenever another action is taken.
         private readonly Stack<GameMemento> _breadCrumbs = new Stack<GameMemento>();
 

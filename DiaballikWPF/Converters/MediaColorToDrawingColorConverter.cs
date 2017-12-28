@@ -6,11 +6,11 @@ using System.Globalization;
 namespace DiaballikWPF.Converters {
     public class MediaColorToDrawingColorConverter : IValueConverter {
 
-        private static System.Drawing.Color MediaToDrawing(System.Windows.Media.Color val) {
+        public static System.Drawing.Color MediaToDrawing(System.Windows.Media.Color val) {
             return System.Drawing.Color.FromArgb(val.A, val.R, val.G, val.B);
         }
 
-        private static System.Windows.Media.Color DrawingToMedia(System.Drawing.Color val) {
+        public static System.Windows.Media.Color DrawingToMedia(System.Drawing.Color val) {
             return System.Windows.Media.Color.FromArgb(val.A, val.R, val.G, val.B);
         }
 

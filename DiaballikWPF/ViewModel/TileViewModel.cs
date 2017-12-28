@@ -1,4 +1,6 @@
-﻿using Diaballik.Core;
+﻿using System.Windows.Media;
+using Diaballik.Core;
+using DiaballikWPF.Converters;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -7,29 +9,57 @@ namespace DiaballikWPF.ViewModel {
     ///     Controls a tile, which may carry a piece.
     /// </summary>
     public class TileViewModel : ViewModelBase {
-
-        #region Fields
-
-        private bool _isMarked;
-        private bool _isSelected;
-        private readonly Game _game;
-        private readonly BoardViewModel _boardVM;
-
-        #endregion
-
         #region Properties
 
+        private BoardViewModel BoardVm { get; }
         public Position2D Position { get; }
 
-        public bool HasPiece => !_game.State.IsFree(Position);
-        public IPlayer Player => _game.State.PlayerOn(Position);
+        private bool _hasPiece;
+
+
+        public bool HasPiece {
+            get => _hasPiece;
+            set {
+                if (value != HasPiece) {
+                    _hasPiece = value;
+                    RaisePropertyChanged("HasPiece");
+                }
+            }
+        }
+
+        private bool _hasBall;
+
+
+        public bool HasBall {
+            get => _hasBall;
+            set {
+                if (value != HasBall) {
+                    _hasPiece = value;
+                    RaisePropertyChanged("HasBall");
+                }
+            }
+        }
+
+        private Color _color;
+
+        public Color PieceColor {
+            get => _color;
+            set {
+                if (value != PieceColor) {
+                    _color = value;
+                    RaisePropertyChanged("PieceColor");
+                }
+            }
+        }
+
+
+        private bool _isMarked;
 
         /// Marked because of available move
         public bool IsMarked {
             get => _isMarked;
             set {
-                if (_isMarked != value)
-                {
+                if (_isMarked != value) {
                     _isMarked = value;
 
                     RaisePropertyChanged($"Background");
@@ -37,11 +67,13 @@ namespace DiaballikWPF.ViewModel {
             }
         }
 
+        private bool _isSelected;
+
+
         public bool IsSelected {
             get => _isSelected;
             set {
-                if (_isSelected != value)
-                {
+                if (_isSelected != value) {
                     _isSelected = value;
 
                     RaisePropertyChanged($"Background");
@@ -49,17 +81,17 @@ namespace DiaballikWPF.ViewModel {
             }
         }
 
-        public void OnLeftClick()
-        {
+        public void OnLeftClick() {
         }
+
+        public bool IsEven => Position.X % 2 == Position.Y % 2;
 
         #endregion
 
         #region Constructors
 
-        public TileViewModel(Game game, BoardViewModel boardVm, Position2D position) {
-            _game = game;
-            _boardVM = boardVm;
+        public TileViewModel(BoardViewModel boardVm, Position2D position) {
+            BoardVm = boardVm;
             Position = position;
         }
 
@@ -74,10 +106,27 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
-        #region Behaviour
+        #region Methods
 
         private void OnTileClicked() {
             // TODO
+        }
+
+        public void Update(BoardLike board) {
+            var player = board.PlayerOn(Position);
+
+            if (player == null) {
+                HasPiece = false;
+                HasBall = false;
+                return;
+            }
+
+            HasPiece = true;
+            PieceColor = MediaColorToDrawingColorConverter.DrawingToMedia(player.Color);
+
+            if (board.BallCarrierForPlayer(player) == Position) {
+                HasBall = true;
+            }
         }
 
         #endregion

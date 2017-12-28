@@ -9,12 +9,17 @@
         Title="Diaballik" Height="{StaticResource AppWindowHeight}" Width="{StaticResource AppWindowWidth}"
         d:DataContext="{d:DesignInstance viewModel:DockWindowViewModel }">
 
+    <!-- Main window, within which each screen docks as a UserControl. -->
+
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModel:StartupScreenViewModel}">
             <local:StartupScreen />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModel:GameCreationViewModel}">
+        <DataTemplate DataType="{x:Type viewModel:GameCreationScreenViewModel}">
             <local:GameCreationScreen />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:PlayGameScreenViewModel}">
+            <local:PlayGameScreen />
         </DataTemplate>
     </Window.Resources>
 

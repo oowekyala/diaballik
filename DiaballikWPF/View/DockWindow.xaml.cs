@@ -1,4 +1,5 @@
-﻿namespace DiaballikWPF.View {
+﻿
+namespace DiaballikWPF.View {
     /// <summary>
     /// Interaction logic for DockWindow.xaml
     /// </summary>

@@ -16,6 +16,7 @@ namespace DiaballikWPF.ViewModel {
             Builder = builder;
             Color = baseColor;
             OnValidationChanged += onValidationChanged;
+            // OnValidationChanged += () => Debug.WriteLine("Validation changed");
         }
 
         #endregion
@@ -24,7 +25,7 @@ namespace DiaballikWPF.ViewModel {
 
         public delegate void OnValidationChangedDelegate();
 
-        public OnValidationChangedDelegate OnValidationChanged { get; } = () => Debug.WriteLine("Validation changed");
+        public OnValidationChangedDelegate OnValidationChanged { get; } = () => { };
 
         private PlayerBuilder Builder { get; }
 

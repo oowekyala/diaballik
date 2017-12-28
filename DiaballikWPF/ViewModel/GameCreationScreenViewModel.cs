@@ -4,17 +4,25 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using Diaballik.Players;
+using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using static Diaballik.Players.GameBuilder;
 using static DiaballikWPF.ViewModel.PlayerBuilderViewModel;
 
 namespace DiaballikWPF.ViewModel {
-    public class GameCreationViewModel : ViewModelBase {
+    public class GameCreationScreenViewModel : ViewModelBase {
+        #region Fields
+
+        private readonly DockWindowViewModel _dock;
+
+        #endregion
+
         #region Constructors
 
-        public GameCreationViewModel(GameBuilder builder) {
-            Builder = builder;
+        public GameCreationScreenViewModel(DockWindowViewModel dock) {
+            _dock = dock;
+            Builder = new GameBuilder();
             OnValidationChanged += StartGameCommand.RaiseCanExecuteChanged;
 
             PlayerBuilder1 = new PlayerBuilderViewModel(Builder.PlayerBuilder1, Color.RoyalBlue, OnValidationChanged);
@@ -83,6 +91,14 @@ namespace DiaballikWPF.ViewModel {
         public void StartGame() {
             var game = Builder.Build();
             Console.WriteLine(game.Memento.ToState().FullDescription());
+
+            var playGameVm = new PlayGameScreenViewModel(game);
+            var screen = new PlayGameScreen {
+                DataContext = playGameVm
+            };
+
+            _dock.ContentViewModel = playGameVm;
+
         }
 
         #endregion

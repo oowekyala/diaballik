@@ -10,22 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Diaballik.Core;
 
-namespace DiaballikWPF
+namespace DiaballikWPF.View.GamePlay
 {
     /// <summary>
-    /// Logique d'interaction pour PlayGameWindow.xaml
+    /// Interaction logic for TileView.xaml
     /// </summary>
-    public partial class PlayGameWindow : Window
+    public partial class TileView : UserControl
     {
-        GameBoard gb;
-        public PlayGameWindow()
+        public TileView()
         {
             InitializeComponent();
-            board.Rows = gb.BoardSize;
-            board.Columns = gb.BoardSize;
         }
     }
 }
