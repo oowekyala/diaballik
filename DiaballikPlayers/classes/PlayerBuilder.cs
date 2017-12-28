@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using Diaballik.Core;
+using Diaballik.Core.Util;
 
 namespace Diaballik.Players {
     /// <summary>
@@ -11,9 +13,14 @@ namespace Diaballik.Players {
 
         public Color Color { set; get; } = Color.Yellow;
 
-        public string Name { set; get; }
+        public string Name { set; get; } = "";
 
         public PlayerType SelectedPlayerType { get; set; }
+
+        public bool CannotBuild => !CanBuild;
+        public bool CanBuild => ErrorMessage == string.Empty;
+
+        public string ErrorMessage => string.IsNullOrWhiteSpace(Name) ? "Player name cannot be whitespace" : string.Empty;
 
         #endregion
 
@@ -46,6 +53,8 @@ namespace Diaballik.Players {
         /// </summary>
         /// <returns>A new player</returns>
         public IPlayer Build() {
+            DiaballikUtil.Assert(CanBuild, ErrorMessage);
+
             switch (SelectedPlayerType) {
                 case PlayerType.Human:
                     return new HumanPlayer(Color, Name);

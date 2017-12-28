@@ -27,10 +27,11 @@
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Grid.ColumnSpan="2" Content="Configuration" Style="{StaticResource PageTitle}" Margin="198,0,198.8,6.6" Width="144" />
+        <Label Grid.Row="0" Grid.ColumnSpan="2" Content="Configuration" Style="{StaticResource PageTitle}"
+               Margin="198,0,198.8,6.6" Width="144" />
 
 
-        <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource SectionTitle}" Content="Player 1"  />
+        <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource SectionTitle}" Content="Player 1" />
         <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource SectionTitle}" Content="Player 2" />
 
 
@@ -38,20 +39,27 @@
         <view:PlayerBuilderView Grid.Row="2" Grid.Column="1" DataContext="{Binding PlayerBuilder2}" />
 
 
-        <Label Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource SectionTitle}" Content="Game Config"/>
+        <Label Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource SectionTitle}"
+               Content="Game Config" />
 
         <Label Grid.Row="4" Grid.Column="0" Style="{StaticResource ControlLabel}" Content="Board size" />
         <Slider Grid.Row="4" Grid.Column="1" Style="{StaticResource ControlBase}" HorizontalAlignment="Stretch"
-                Minimum="5" Value="{Binding Size}" Maximum="17" TickFrequency="2" IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
+                Minimum="5" Value="{Binding Size}" Maximum="17" TickFrequency="2" IsSnapToTickEnabled="True"
+                TickPlacement="BottomRight" AutoToolTipPlacement="BottomRight" AutoToolTipPrecision="0" />
 
         <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource ControlLabel}" Content="Game scenario" />
-        <ComboBox Grid.Row="5" Grid.Column="1" Style="{StaticResource ControlBase}"  HorizontalAlignment="Stretch" 
-                  ItemsSource="{Binding GameScenarios}" SelectedItem="{Binding Scenario}"/>
+        <ComboBox Grid.Row="5" Grid.Column="1" Style="{StaticResource ControlBase}" HorizontalAlignment="Stretch"
+                  ItemsSource="{Binding GameScenarios}" SelectedItem="{Binding Scenario}" />
 
 
         <Button Grid.Row="6" Grid.Column="1" Content="Start game"
                 Style="{StaticResource GameStartButton}"
-                Command="{Binding StartGameCommand}" 
-                HorizontalAlignment="Right"/>
+                Command="{Binding StartGameCommand}"
+                HorizontalAlignment="Right"
+                ToolTipService.ShowOnDisabled="True">
+            <Button.ToolTip>
+                <TextBlock Text="{Binding ErrorMessage}" />
+            </Button.ToolTip>
+        </Button>
     </Grid>
 </UserControl>

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using Diaballik.Core;
 using Diaballik.Players;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using static Diaballik.Players.GameBuilder;
+using static DiaballikWPF.ViewModel.PlayerBuilderViewModel;
 
 namespace DiaballikWPF.ViewModel {
     public class GameCreationViewModel : ViewModelBase {
@@ -14,8 +15,10 @@ namespace DiaballikWPF.ViewModel {
 
         public GameCreationViewModel(GameBuilder builder) {
             Builder = builder;
-            PlayerBuilder1 = new PlayerBuilderViewModel(Builder.PlayerBuilder1, Color.RoyalBlue);
-            PlayerBuilder2 = new PlayerBuilderViewModel(Builder.PlayerBuilder2, Color.DarkRed);
+            OnValidationChanged += StartGameCommand.RaiseCanExecuteChanged;
+
+            PlayerBuilder1 = new PlayerBuilderViewModel(Builder.PlayerBuilder1, Color.RoyalBlue, OnValidationChanged);
+            PlayerBuilder2 = new PlayerBuilderViewModel(Builder.PlayerBuilder2, Color.DarkRed, OnValidationChanged);
         }
 
         #endregion
@@ -23,10 +26,16 @@ namespace DiaballikWPF.ViewModel {
 
         #region Properties
 
+        private OnValidationChangedDelegate OnValidationChanged { get; } = () => { };
+
+
         public GameBuilder Builder { get; }
 
         public PlayerBuilderViewModel PlayerBuilder1 { get; }
         public PlayerBuilderViewModel PlayerBuilder2 { get; }
+
+
+        public string ErrorMessage => Builder.ErrorMessage;
 
         public int Size {
             get => Builder.BoardSize;
@@ -34,6 +43,7 @@ namespace DiaballikWPF.ViewModel {
                 if (value != Size) {
                     Builder.BoardSize = value;
                     RaisePropertyChanged("Size");
+                    OnValidationChanged();
                 }
             }
         }
@@ -48,6 +58,7 @@ namespace DiaballikWPF.ViewModel {
                 if (value != Scenario) {
                     Builder.Scenario = value;
                     RaisePropertyChanged("Scenario");
+                    OnValidationChanged();
                 }
             }
         }
@@ -58,11 +69,16 @@ namespace DiaballikWPF.ViewModel {
 
         private RelayCommand _startGameCommand;
 
-        public RelayCommand StartGameCommand => _startGameCommand ?? (_startGameCommand = new RelayCommand(StartGame));
+        public RelayCommand StartGameCommand {
+            get => _startGameCommand ?? (_startGameCommand = new RelayCommand(StartGame, CanStart));
+            set => _startGameCommand = value;
+        }
 
         #endregion
 
         #region Methods
+
+        public bool CanStart() => Builder.CanBuild;
 
         public void StartGame() {
             var game = Builder.Build();

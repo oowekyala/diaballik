@@ -27,6 +27,21 @@ namespace Diaballik.Players {
         /// Determines where the pieces of each player will be initialised.
         public GameScenario Scenario { get; set; } = GameScenario.Standard;
 
+        public bool CannotBuild => !CanBuild;
+        public bool CanBuild => ErrorMessage == string.Empty;
+
+        public string ErrorMessage =>
+            PlayerBuilder1.CannotBuild
+                ? $"Player 1 error: {PlayerBuilder1.ErrorMessage}"
+                : PlayerBuilder2.CannotBuild
+                    ? $"Player 2 error: {PlayerBuilder2.ErrorMessage}"
+                    : PlayerBuilder1.Color == PlayerBuilder2.Color
+                        ? "Players cannot have the same color"
+                        : BoardSize % 2 == 0 || BoardSize < 3
+                            ? "Board size must be odd and >= 3"
+                            : string.Empty;
+
+
         public enum GameScenario {
             Standard,
             BallRandom,
@@ -52,7 +67,7 @@ namespace Diaballik.Players {
         /// </summary>
         /// <returns>A new game</returns>
         public Game Build() {
-            DiaballikUtil.Assert(BoardSize % 2 == 1 && BoardSize > 1, "The size of the board must be odd and > 1");
+            DiaballikUtil.Assert(CanBuild, ErrorMessage);
 
             var players = (PlayerBuilder1, PlayerBuilder2).Map(x => x.Build());
             var specs = InitStrategy.InitPositions(BoardSize)

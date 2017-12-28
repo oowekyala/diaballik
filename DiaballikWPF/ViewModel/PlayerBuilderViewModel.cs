@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using Diaballik.Players;
@@ -10,14 +11,20 @@ namespace DiaballikWPF.ViewModel {
     public class PlayerBuilderViewModel : ViewModelBase {
         #region Constructors
 
-        public PlayerBuilderViewModel(PlayerBuilder builder, Color baseColor) {
+        public PlayerBuilderViewModel(PlayerBuilder builder, Color baseColor,
+            OnValidationChangedDelegate onValidationChanged) {
             Builder = builder;
             Color = baseColor;
+            OnValidationChanged += onValidationChanged;
         }
 
         #endregion
 
         #region Properties
+
+        public delegate void OnValidationChangedDelegate();
+
+        public OnValidationChangedDelegate OnValidationChanged { get; } = () => Debug.WriteLine("Validation changed");
 
         private PlayerBuilder Builder { get; }
 
@@ -27,6 +34,7 @@ namespace DiaballikWPF.ViewModel {
                 if (value != Name) {
                     Builder.Name = value;
                     RaisePropertyChanged("Name");
+                    OnValidationChanged();
                 }
             }
         }
@@ -37,6 +45,7 @@ namespace DiaballikWPF.ViewModel {
                 if (value != Color) {
                     Builder.Color = value;
                     RaisePropertyChanged("Color");
+                    OnValidationChanged();
                 }
             }
         }
@@ -51,6 +60,7 @@ namespace DiaballikWPF.ViewModel {
                 if (value != SelectedPlayerType) {
                     Builder.SelectedPlayerType = value;
                     RaisePropertyChanged("SelectedPlayerType");
+                    OnValidationChanged();
                 }
             }
         }

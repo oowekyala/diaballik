@@ -23,30 +23,32 @@ namespace Diaballik.Tests {
 
 
         [Test]
-        public void TestBuildAi([Values] AiLevel level) {
-            var builder = new PlayerBuilder {
+        public void TestBuiltType([Values] PlayerType level) {
+            var player = new PlayerBuilder {
                 Color = Color.DeepPink,
-                Name = "dummy"
-            };
+                Name = "dummy",
+                SelectedPlayerType = level
+            }.Build();
 
-            var player = builder.SetIsAi(level).Build();
 
             switch (level) {
-                case AiLevel.Noob:
+                case PlayerType.NoobAi:
                     Assert.AreEqual(player.GetType(), typeof(NoobAiPlayer));
                     break;
-                case AiLevel.Starting:
+                case PlayerType.StartingAi:
                     Assert.AreEqual(player.GetType(), typeof(StartingAiPlayer));
                     break;
-                case AiLevel.Progressive:
+                case PlayerType.ProgressiveAi:
                     Assert.AreEqual(player.GetType(), typeof(ProgressiveAiPlayer));
+                    break;
+                case PlayerType.Human:
+                    Assert.AreEqual(player.GetType(), typeof(HumanPlayer));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(level), level, null);
             }
 
-            Assert.IsTrue(player.IsAi);
-            Assert.IsInstanceOf<AiPlayer>(player);
+            Assert.IsInstanceOf<AbstractPlayer>(player);
         }
     }
 }

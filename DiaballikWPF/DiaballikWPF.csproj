@@ -89,6 +89,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\MediaColorToDrawingColorConverter.cs" />
     <Compile Include="Converters\PlayerToStrokeColorConverter.cs" />
     <Compile Include="Converters\StringToInitStrategy.cs" />
     <Compile Include="ViewModel\DockWindowViewModel.cs" />

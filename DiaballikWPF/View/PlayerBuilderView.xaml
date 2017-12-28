@@ -6,6 +6,7 @@
     xmlns:view="clr-namespace:DiaballikWPF.View"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
+    xmlns:converters="clr-namespace:DiaballikWPF.Converters"
     x:Class="DiaballikWPF.View.PlayerBuilderView"
     d:DataContext="{d:DesignInstance viewModel:PlayerBuilderViewModel}"
     mc:Ignorable="d">
@@ -14,7 +15,7 @@
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
         </Style>
-        
+        <converters:MediaColorToDrawingColorConverter x:Key="ColorConverter"/>
     </UserControl.Resources>
     <Grid Margin="10,0,10,0">
       
@@ -33,10 +34,10 @@
                   SelectedItem="{Binding SelectedPlayerType, Mode=TwoWay}" />
 
         <Label Grid.Row="2" Style="{StaticResource ControlLabel}" Content="Color" />
-        <xctk:ColorPicker Grid.Row="3" Style="{StaticResource Control}" SelectedColor="{Binding Color, Mode=TwoWay}" />
+        <xctk:ColorPicker Grid.Row="3" Style="{StaticResource Control}" SelectedColor="{Binding Color, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
 
         <Label Grid.Row="4" Style="{StaticResource ControlLabel}" Content="Name" />
-        <TextBox Grid.Row="5" Style="{StaticResource Control}" Text="{Binding Name}" />
+        <TextBox Grid.Row="5" Style="{StaticResource Control}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
 
     </Grid>
 </UserControl>

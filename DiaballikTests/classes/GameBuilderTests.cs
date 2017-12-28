@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Drawing;
+using System.Linq;
 using Diaballik.Core;
 using Diaballik.Core.Util;
 using Diaballik.Players;
 using NUnit.Framework;
+using static Diaballik.Players.GameBuilder;
 
 namespace Diaballik.Tests {
     [TestFixture]
@@ -13,22 +16,39 @@ namespace Diaballik.Tests {
 
             if (size % 2 == 0 || size < 2) {
                 Assert.That(() => {
-                    builder.Size = size;
+                    builder.BoardSize = size;
                     builder.Build();
                 }, Throws.ArgumentException);
             } else {
-                builder.Size = size;
+                builder.BoardSize = size;
                 var game = builder.Build();
                 Assert.AreEqual(size, game.State.BoardSize);
             }
+        }
+
+        [Test]
+        public void TestSameColor() {
+            var builder = new GameBuilder {
+                BoardSize = 7,
+                Scenario = GameScenario.EnemyAmongUs
+            };
+
+            builder.PlayerBuilder1.Color = Color.Blue;
+            builder.PlayerBuilder1.Name = "foo";
+            builder.PlayerBuilder2.Color = Color.Blue;
+            builder.PlayerBuilder2.Name = "bar";
+
+            Assert.IsTrue(builder.CannotBuild);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(builder.ErrorMessage));
+            Console.WriteLine(builder.ErrorMessage);
         }
 
 
         [Test]
         public void TestStandardInitStrategy([Range(3, 15, 2)] int size) {
             var builder = new GameBuilder {
-                Size = size,
-                InitStrategy = new StandardInitStrategy()
+                BoardSize = size,
+                Scenario = GameScenario.Standard
             };
             var game = builder.Build();
             var (p1Pos, p2Pos) = game.State.PositionsPair.Map(x => x.ToList());
@@ -47,8 +67,8 @@ namespace Diaballik.Tests {
         [Test]
         public void TestBallRandomInitStrategy([Range(3, 15, 2)] int size) {
             var builder = new GameBuilder {
-                Size = size,
-                InitStrategy = new BallRandomStrategy()
+                BoardSize = size,
+                Scenario = GameScenario.BallRandom
             };
             var game = builder.Build();
             var (p1Pos, p2Pos) = game.State.PositionsPair.Map(x => x.ToList());
@@ -65,8 +85,8 @@ namespace Diaballik.Tests {
         [Test]
         public void TestEnemyAmongUsInitStrategy([Range(3, 15, 2)] int size) {
             var builder = new GameBuilder {
-                Size = size,
-                InitStrategy = new EnemyAmongUsStrategy()
+                BoardSize = size,
+                Scenario = GameScenario.EnemyAmongUs
             };
             var game = builder.Build();
             var positionsTuple = game.State.PositionsPair.Map(x => x.ToList());
