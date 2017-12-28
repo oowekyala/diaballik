@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.ComponentModel;
+using System.Windows.Media;
 using System.Linq;
 using System.Xml.Linq;
 using Diaballik.Core;
@@ -52,7 +53,6 @@ namespace Diaballik.Players {
                 {PlayerType.ProgressiveAi, "progressiveAi"},
             };
 
-
         #endregion
 
 
@@ -88,7 +88,7 @@ namespace Diaballik.Players {
 
             private static XElement PlayerToElement(IPlayer player, int id) {
                 return new XElement(PlayerElement,
-                                    new XAttribute("color", player.Color.ToArgb()),
+                                    new XAttribute("color", new ColorConverter().ConvertToString(player.Color)),
                                     new XAttribute("name", player.Name),
                                     new XAttribute("type", PlayerTypesToString[PlayerTypes.FromPlayer(player)])
                 );
@@ -206,7 +206,8 @@ namespace Diaballik.Players {
 
             private static IPlayer PlayerFromElement(XElement element) {
                 var name = element.Attribute("name").Value;
-                var color = Color.FromArgb(int.Parse(element.Attribute("color").Value));
+                var color =
+                    (Color) (new ColorConverter() as TypeConverter).ConvertFromString(element.Attribute("color").Value);
                 var type = element.Attribute("type").Value;
 
                 var playerType = PlayerTypesToString.First(x => x.Value == type).Key;

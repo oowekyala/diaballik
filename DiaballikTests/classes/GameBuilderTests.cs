@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Drawing;
 using System.Linq;
-using Diaballik.Core;
+using System.Windows.Media;
 using Diaballik.Core.Util;
 using Diaballik.Players;
 using NUnit.Framework;
@@ -33,9 +32,9 @@ namespace Diaballik.Tests {
                 Scenario = GameScenario.EnemyAmongUs
             };
 
-            builder.PlayerBuilder1.Color = Color.Blue;
+            builder.PlayerBuilder1.Color = Colors.Blue;
             builder.PlayerBuilder1.Name = "foo";
-            builder.PlayerBuilder2.Color = Color.Blue;
+            builder.PlayerBuilder2.Color = Colors.Blue;
             builder.PlayerBuilder2.Name = "bar";
 
             Assert.IsTrue(builder.CannotBuild);

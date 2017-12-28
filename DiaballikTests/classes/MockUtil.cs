@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Windows.Media;
 using System.Linq;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
@@ -58,7 +58,7 @@ namespace Diaballik.Tests {
 
         #region Player mocking
 
-        public static Color RandomColor() => Color.FromArgb(Rng.Next(256), Rng.Next(256), Rng.Next(256));
+        public static Color RandomColor() => Color.FromRgb((byte) Rng.Next(256), (byte) Rng.Next(256), (byte) Rng.Next(256));
 
         public static (FullPlayerBoardSpec, FullPlayerBoardSpec) DummyPlayerSpecPair(int boardSize)
             => RandomPositionsPair(boardSize).Map(p => new FullPlayerBoardSpec(DummyPlayer(), p, boardSize / 2));

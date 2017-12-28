@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using System.Windows.Media;
 using Diaballik.Core;
 
 namespace Diaballik.Players {
@@ -39,7 +39,7 @@ namespace Diaballik.Players {
         };
 
         public override string ToString() {
-            return $"Player(type: {GetType().Name}, color: {ColorTranslator.ToHtml(Color)}, name: {Name})";
+            return $"Player(type: {GetType().Name}, color: {new ColorConverter().ConvertToString(Color)}, name: {Name})";
         }
 
         #endregion

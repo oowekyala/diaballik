@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Drawing;
+using System.Windows.Media;
 using System.Linq;
 using Diaballik.Players;
 using GalaSoft.MvvmLight;

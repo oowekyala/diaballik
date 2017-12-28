@@ -7,12 +7,33 @@
              xmlns:converters="clr-namespace:DiaballikWPF.Converters"
              xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance viewModel:TileViewModel}">
 
     <UserControl.Resources>
         <converters:PositionToTileFillConverter x:Key="TileBrushConverter" />
+        <converters:BoolToVisibility x:Key="BoolToVisibility" />
+        <Style x:Key="PieceStyle" TargetType="StackPanel" />
     </UserControl.Resources>
+    <StackPanel Style="{StaticResource PieceStyle}"
+                Background="{Binding Position, Converter={StaticResource TileBrushConverter}}">
 
-    <Rectangle Fill="{Binding Position, Converter={StaticResource TileBrushConverter}}" />
+        <Button Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type StackPanel}}, Path=ActualHeight}"
+                Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type StackPanel}}, Path=ActualWidth}"
+                Visibility="{Binding HasPiece, Converter={StaticResource BoolToVisibility}}">
+            <Button.Template>
+                <ControlTemplate>
+                    <Grid>
+                        <Ellipse Stroke="Black" StrokeThickness="2">
+                            <Ellipse.Fill>
+                                <SolidColorBrush x:Name="PieceBrush" Color="{Binding PieceColor}" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </Button.Template>
+
+        </Button>
+    </StackPanel>
 
 </UserControl>

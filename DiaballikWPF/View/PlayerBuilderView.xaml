@@ -15,10 +15,9 @@
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
         </Style>
-        <converters:MediaColorToDrawingColorConverter x:Key="ColorConverter"/>
     </UserControl.Resources>
     <Grid Margin="10,0,10,0">
-      
+
         <Grid.RowDefinitions>
             <RowDefinition Height="22*" />
             <RowDefinition Height="18*" />
@@ -34,10 +33,12 @@
                   SelectedItem="{Binding SelectedPlayerType, Mode=TwoWay}" />
 
         <Label Grid.Row="2" Style="{StaticResource ControlLabel}" Content="Color" />
-        <xctk:ColorPicker Grid.Row="3" Style="{StaticResource Control}" SelectedColor="{Binding Color, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+        <xctk:ColorPicker Grid.Row="3" Style="{StaticResource Control}"
+                          SelectedColor="{Binding Color, Mode=TwoWay}" />
 
         <Label Grid.Row="4" Style="{StaticResource ControlLabel}" Content="Name" />
-        <TextBox Grid.Row="5" Style="{StaticResource Control}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Grid.Row="5" Style="{StaticResource Control}"
+                 Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
 
     </Grid>
 </UserControl>

@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Drawing;
-using Diaballik.Core;
+using System.Windows.Media;
 using NUnit.Framework;
-using static System.Drawing.KnownColor;
 using Diaballik.Players;
 
 namespace Diaballik.Tests {
     [TestFixture]
     public class PlayerBuilderTest {
         [Test]
-        public void TestProperties([Values(Blue, Red, HotPink)] KnownColor color, [Values("a", "b", "c")] string name) {
+        public void TestProperties([Values("a", "b", "c")] string name) {
             var builder = new PlayerBuilder {
-                Color = Color.FromKnownColor(color),
+                Color = Colors.Beige,
                 Name = name
             };
 
             var player = builder.Build();
 
-            Assert.AreEqual(player.Color, Color.FromKnownColor(color));
+            Assert.AreEqual(player.Color, Colors.Beige);
             Assert.AreEqual(player.Name, name);
         }
 
@@ -25,7 +23,7 @@ namespace Diaballik.Tests {
         [Test]
         public void TestBuiltType([Values] PlayerType level) {
             var player = new PlayerBuilder {
-                Color = Color.DeepPink,
+                Color = Colors.DeepPink,
                 Name = "dummy",
                 SelectedPlayerType = level
             }.Build();

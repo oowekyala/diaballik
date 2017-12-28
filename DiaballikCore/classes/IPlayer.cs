@@ -1,5 +1,5 @@
 ﻿using System.CodeDom;
-using System.Drawing;
+using System.Windows.Media;
 
 namespace Diaballik.Core {
     // clarifies intent

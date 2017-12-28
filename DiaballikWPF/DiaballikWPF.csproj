@@ -89,7 +89,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\MediaColorToDrawingColorConverter.cs" />
     <Compile Include="Converters\PositionToTileFillConverter.cs" />
     <Compile Include="Converters\StringToInitStrategy.cs" />
     <Compile Include="ViewModel\DockWindowViewModel.cs" />
@@ -102,6 +101,7 @@
     <Compile Include="View\DockWindow.xaml.cs">
       <DependentUpon>DockWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BoolToVisibility.cs" />
     <Compile Include="View\GamePlay\PlayGameScreen.xaml.cs">
       <DependentUpon>PlayGameScreen.xaml</DependentUpon>
     </Compile>

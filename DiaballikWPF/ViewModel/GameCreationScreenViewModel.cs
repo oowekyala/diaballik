@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Media;
 using Diaballik.Players;
 using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
@@ -25,8 +26,8 @@ namespace DiaballikWPF.ViewModel {
             Builder = new GameBuilder();
             OnValidationChanged += StartGameCommand.RaiseCanExecuteChanged;
 
-            PlayerBuilder1 = new PlayerBuilderViewModel(Builder.PlayerBuilder1, Color.RoyalBlue, OnValidationChanged);
-            PlayerBuilder2 = new PlayerBuilderViewModel(Builder.PlayerBuilder2, Color.DarkRed, OnValidationChanged);
+            PlayerBuilder1 = new PlayerBuilderViewModel(Builder.PlayerBuilder1, Colors.RoyalBlue, OnValidationChanged);
+            PlayerBuilder2 = new PlayerBuilderViewModel(Builder.PlayerBuilder2, Colors.DarkRed, OnValidationChanged);
         }
 
         #endregion

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Drawing;
+using System.Windows.Media;
 using System.Text.RegularExpressions;
 using Diaballik.Core;
 using Diaballik.Core.Util;
@@ -11,7 +11,7 @@ namespace Diaballik.Players {
     public sealed class PlayerBuilder {
         #region Properties
 
-        public Color Color { set; get; } = Color.Yellow;
+        public Color Color { set; get; } = Colors.Yellow;
 
         public string Name { set; get; } = "";
 

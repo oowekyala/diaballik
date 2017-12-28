@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 using Diaballik.Core;
 using DiaballikWPF.Converters;
 using GalaSoft.MvvmLight;
@@ -34,7 +35,7 @@ namespace DiaballikWPF.ViewModel {
             get => _hasBall;
             set {
                 if (value != HasBall) {
-                    _hasPiece = value;
+                    _hasBall = value;
                     RaisePropertyChanged("HasBall");
                 }
             }
@@ -122,7 +123,7 @@ namespace DiaballikWPF.ViewModel {
             }
 
             HasPiece = true;
-            PieceColor = MediaColorToDrawingColorConverter.DrawingToMedia(player.Color);
+            PieceColor = player.Color;
 
             if (board.BallCarrierForPlayer(player) == Position) {
                 HasBall = true;

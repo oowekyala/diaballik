@@ -17,6 +17,7 @@ namespace DiaballikWPF.ViewModel {
                              .SelectMany(r => r);
 
             foreach (var tile in tiles) {
+                tile.Update(Game.State);
                 Tiles.Add(tile);
             }
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using Diaballik.Core;
 using Diaballik.Core.Util;
 
