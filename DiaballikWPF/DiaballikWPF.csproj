@@ -46,6 +46,9 @@
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="QuickConverter, Version=1.2.5.0, Culture=neutral, PublicKeyToken=9c892aa7bc2af2cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickConverter.1.2.5\lib\net40\QuickConverter.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
@@ -88,11 +91,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\ColorDimmer.cs" />
     <Compile Include="Converters\ConvertUtil.cs" />
-    <Compile Include="Converters\TileFillConverter.cs" />
-    <Compile Include="Converters\RatioConverter.cs" />
-    <Compile Include="Converters\StringToInitStrategy.cs" />
     <Compile Include="ViewModel\DockWindowViewModel.cs" />
     <Compile Include="ViewModel\PlayGameScreenViewModel.cs" />
     <Compile Include="ViewModel\StartupScreenViewModel.cs" />
@@ -103,7 +102,6 @@
     <Compile Include="View\DockWindow.xaml.cs">
       <DependentUpon>DockWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\BoolToVisibility.cs" />
     <Compile Include="View\GamePlay\PlayGameScreen.xaml.cs">
       <DependentUpon>PlayGameScreen.xaml</DependentUpon>
     </Compile>

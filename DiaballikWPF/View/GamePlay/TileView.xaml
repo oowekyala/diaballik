@@ -7,79 +7,53 @@
              xmlns:converters="clr-namespace:DiaballikWPF.Converters"
              xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:qc="http://QuickConverter.CodePlex.com/"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance viewModel:TileViewModel}">
 
     <UserControl.Resources>
-        <converters:TileFillConverter x:Key="TileBrushConverter" />
-        <converters:ColorDimmer x:Key="SelectedColorConverter" Ratio="70" />
-        <converters:ColorDimmer x:Key="BallColorConverter" Ratio="50" />
-        <converters:RatioConverter x:Key="BallSizeConverter" Ratio="60" />
-        <converters:BoolToVisibility x:Key="BoolToVisibility" />
+        <qc:QuickConverter x:Key="BoolToVisibility" Convert="$P ? Visibility.Visible : Visibility.Hidden" />
 
         <!-- Style for the base of the tile, always visible -->
         <Style x:Key="TileStyle" TargetType="Grid">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <MultiBinding Converter="{StaticResource TileBrushConverter}">
-                        <Binding Path="Position" />
-                        <Binding Path="IsMarked" />
-                    </MultiBinding>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="Background"
+                    Value="{qc:Binding 'new SolidColorBrush(($P.X % 2 == $P.Y % 2) ? Colors.Bisque : Colors.Peru)', P={Binding Position, Mode=OneTime}}" />
         </Style>
 
+        <Style x:Key="MarkStyle" TargetType="Ellipse">
+            <Setter Property="Visibility"
+                    Value="{qc:MultiBinding '$P0 ## !$P1 ? Visibility.Visible : Visibility.Hidden', P0={Binding IsMarked}, P1={Binding HasPiece}}" />
+            <Setter Property="StrokeThickness" Value="5" />
+            <Setter Property="Stroke"
+                    Value="{qc:Binding 'new SolidColorBrush($P != null ? ConvertUtil.GetComplement($P.Color) : Colors.Purple)', P={Binding ParentBoard.UnlockedPlayer}}" />
+        </Style>
+
+
         <Style x:Key="PieceStyle" TargetType="Ellipse">
-            <Style.Triggers>
-
-                <!-- Selected -->
-                <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                    <Setter Property="Fill">
-                        <Setter.Value>
-                            <SolidColorBrush>
-                                <SolidColorBrush.Color>
-                                    <Binding Path="PieceColor" Converter="{StaticResource SelectedColorConverter}" />
-                                </SolidColorBrush.Color>
-                            </SolidColorBrush>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-
-                <!-- Default style -->
-                <DataTrigger Binding="{Binding IsSelected}" Value="False">
-                    <Setter Property="Fill">
-                        <Setter.Value>
-                            <SolidColorBrush Color="{Binding PieceColor}" />
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-
-            </Style.Triggers>
             <Setter Property="Stroke" Value="Black" />
             <Setter Property="StrokeThickness" Value="2" />
+            <Setter Property="Fill"
+                    Value="{qc:MultiBinding Converter='new SolidColorBrush($P0 ? ConvertUtil.DimColor($P1, 70) : $P1)', P0={Binding IsSelected}, P1={Binding PieceColor}}" />
+
+            <Style.Triggers>
+                <DataTrigger Binding="{qc:MultiBinding '$P0 ## $P1', P0={Binding IsMarked}, P1={Binding HasPiece}}"
+                             Value="True">
+                    <Setter Property="Stroke"
+                            Value="{qc:Binding 'new SolidColorBrush(ConvertUtil.GetComplement($P))', P={Binding PieceColor}}" />
+                    <Setter Property="StrokeThickness" Value="5" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="BallStyle" TargetType="Ellipse">
-
-            <Style.Triggers>
-                <!-- Visible ball -->
-                <DataTrigger Binding="{Binding HasBall}" Value="True">
-                    <Setter Property="Stroke" Value="Black" />
-                    <Setter Property="Fill">
-                        <Setter.Value>
-                            <SolidColorBrush
-                                Color="{Binding PieceColor, Converter={StaticResource BallColorConverter}}" />
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-
-                <!-- No ball -> invisible -->
-                <DataTrigger Binding="{Binding HasBall}" Value="False">
-                    <Setter Property="Stroke" Value="Transparent" />
-                    <Setter Property="Fill" Value="Transparent" />
-                </DataTrigger>
-            </Style.Triggers>
-
+            <Setter Property="Visibility"
+                    Value="{Binding HasBall, Converter={StaticResource BoolToVisibility}}" />
+            <Setter Property="Fill"
+                    Value="{qc:Binding 'new SolidColorBrush(ConvertUtil.DimColor($P,50))', P={Binding PieceColor},PType={x:Type Color}}" />
+            <Setter Property="Width"
+                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 60 / 100.0'}}" />
+            <Setter Property="Height"
+                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualHeight, Converter={qc:QuickConverter '$P * 60 / 100.0'}}" />
         </Style>
 
     </UserControl.Resources>
@@ -94,21 +68,19 @@
         <RadioButton
             Visibility="{Binding HasPiece, Converter={StaticResource BoolToVisibility}}"
             IsChecked="{Binding IsSelected}"
-            GroupName="Pieces"
-            IsEnabled="{Binding IsSelectable}">
+            IsEnabled="{Binding IsSelectable}"
+            GroupName="Pieces">
             <RadioButton.Template>
                 <ControlTemplate>
                     <Grid>
                         <Ellipse Style="{StaticResource PieceStyle}" />
-                        <Ellipse
-                            Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={StaticResource BallSizeConverter}}"
-                            Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualHeight, Converter={StaticResource BallSizeConverter}}"
-                            Style="{StaticResource BallStyle}" />
+                        <Ellipse Style="{StaticResource BallStyle}" />
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Grid>
                 </ControlTemplate>
             </RadioButton.Template>
-
         </RadioButton>
+        <Ellipse Style="{StaticResource MarkStyle}" />
+        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
     </Grid>
 </UserControl>

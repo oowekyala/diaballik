@@ -12,6 +12,8 @@ namespace DiaballikWPF.ViewModel {
 
         public BoardViewModel(Game game) {
             Game = game;
+            UnlockedPlayer = Game.State.CurrentPlayer; // FIXME
+
 
             var range = Enumerable.Range(0, BoardSize).ToList();
             var tiles = range.Select(x => range.Select(y => new TileViewModel(this, Position2D.New(x, y))))
@@ -35,6 +37,19 @@ namespace DiaballikWPF.ViewModel {
         /// Stores the tiles linearly. Use TileAt to retrieve one.
         public ObservableCollection<TileViewModel> Tiles { get; } = new ObservableCollection<TileViewModel>();
 
+
+        #region UnlockedPlayer
+
+        private IPlayer _unlockedPlayer;
+
+        /// Player currently allowed to play. Null if both players are locked.
+        public IPlayer UnlockedPlayer {
+            get => _unlockedPlayer;
+            set => Set(ref _unlockedPlayer, value, "UnlockedPlayer");
+        }
+        
+
+        #endregion
 
         #region SelectedTile
 
@@ -79,7 +94,6 @@ namespace DiaballikWPF.ViewModel {
             foreach (var move in moves) {
                 var target = TileAt(move.Dst);
                 target.IsMarked = true;
-                Debug.WriteLine($"{move.Dst} isMarked");
                 _markedTiles.Add(target);
             }
         }

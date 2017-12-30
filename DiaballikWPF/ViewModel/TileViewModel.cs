@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows.Media;
 using Diaballik.Core;
 using GalaSoft.MvvmLight;
@@ -9,9 +10,15 @@ namespace DiaballikWPF.ViewModel {
     ///     Controls a tile, which may carry a piece.
     /// </summary>
     public class TileViewModel : ViewModelBase {
+        #region Events
+
+//        public event EventHandler SelectEvent;
+
+        #endregion
+
         #region Properties
 
-        private BoardViewModel BoardVm { get; }
+        public BoardViewModel ParentBoard { get; }
 
         public Position2D Position { get; }
 
@@ -60,6 +67,18 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
+        #region MarkingColor
+
+        private Color _markingColor;
+
+        /// Color with which the tile should be marked
+        public Color MarkingColor {
+            get => _markingColor;
+            set => Set(ref _markingColor, value, "MarkingColor");
+        }
+
+        #endregion
+
         #region IsSelected
 
         private bool _isSelected;
@@ -69,9 +88,9 @@ namespace DiaballikWPF.ViewModel {
             set {
                 if (_isSelected != value) {
                     _isSelected = value;
-                    Debug.WriteLine($"{Position} thinks it's selected");
                     if (IsSelected) {
-                        BoardVm.SelectedTile = this;
+                        ;
+                        ParentBoard.SelectedTile = this;
                     }
 
                     RaisePropertyChanged("IsSelected");
@@ -96,8 +115,8 @@ namespace DiaballikWPF.ViewModel {
 
         #region Constructors
 
-        public TileViewModel(BoardViewModel boardVm, Position2D position) {
-            BoardVm = boardVm;
+        public TileViewModel(BoardViewModel parentBoard, Position2D position) {
+            ParentBoard = parentBoard;
             Position = position;
         }
 
@@ -136,5 +155,9 @@ namespace DiaballikWPF.ViewModel {
         }
 
         #endregion
+
+//        protected virtual void OnSelectEvent() {
+//            SelectEvent?.Invoke(this, new EventArgs());
+//        }
     }
 }
