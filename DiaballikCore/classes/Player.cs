@@ -12,7 +12,7 @@ namespace Diaballik.Core {
     ///     The behavior of players is defined either in an AiDecisionAlgo,
     ///     if the player is an AI, or in the WPF logic for human players.
     /// </summary>
-    public sealed class Player {
+    public class Player {
         #region Properties
 
         public Color Color { get; }
@@ -23,7 +23,7 @@ namespace Diaballik.Core {
         /// <summary>
         ///     Is true if this player is an AI.
         /// </summary>
-        private bool IsAi => Type == PlayerType.NoobAi
+        public bool IsAi => Type == PlayerType.NoobAi
                              || Type == PlayerType.ProgressiveAi
                              || Type == PlayerType.StartingAi;
 
@@ -43,10 +43,8 @@ namespace Diaballik.Core {
 
         #region Equality members
 
-        private bool Equals(Player other) {
-            return Color.Equals(other.Color)
-                   && string.Equals(Name, other.Name)
-                   && Equals(Type, other.Type);
+        protected bool Equals(Player other) {
+            return Color.Equals(other.Color) && string.Equals(Name, other.Name) && Type == other.Type;
         }
 
         public override bool Equals(object obj) {
@@ -58,7 +56,10 @@ namespace Diaballik.Core {
 
         public override int GetHashCode() {
             unchecked {
-                return (Color.GetHashCode() * 397) ^ Name.GetHashCode();
+                var hashCode = Color.GetHashCode();
+                hashCode = (hashCode * 397) ^ Name.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int) Type;
+                return hashCode;
             }
         }
 

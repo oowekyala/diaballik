@@ -58,7 +58,7 @@
     <Compile Include="classes\PlayerBoardSpec.cs" />
     <Compile Include="classes\builders\PlayerBuilder.cs" />
     <Compile Include="classes\util\DiaballikUtil.cs" />
-    <Compile Include="classes\util\TupleExtensions.cs" />
+    <Compile Include="classes\util\ExtensionUtil.cs" />
     <Compile Include="classes\Position2D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

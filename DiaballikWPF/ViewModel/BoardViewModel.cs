@@ -5,23 +5,69 @@ using System.Linq;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
+using static DiaballikWPF.ViewModel.TilePresenterConstants;
 
 namespace DiaballikWPF.ViewModel {
-    public class BoardViewModel : ViewModelBase {
+    public interface IBoardPresenter {
+        Player UnlockedPlayer { get; set; }
+
+        /// <summary>
+        ///     Updates the view to reflect the given state.
+        ///     The transition from the previous state is given
+        ///     as parameter, to only update those tiles that 
+        ///     have changed.
+        /// </summary>
+        /// <param name="state">New state</param>
+        /// <param name="action">Transition to the new state</param>
+        void UpdateState(BoardLike state, MoveAction action);
+    }
+
+    /// <summary>
+    ///     Presents a board. This control is passive, it doesn't drive the game itself.
+    ///     View updates must be requested by the parent view model.
+    /// 
+    ///     It can let one player play at a time, and fires an event when the player commits
+    ///     to a MoveAction.
+    /// </summary>
+    public class BoardViewModel : ViewModelBase, IBoardPresenter {
+        #region Fields
+
+        private readonly Dictionary<Player, HashSet<Position2D>> _positionsByPlayer
+            = new Dictionary<Player, HashSet<Position2D>>();
+
+        private readonly Player _player1;
+        private readonly Player _player2;
+
+        #endregion
+
+
         #region Constructor
 
-        public BoardViewModel(Game game) {
-            Game = game;
-            UnlockedPlayer = Game.State.CurrentPlayer; // FIXME
-
+        /// <summary>
+        ///     Builds a board presenter, initially with no unlocked player.
+        /// </summary>
+        /// <param name="state">Initial state</param>
+        public BoardViewModel(BoardLike state) {
+            CurrentState = state;
+            BoardSize = state.BoardSize;
 
             var range = Enumerable.Range(0, BoardSize).ToList();
-            var tiles = range.Select(x => range.Select(y => new TileViewModel(this, Position2D.New(x, y))))
-                             .SelectMany(r => r);
+            var tiles = range.SelectMany(x => range.Select(y => new TileViewModel(Position2D.New(x, y))))
+                             .Cast<ITilePresenter>();
+
+            _player1 = state.Player1;
+            _player2 = state.Player2;
+
+            _positionsByPlayer.Add(state.Player1, new HashSet<Position2D>(state.Player1Positions));
+            _positionsByPlayer.Add(state.Player2, new HashSet<Position2D>(state.Player2Positions));
+
+            // Register message handlers
+            MessengerInstance.Register<NotificationMessage<ITilePresenter>>(this, token: SelectedTileMessageToken,
+                                                       action: message => SelectedTile = message.Content);
 
             foreach (var tile in tiles) {
-                tile.Update(Game.State);
-                tile.IsSelectable = tile.PieceColor == Game.State.CurrentPlayer.Color;
+                tile.Update(state.PlayerOn(tile.Position), state.HasBall(tile.Position));
                 Tiles.Add(tile);
             }
         }
@@ -30,13 +76,24 @@ namespace DiaballikWPF.ViewModel {
 
         #region Properties
 
-        public Game Game { get; }
-        public GameMemento Memento => Game.Memento;
-        public int BoardSize => Game.State.BoardSize;
+        public int BoardSize { get; }
+
+
+        public BoardLike CurrentState { get; private set; }
+
+
+        #region Tiles
 
         /// Stores the tiles linearly. Use TileAt to retrieve one.
-        public ObservableCollection<TileViewModel> Tiles { get; } = new ObservableCollection<TileViewModel>();
+        public ObservableCollection<ITilePresenter> Tiles { get; } = new ObservableCollection<ITilePresenter>();
 
+        #endregion
+
+        #region MessengerInstance
+
+//        protected new IMessenger MessengerInstance => Messenger.Default;
+
+        #endregion
 
         #region UnlockedPlayer
 
@@ -45,22 +102,46 @@ namespace DiaballikWPF.ViewModel {
         /// Player currently allowed to play. Null if both players are locked.
         public Player UnlockedPlayer {
             get => _unlockedPlayer;
-            set => Set(ref _unlockedPlayer, value, "UnlockedPlayer");
+            set {
+                if (UnlockedPlayer != value) {
+                    if (value != null && UnlockedPlayer != null) {
+                        // change player
+                        foreach (var tile in _positionsByPlayer[value]) {
+                            TileAt(tile).IsSelectable = true;
+                        }
+                        var opponent = value == _player1 ? _player2 : _player1;
+                        foreach (var tile in _positionsByPlayer[opponent]) {
+                            TileAt(tile).IsSelectable = false;
+                        }
+                    } else if (value == null) {
+                        // then we put the board in readonly state, the other player is already locked
+                        foreach (var tile in _positionsByPlayer[UnlockedPlayer]) {
+                            TileAt(tile).IsSelectable = false;
+                        }
+                    } else if (value != null) {
+                        // then we unlock the value player, the other is already locked
+                        foreach (var tile in _positionsByPlayer[value]) {
+                            TileAt(tile).IsSelectable = true;
+                        }
+                    }
+                    SelectedTile = null;
+                    Set(ref _unlockedPlayer, value, "UnlockedPlayer");
+                }
+            }
         }
-        
 
         #endregion
 
         #region SelectedTile
 
-        private TileViewModel _selectedTile;
+        private ITilePresenter _selectedTile;
 
-        public TileViewModel SelectedTile {
+        public ITilePresenter SelectedTile {
             get => _selectedTile;
             set {
+                Debug.WriteLine($"Selected {value?.Position}");
                 if (_selectedTile != value) {
                     _selectedTile = value;
-                    Debug.WriteLine($"{_selectedTile.Position} isSelected");
                     if (SelectedTile != null) {
                         SuggestMoves(SelectedTile);
                     }
@@ -76,44 +157,36 @@ namespace DiaballikWPF.ViewModel {
 
         #region Methods
 
-        public TileViewModel TileAt(Position2D p) {
+        public ITilePresenter TileAt(Position2D p) {
+            Debug.WriteLine($"{p} : {Tiles[p.X * BoardSize + p.Y].Position}");
             return Tiles[p.X * BoardSize + p.Y];
         }
 
-        private readonly IList<TileViewModel> _markedTiles = new List<TileViewModel>();
+        private readonly List<ITilePresenter> _markedTiles = new List<ITilePresenter>();
 
-        public void SuggestMoves(TileViewModel sourceTile) {
-            foreach (var tile in _markedTiles) {
-                tile.IsMarked = false;
-            }
 
+        private void SuggestMoves(ITilePresenter sourceTile) {
+            _markedTiles.ForEach(t => t.UnMark());
             _markedTiles.Clear();
 
-            var moves = Game.State.AvailableMoves(sourceTile.Position);
+            var moves = CurrentState.AvailableMoves(sourceTile.Position);
 
             foreach (var move in moves) {
                 var target = TileAt(move.Dst);
-                target.IsMarked = true;
+                target.MarkMove(UnlockedPlayer, move);
                 _markedTiles.Add(target);
             }
         }
 
-        // Updates the underlying game and the tiles.
-        private void Update(IUpdateAction action) {
-            Game.Update(action);
-            if (action is MoveAction m) {
-                TileAt(m.Dst).Update(Game.State);
-                TileAt(m.Src).Update(Game.State);
-            }
+        public void UpdateState(BoardLike state, MoveAction action) {
+            CurrentState = state;
+            UpdateTile(action.Src, state);
+            UpdateTile(action.Dst, state);
+        }
 
-            // player has changed
-            if (Game.State.CurrentPlayer != Game.Memento.Parent.ToState().CurrentPlayer) {
-                foreach (var tile in Tiles) {
-                    if (tile.HasPiece) {
-                        tile.IsSelectable = !tile.IsSelectable;
-                    }
-                }
-            }
+
+        private void UpdateTile(Position2D p, BoardLike state) {
+            TileAt(p).Update(state.PlayerOn(p), state.HasBall(p));
         }
 
         #endregion

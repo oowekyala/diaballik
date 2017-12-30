@@ -2,17 +2,34 @@
 #include "NoobAiAlgo.hpp"
 
 using namespace System::Linq;
+using namespace Diaballik::Core::Util;
+
+
 
 namespace Diaballik::AlgoLib {
 	
+	// I couldn't write a generic method for some reason
+
+	IEnumerable<Position2D>^ Shuffle(IEnumerable<Position2D>^ l)
+	{
+		return ExtensionUtil::Shuffle(Enumerable::ToList(l));
+	}
+
+
+	IEnumerable<MoveAction^>^ Shuffle(IEnumerable<MoveAction^>^ l)
+	{
+		return ExtensionUtil::Shuffle(Enumerable::ToList(l));
+	}
+
 	IUpdateAction^ NoobAiAlgo::TryGetAMovePiece(GameState^ state, IEnumerable<Position2D>^ ps, Position2D ballCarrier) 
 	{
-		for each(auto p in ps) 
+		auto shuffledPs = Shuffle(ps);
+		for each(auto p in shuffledPs) 
 		{
 			if (p == ballCarrier) continue;
 
-			auto movePieces = Enumerable::ToList(BoardAnalysis::AvailableMoves(state, p));
-			if (movePieces->Count > 0) return movePieces[0];
+			auto movePieces = Shuffle(BoardAnalysis::AvailableMoves(state, p));
+			if (Enumerable::Any(movePieces)) return Enumerable::First(movePieces);
 		}
 		// We make the assumption that this line is never reached,
 		// which is confirmed by coverage analysis.
@@ -20,11 +37,10 @@ namespace Diaballik::AlgoLib {
 	}
 
 
-
 	IUpdateAction^ NoobAiAlgo::TryGetAMoveBall(GameState^ state, IEnumerable<Position2D>^ ps, Position2D ballCarrier) 
 	{
-		auto moveBalls = Enumerable::ToList(BoardAnalysis::AvailableMoves(state, ballCarrier));
-		return moveBalls->Count > 0 ? moveBalls[0] : TryGetAMovePiece(state, ps, ballCarrier);
+		auto moveBalls = Shuffle(BoardAnalysis::AvailableMoves(state, ballCarrier));
+		return Enumerable::Any(moveBalls) ? Enumerable::First(moveBalls) : TryGetAMovePiece(state, ps, ballCarrier);
 	}
 
 
@@ -33,8 +49,8 @@ namespace Diaballik::AlgoLib {
 		auto ps = state->PositionsForPlayer(player);
 		auto ballCarrier = state->BallCarrierForPlayer(player);
 
-		const int movePieceProportion = 40; 
-		const int moveBallProportion = 40;
+		const int movePieceProportion = 50; 
+		const int moveBallProportion = 50;
 		auto random = NoobAiAlgo::Rng->Next(100);
 
 		if (random < movePieceProportion) 

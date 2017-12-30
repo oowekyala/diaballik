@@ -10,7 +10,7 @@
              d:DesignWidth="300"
              d:DataContext="{d:DesignInstance viewModel:BoardViewModel}">
     <UserControl.Resources>
-        <Brush x:Key="BoardBackGroundBrush">Bisque</Brush>
+        <Brush x:Key="BoardBackGroundBrush">White</Brush>
     </UserControl.Resources>
 
 

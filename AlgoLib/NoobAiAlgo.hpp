@@ -16,6 +16,7 @@ namespace Diaballik::AlgoLib {
 		/// <summary>Tries to get a moveball, falling back on movePiece if not possible.</summary>
 		static IUpdateAction^ TryGetAMoveBall(GameState^ state, IEnumerable<Position2D>^ ps, Position2D ballCarrier);
 
+
 	public:
 		/// <inheritdoc />
 		/// <summary>

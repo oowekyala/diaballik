@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Diaballik.Core.Util {
-    public static class TupleExtensions {
+    public static class ExtensionUtil {
         // Mainly extension methods for homogeneous pairs. Avoids repeating symmetrical code over and over.
 
 
@@ -61,6 +61,18 @@ namespace Diaballik.Core.Util {
 
         public static IEnumerable<A> SortAndUnzip<A>(this IEnumerable<(A, int)> l) {
             return l.OrderBy(t => t.Item2).Select(t => t.Item1);
+        }
+
+
+        private static readonly Random Rng = new Random();
+
+        public static IEnumerable<T> Shuffle<T>(this IList<T> list) {
+            for (var i = 0; i < list.Count; i++) {
+                var j = Rng.Next(i, list.Count);
+                yield return list[j];
+
+                list[j] = list[i];
+            }
         }
     }
 }

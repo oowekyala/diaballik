@@ -2,6 +2,7 @@
 using System.Windows.Navigation;
 using DiaballikWPF.View;
 using DiaballikWPF.ViewModel;
+using GalaSoft.MvvmLight.Threading;
 
 namespace DiaballikWPF {
     /// <summary>
@@ -21,7 +22,11 @@ namespace DiaballikWPF {
             QuickConverter.EquationTokenizer.AddExtensionMethods(typeof(Converters.ConvertUtil));
             QuickConverter.EquationTokenizer.AddNamespace(typeof(Converters.ConvertUtil));
 
+            DispatcherHelper.Initialize();
+
         }
+
+
 
         protected override void OnStartup(StartupEventArgs e) {
             base.OnStartup(e);

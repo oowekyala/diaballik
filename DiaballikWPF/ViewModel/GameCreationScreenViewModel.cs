@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
+using Diaballik.Core;
 using Diaballik.Core.Builders;
 using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
@@ -56,7 +57,8 @@ namespace DiaballikWPF.ViewModel {
 
 
         public ObservableCollection<GameBuilder.GameScenario> GameScenarios { get; }
-            = new ObservableCollection<GameBuilder.GameScenario>(Enum.GetValues(typeof(GameBuilder.GameScenario)).Cast<GameBuilder.GameScenario>());
+            = new ObservableCollection<GameBuilder.GameScenario>(
+                Enum.GetValues(typeof(GameBuilder.GameScenario)).Cast<GameBuilder.GameScenario>());
 
         public GameBuilder.GameScenario Scenario {
             get => Builder.Scenario;
@@ -97,6 +99,7 @@ namespace DiaballikWPF.ViewModel {
 
             _dock.ContentViewModel = playGameVm;
 
+            playGameVm.StartGameLoop();
         }
 
         #endregion
