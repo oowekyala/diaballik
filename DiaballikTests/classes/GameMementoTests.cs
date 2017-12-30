@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Diaballik.Core;
-using Diaballik.Players;
+using Diaballik.Core.Util;
 using NUnit.Framework;
 using static Diaballik.Tests.MockUtil;
 

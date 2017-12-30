@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Media;
-using Diaballik.Players;
+using Diaballik.Core.Builders;
 using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using static Diaballik.Players.GameBuilder;
 using static DiaballikWPF.ViewModel.PlayerBuilderViewModel;
 
 namespace DiaballikWPF.ViewModel {
@@ -58,10 +55,10 @@ namespace DiaballikWPF.ViewModel {
         }
 
 
-        public ObservableCollection<GameScenario> GameScenarios { get; }
-            = new ObservableCollection<GameScenario>(Enum.GetValues(typeof(GameScenario)).Cast<GameScenario>());
+        public ObservableCollection<GameBuilder.GameScenario> GameScenarios { get; }
+            = new ObservableCollection<GameBuilder.GameScenario>(Enum.GetValues(typeof(GameBuilder.GameScenario)).Cast<GameBuilder.GameScenario>());
 
-        public GameScenario Scenario {
+        public GameBuilder.GameScenario Scenario {
             get => Builder.Scenario;
             set {
                 if (value != Scenario) {

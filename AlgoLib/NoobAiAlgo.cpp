@@ -28,7 +28,7 @@ namespace Diaballik::AlgoLib {
 	}
 
 
-	IUpdateAction^ NoobAiAlgo::NextMove(GameState^ state, IPlayer^ player)
+	IUpdateAction^ NoobAiAlgo::NextMove(GameState^ state, Player^ player)
 	{
 		auto ps = state->PositionsForPlayer(player);
 		auto ballCarrier = state->BallCarrierForPlayer(player);

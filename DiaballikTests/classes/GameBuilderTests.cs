@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Media;
+using Diaballik.Core.Builders;
 using Diaballik.Core.Util;
-using Diaballik.Players;
 using NUnit.Framework;
-using static Diaballik.Players.GameBuilder;
+using static Diaballik.Core.Builders.GameBuilder;
 
 namespace Diaballik.Tests {
     [TestFixture]

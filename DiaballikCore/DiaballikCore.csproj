@@ -41,17 +41,22 @@
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="classes\BoardLike.cs" />
     <Compile Include="classes\Game.cs" />
+    <Compile Include="classes\builders\GameBuilder.cs" />
     <Compile Include="classes\GameState.cs" />
     <Compile Include="classes\GameBoard.cs" />
     <Compile Include="classes\GameMemento.cs" />
-    <Compile Include="classes\InitStrategy.cs" />
-    <Compile Include="classes\IPlayer.cs" />
+    <Compile Include="classes\builders\InitStrategy.cs" />
+    <Compile Include="classes\util\MementoSerializationUtil.cs" />
+    <Compile Include="classes\Player.cs" />
     <Compile Include="classes\IUpdateAction.cs" />
     <Compile Include="classes\PlayerBoardSpec.cs" />
+    <Compile Include="classes\builders\PlayerBuilder.cs" />
     <Compile Include="classes\util\DiaballikUtil.cs" />
     <Compile Include="classes\util\TupleExtensions.cs" />
     <Compile Include="classes\Position2D.cs" />

@@ -26,7 +26,7 @@ namespace Diaballik.Core {
     public sealed class GameBoard : BoardLike {
         #region Fields
 
-        private readonly ImmutableDictionary<Position2D, IPlayer> _boardLookup;
+        private readonly ImmutableDictionary<Position2D, Player> _boardLookup;
         private readonly ImmutableHashSet<Position2D> _player1Positions;
         private readonly ImmutableHashSet<Position2D> _player2Positions;
 
@@ -34,8 +34,8 @@ namespace Diaballik.Core {
 
         #region BoardLike properties
 
-        public override IPlayer Player1 { get; }
-        public override IPlayer Player2 { get; }
+        public override Player Player1 { get; }
+        public override Player Player2 { get; }
 
         public override Position2D BallCarrier1 { get; }
         public override Position2D BallCarrier2 { get; }
@@ -63,15 +63,15 @@ namespace Diaballik.Core {
             (BallCarrier1, BallCarrier2) = positions.Zip(specs, (l, spec) => l[spec.BallIndex]);
             (_player1Positions, _player2Positions) = positions.Map(ImmutableHashSet.CreateRange);
 
-            var lookupBuilder = ImmutableDictionary.CreateBuilder<Position2D, IPlayer>();
-            specs.Map(spec => spec.Positions.Select(p => new KeyValuePair<Position2D, IPlayer>(p, spec.Player)))
+            var lookupBuilder = ImmutableDictionary.CreateBuilder<Position2D, Player>();
+            specs.Map(spec => spec.Positions.Select(p => new KeyValuePair<Position2D, Player>(p, spec.Player)))
                  .Foreach(lookupBuilder.AddRange);
             _boardLookup = lookupBuilder.ToImmutable();
         }
 
 
         // used internally, for MovePiece updates
-        private GameBoard(GameBoard previous, ImmutableDictionary<Position2D, IPlayer> lookup,
+        private GameBoard(GameBoard previous, ImmutableDictionary<Position2D, Player> lookup,
             (ImmutableHashSet<Position2D>, ImmutableHashSet<Position2D>) positions) {
             BoardSize = previous.BoardSize;
             Player1 = previous.Player1;
@@ -135,7 +135,7 @@ namespace Diaballik.Core {
             return !_boardLookup.ContainsKey(pos);
         }
 
-        public override IPlayer PlayerOn(Position2D pos) {
+        public override Player PlayerOn(Position2D pos) {
             var ok = _boardLookup.TryGetValue(pos, out var player);
             return ok ? player : null;
         }

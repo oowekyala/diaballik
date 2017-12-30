@@ -16,7 +16,7 @@ namespace Diaballik.Core {
         public int NumMovesLeft { get; } = Game.MaxMovesPerTurn;
 
         /// Current player of the game
-        public IPlayer CurrentPlayer { get; }
+        public Player CurrentPlayer { get; }
 
         #endregion
 
@@ -30,7 +30,7 @@ namespace Diaballik.Core {
 
 
         // Called when updating an existing game
-        private GameState(GameBoard board, IPlayer currentPlayer, int numMoves) : base(board) {
+        private GameState(GameBoard board, Player currentPlayer, int numMoves) : base(board) {
             CurrentPlayer = currentPlayer;
             NumMovesLeft = numMoves;
         }

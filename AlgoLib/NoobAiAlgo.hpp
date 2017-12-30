@@ -25,7 +25,7 @@ namespace Diaballik::AlgoLib {
 		///		distributed around 50% MovePiece, 
 		///		30% MoveBall, and 20% Pass.
         /// </summary>
-		IUpdateAction^ NextMove(GameState^ board, IPlayer^ player) override;
+		IUpdateAction^ NextMove(GameState^ board, Player^ player) override;
 	};
 
 }

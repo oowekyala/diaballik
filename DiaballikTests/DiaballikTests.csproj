@@ -63,7 +63,6 @@
     <Compile Include="classes\GameBuilderTests.cs" />
     <Compile Include="classes\GameMementoTests.cs" />
     <Compile Include="classes\PlayerBuilderTest.cs" />
-    <Compile Include="classes\PlayerTests.cs" />
     <Compile Include="classes\GameBoardTests.cs" />
     <Compile Include="classes\GameStateTests.cs" />
     <Compile Include="classes\MockUtil.cs" />
@@ -80,10 +79,6 @@
     <ProjectReference Include="..\DiaballikCore\DiaballikCore.csproj">
       <Project>{fcdb9834-c071-40b0-84b8-2bc325abfd35}</Project>
       <Name>DiaballikCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DiaballikPlayers\DiaballikPlayers.csproj">
-      <Project>{82115560-5abf-4302-95e8-89a55d25f840}</Project>
-      <Name>DiaballikPlayers</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

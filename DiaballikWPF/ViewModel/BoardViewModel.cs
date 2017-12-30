@@ -40,10 +40,10 @@ namespace DiaballikWPF.ViewModel {
 
         #region UnlockedPlayer
 
-        private IPlayer _unlockedPlayer;
+        private Player _unlockedPlayer;
 
         /// Player currently allowed to play. Null if both players are locked.
-        public IPlayer UnlockedPlayer {
+        public Player UnlockedPlayer {
             get => _unlockedPlayer;
             set => Set(ref _unlockedPlayer, value, "UnlockedPlayer");
         }

@@ -4,7 +4,8 @@ using System.Linq;
 using Diaballik.Core.Util;
 
 
-namespace Diaballik.Core {
+namespace Diaballik.Core.Builders {
+
     using PlayerSpecPair = ValueTuple<PlayerBoardSpec, PlayerBoardSpec>;
 
 

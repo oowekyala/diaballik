@@ -1,5 +1,4 @@
-﻿using Diaballik.Players;
-using DiaballikWPF.View;
+﻿using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 

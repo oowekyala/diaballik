@@ -36,11 +36,11 @@ namespace Diaballik::AlgoLib {
 			List<Position2D>^ accumulator;
 			int startX;
 			int startY;
-			IPlayer^ player;
-			IPlayer^ opponent;
+			Player^ player;
+			Player^ opponent;
 			BoardLike^ Board;
 
-			Helper(List<Position2D>^ acc, Position2D start, IPlayer^ p, IPlayer^ o, BoardLike^ board)
+			Helper(List<Position2D>^ acc, Position2D start, Player^ p, Player^ o, BoardLike^ board)
 				: accumulator(acc), startX(start.X), startY(start.Y), player(p), opponent(o), Board(board) {}
 		};
 

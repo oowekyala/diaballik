@@ -154,6 +154,7 @@
     <ClInclude Include="AiDecisionAlgo.hpp" />
     <ClInclude Include="BoardAnalysis.hpp" />
     <ClInclude Include="NoobAiAlgo.hpp" />
+    <ClInclude Include="ProgressiveAiAlgo.hpp" />
     <ClInclude Include="StartingAiAlgo.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -161,6 +162,7 @@
   <ItemGroup>
     <ClCompile Include="BoardAnalysis.cpp" />
     <ClCompile Include="NoobAiAlgo.cpp" />
+    <ClCompile Include="ProgressiveAiAlgo.cpp" />
     <ClCompile Include="StartingAiAlgo.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

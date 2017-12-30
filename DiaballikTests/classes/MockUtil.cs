@@ -5,7 +5,6 @@ using System.Linq;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
 using Diaballik.Core.Util;
-using Diaballik.Players;
 
 namespace Diaballik.Tests {
     /// <summary>
@@ -58,7 +57,8 @@ namespace Diaballik.Tests {
 
         #region Player mocking
 
-        public static Color RandomColor() => Color.FromRgb((byte) Rng.Next(256), (byte) Rng.Next(256), (byte) Rng.Next(256));
+        public static Color RandomColor() =>
+            Color.FromRgb((byte) Rng.Next(256), (byte) Rng.Next(256), (byte) Rng.Next(256));
 
         public static (FullPlayerBoardSpec, FullPlayerBoardSpec) DummyPlayerSpecPair(int boardSize)
             => RandomPositionsPair(boardSize).Map(p => new FullPlayerBoardSpec(DummyPlayer(), p, boardSize / 2));
@@ -72,20 +72,26 @@ namespace Diaballik.Tests {
             => new FullPlayerBoardSpec(DummyPlayer(), positions, boardSize / 2);
 
 
-        public static IPlayer DummyPlayer() => DummyPlayer(RandomColor(), "dummy" + Rng.Next(100));
+        public static Player DummyPlayer() => DummyPlayer(RandomColor(), "dummy" + Rng.Next(100));
 
 
         /// Returns a dummy player of any type
-        public static IPlayer DummyPlayer(Color c, string name) {
+        public static Player DummyPlayer(Color c, string name) {
             var random = Rng.Next(100);
 
-            if (random < 33) {
-                return new NoobAiPlayer(c, name);
+            PlayerType type;
+
+            if (random < 25) {
+                type = PlayerType.NoobAi;
+            } else if (random < 50) {
+                type = PlayerType.StartingAi;
+            } else if (random < 75) {
+                type = PlayerType.ProgressiveAi;
+            } else {
+                type = PlayerType.Human;
             }
-            if (random < 66) {
-                return new StartingAiPlayer(c, name);
-            }
-            return new ProgressiveAiPlayer(c, name);
+
+            return new Player(c, name, type);
         }
 
         #endregion

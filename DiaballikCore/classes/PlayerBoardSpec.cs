@@ -77,19 +77,19 @@ namespace Diaballik.Core {
         #region Properties
 
         /// The player
-        public IPlayer Player { get; }
+        public Player Player { get; }
 
         #endregion
 
         #region Constructors
 
-        public FullPlayerBoardSpec(IPlayer player, IEnumerable<Position2D> positions, int ballIndex) :
+        public FullPlayerBoardSpec(Player player, IEnumerable<Position2D> positions, int ballIndex) :
             base(positions, ballIndex) {
             Player = player;
         }
 
 
-        public FullPlayerBoardSpec(IPlayer player, PlayerBoardSpec spec) :
+        public FullPlayerBoardSpec(Player player, PlayerBoardSpec spec) :
             this(player, spec.Positions, spec.BallIndex) {
         }
 

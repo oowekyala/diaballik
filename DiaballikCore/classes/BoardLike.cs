@@ -14,8 +14,8 @@ namespace Diaballik.Core {
 
         public abstract int BoardSize { get; }
 
-        public abstract IPlayer Player1 { get; }
-        public abstract IPlayer Player2 { get; }
+        public abstract Player Player1 { get; }
+        public abstract Player Player2 { get; }
 
         public abstract IEnumerable<Position2D> Player1Positions { get; }
         public abstract IEnumerable<Position2D> Player2Positions { get; }
@@ -34,7 +34,7 @@ namespace Diaballik.Core {
         ///     Returns null if the tile is empty or out of bounds.
         /// </summary>
         /// <returns>The player, or null</returns>
-        public abstract IPlayer PlayerOn(Position2D p);
+        public abstract Player PlayerOn(Position2D p);
 
         #endregion
 
@@ -55,7 +55,7 @@ namespace Diaballik.Core {
 
         #region Properties depending on the player
 
-        private T GetPlayerProperty<T>(IPlayer player, (T, T) choices) {
+        private T GetPlayerProperty<T>(Player player, (T, T) choices) {
             return player == Player1
                 ? choices.Item1
                 : player == Player2
@@ -67,7 +67,7 @@ namespace Diaballik.Core {
         ///     Gets the positions of the pieces of a player.
         /// </summary>
         /// <exception cref="ArgumentException">If the player is unknown</exception>
-        public IEnumerable<Position2D> PositionsForPlayer(IPlayer player) {
+        public IEnumerable<Position2D> PositionsForPlayer(Player player) {
             return GetPlayerProperty(player, PositionsPair);
         }
 
@@ -76,7 +76,7 @@ namespace Diaballik.Core {
         ///     Gets the position of the piece carrying the ball of a player.
         /// </summary>
         /// <exception cref="ArgumentException">If the player is not recognised</exception>
-        public Position2D BallCarrierForPlayer(IPlayer player) {
+        public Position2D BallCarrierForPlayer(Player player) {
             return GetPlayerProperty(player, BallCarrierPair);
         }
 
@@ -85,13 +85,13 @@ namespace Diaballik.Core {
         ///     Returns the opponent of the specified player.
         /// </summary>
         /// <exception cref="ArgumentException">If the player is unknown</exception>
-        public IPlayer GetOtherPlayer(IPlayer player) {
+        public Player GetOtherPlayer(Player player) {
             return GetPlayerProperty(player, (Player2, Player1));
         }
 
 
         // Gets the index of the starting row of a player. Used to check for victory
-        protected int GetRowIndexOfInitialLine(IPlayer player) {
+        protected int GetRowIndexOfInitialLine(Player player) {
             return GetPlayerProperty(player, (BoardSize - 1, 0));
         }
 
@@ -99,7 +99,7 @@ namespace Diaballik.Core {
         ///     Returns true if the given player is victorious in the current
         ///     configuration.
         /// </summary>
-        public bool IsVictoriousPlayer(IPlayer player) {
+        public bool IsVictoriousPlayer(Player player) {
             return PositionsForPlayer(player)
                 .Select(p => p.X)
                 .Any(i => BoardSize - 1 - GetRowIndexOfInitialLine(player) == i);
@@ -196,12 +196,12 @@ namespace Diaballik.Core {
         public override IEnumerable<Position2D> Player1Positions => UnderlyingBoard.Player1Positions;
         public override IEnumerable<Position2D> Player2Positions => UnderlyingBoard.Player2Positions;
         public override int BoardSize => UnderlyingBoard.BoardSize;
-        public override IPlayer Player1 => UnderlyingBoard.Player1;
-        public override IPlayer Player2 => UnderlyingBoard.Player2;
+        public override Player Player1 => UnderlyingBoard.Player1;
+        public override Player Player2 => UnderlyingBoard.Player2;
         public override Position2D BallCarrier1 => UnderlyingBoard.BallCarrier1;
         public override Position2D BallCarrier2 => UnderlyingBoard.BallCarrier2;
         public override bool IsFree(Position2D p) => UnderlyingBoard.IsFree(p);
-        public override IPlayer PlayerOn(Position2D p) => UnderlyingBoard.PlayerOn(p);
+        public override Player PlayerOn(Position2D p) => UnderlyingBoard.PlayerOn(p);
 
         #endregion
     }

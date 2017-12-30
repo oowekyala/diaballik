@@ -225,8 +225,8 @@ namespace Diaballik.Core {
         public bool IsFirstPlayerPlaying { get; }
         public FullPlayerSpecPair Specs { get; }
 
-        public IPlayer Player1 => Specs.Item1.Player;
-        public IPlayer Player2 => Specs.Item2.Player;
+        public Player Player1 => Specs.Item1.Player;
+        public Player Player2 => Specs.Item2.Player;
 
         #endregion
 

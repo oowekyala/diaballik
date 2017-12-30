@@ -1,10 +1,7 @@
-﻿using System;
-using System.Windows.Media;
-using System.Text.RegularExpressions;
-using Diaballik.Core;
+﻿using System.Windows.Media;
 using Diaballik.Core.Util;
 
-namespace Diaballik.Players {
+namespace Diaballik.Core.Builders {
     /// <summary>
     ///     Builds player instances.
     /// </summary>
@@ -20,7 +17,7 @@ namespace Diaballik.Players {
         public bool CannotBuild => !CanBuild;
         public bool CanBuild => ErrorMessage == string.Empty;
 
-        public string ErrorMessage => string.IsNullOrWhiteSpace(Name) ? "Player name cannot be whitespace" : string.Empty;
+        public string ErrorMessage => string.Empty;
 
         #endregion
 
@@ -52,21 +49,9 @@ namespace Diaballik.Players {
         ///     Builds a player with the specified configuration.
         /// </summary>
         /// <returns>A new player</returns>
-        public IPlayer Build() {
+        public Player Build() {
             DiaballikUtil.Assert(CanBuild, ErrorMessage);
-
-            switch (SelectedPlayerType) {
-                case PlayerType.Human:
-                    return new HumanPlayer(Color, Name);
-                case PlayerType.NoobAi:
-                    return new NoobAiPlayer(Color, Name);
-                case PlayerType.StartingAi:
-                    return new StartingAiPlayer(Color, Name);
-                case PlayerType.ProgressiveAi:
-                    return new ProgressiveAiPlayer(Color, Name);
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            return new Player(Color, Name, SelectedPlayerType);
         }
 
         #endregion

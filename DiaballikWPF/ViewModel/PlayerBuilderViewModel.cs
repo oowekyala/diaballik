@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Windows.Media;
 using System.Linq;
-using Diaballik.Players;
+using Diaballik.Core;
+using Diaballik.Core.Builders;
 using GalaSoft.MvvmLight;
-using static Diaballik.Players.PlayerBuilder;
 
 namespace DiaballikWPF.ViewModel {
     public class PlayerBuilderViewModel : ViewModelBase {

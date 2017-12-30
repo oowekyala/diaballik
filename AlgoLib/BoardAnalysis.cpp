@@ -69,7 +69,7 @@ namespace Diaballik::AlgoLib
 
 
 		List<Position2D>^ validDst = gcnew List<Position2D>;
-		IPlayer^ player = Board->PlayerOn(p);
+		Player^ player = Board->PlayerOn(p);
 		Helper helper(validDst, p, player, Board->GetOtherPlayer(player), Board);
 
 		TryGetFriend(helper, -1, 0);    // top
@@ -91,7 +91,7 @@ namespace Diaballik::AlgoLib
 		int x = help.startX, y = help.startY;
 
 		Position2D p(x + xstep, y + ystep);
-		IPlayer^ curPlayer = help.Board->PlayerOn(p);
+		Player^ curPlayer = help.Board->PlayerOn(p);
 
 		while (curPlayer != help.player)
 		{

@@ -196,10 +196,6 @@
       <Project>{fcdb9834-c071-40b0-84b8-2bc325abfd35}</Project>
       <Name>DiaballikCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiaballikPlayers\DiaballikPlayers.csproj">
-      <Project>{82115560-5abf-4302-95e8-89a55d25f840}</Project>
-      <Name>DiaballikPlayers</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />

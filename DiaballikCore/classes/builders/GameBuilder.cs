@@ -1,12 +1,11 @@
 ﻿using System;
-using Diaballik.Core;
 using Diaballik.Core.Util;
 
-namespace Diaballik.Players {
+namespace Diaballik.Core.Builders {
     /// <summary>
     ///     Builds a game, enforcing the correctness of its arguments throughout the process.
     /// </summary>
-    public class GameBuilder {
+    public sealed class GameBuilder {
         #region Private fields
 
         #endregion

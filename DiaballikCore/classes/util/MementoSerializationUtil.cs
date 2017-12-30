@@ -4,13 +4,11 @@ using System.ComponentModel;
 using System.Windows.Media;
 using System.Linq;
 using System.Xml.Linq;
-using Diaballik.Core;
-using Diaballik.Core.Util;
-using static Diaballik.Players.PlayerBuilder;
+using Diaballik.Core.Builders;
 
 // ReSharper disable PossibleNullReferenceException
 
-namespace Diaballik.Players {
+namespace Diaballik.Core.Util {
     /// <summary>
     ///    Serialization and deserialization utility for game memento.
     ///    Reader and writer are kept together for encapsulation and better maintainability.
@@ -86,11 +84,11 @@ namespace Diaballik.Players {
                                                  )));
             }
 
-            private static XElement PlayerToElement(IPlayer player, int id) {
+            private static XElement PlayerToElement(Player player, int id) {
                 return new XElement(PlayerElement,
                                     new XAttribute("color", new ColorConverter().ConvertToString(player.Color)),
                                     new XAttribute("name", player.Name),
-                                    new XAttribute("type", PlayerTypesToString[PlayerTypes.FromPlayer(player)])
+                                    new XAttribute("type", PlayerTypesToString[player.Type])
                 );
             }
 
@@ -204,7 +202,7 @@ namespace Diaballik.Players {
                 return (new FullPlayerBoardSpec(player, positions, ballIndex), idx);
             }
 
-            private static IPlayer PlayerFromElement(XElement element) {
+            private static Player PlayerFromElement(XElement element) {
                 var name = element.Attribute("name").Value;
                 var color =
                     (Color) (new ColorConverter() as TypeConverter).ConvertFromString(element.Attribute("color").Value);

@@ -3,7 +3,7 @@
 
 
 namespace Diaballik::AlgoLib {
-	IUpdateAction^ StartingAiAlgo::NextMove(GameState^ board, IPlayer^ player)
+	IUpdateAction^ StartingAiAlgo::NextMove(GameState^ board, Player^ player)
 	{
 		throw "Not implemented";
 	}
