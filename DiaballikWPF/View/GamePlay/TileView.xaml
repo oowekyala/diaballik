@@ -15,18 +15,16 @@
         <qc:QuickConverter x:Key="BoolToVisibility" Convert="$P ? Visibility.Visible : Visibility.Hidden" />
         <qc:QuickConverter x:Key="ColorToBrush" Convert="new SolidColorBrush($P)" />
 
-        <!-- Style for the base of the tile, always visible -->
-        <Style x:Key="TileStyle" TargetType="Grid">
-            <Setter Property="Background"
-                    Value="{qc:Binding 'new SolidColorBrush(($P.X % 2 == $P.Y % 2) ? Colors.Black : Colors.White)', P={Binding Position, Mode=OneTime}}" />
-        </Style>
-
+        
         <Style x:Key="MarkStyle" TargetType="Ellipse">
-            <Setter Property="Visibility"
-                    Value="{qc:MultiBinding '$P0 ## !$P1 ? Visibility.Visible : Visibility.Hidden', P0={Binding IsMarked}, P1={Binding HasPiece}}" />
-            <Setter Property="StrokeThickness" Value="5" />
-            <Setter Property="Stroke"
-                    Value="{Binding MarkingColor, Converter={StaticResource ColorToBrush}}" />
+            <Setter Property="Visibility" Value="{Binding IsMarked, Converter={StaticResource BoolToVisibility}}" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="Fill" Value="{Binding MarkingColor, Converter={StaticResource ColorToBrush}}" />
+            <Setter Property="IsHitTestVisible" Value="False"/> <!-- Make it clickthrough -->
+            <Setter Property="Width"
+                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 20 / 100.0'}}" />
+            <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
+
         </Style>
 
 
@@ -35,32 +33,30 @@
             <Setter Property="StrokeThickness" Value="2" />
             <Setter Property="Fill"
                     Value="{qc:MultiBinding Converter='new SolidColorBrush($P0 ? ConvertUtil.DimColor($P1, 70) : $P1)', P0={Binding IsSelected}, P1={Binding PieceOwner.Color}}" />
+            <Setter Property="Width"
+                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 70 / 100.0'}}" />
+            <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
 
-            <Style.Triggers>
-                <DataTrigger Binding="{qc:MultiBinding '$P0 ## $P1', P0={Binding IsMarked}, P1={Binding HasPiece}}"
-                             Value="True">
-                    <Setter Property="Stroke"
-                            Value="{Binding MarkingColor, Converter={StaticResource ColorToBrush}}" />
-                    <Setter Property="StrokeThickness" Value="5" />
-                </DataTrigger>
-            </Style.Triggers>
         </Style>
 
         <Style x:Key="BallStyle" TargetType="Ellipse">
-            <Setter Property="Visibility"
-                    Value="{Binding HasBall, Converter={StaticResource BoolToVisibility}}" />
+            <Setter Property="Visibility" Value="{Binding HasBall, Converter={StaticResource BoolToVisibility}}" />
             <Setter Property="Fill"
-                    Value="{qc:Binding 'new SolidColorBrush(ConvertUtil.DimColor($P == null ? Colors.Transparent : $P.Color, 50))', P={Binding PieceOwner}}" />
+                    Value="{qc:Binding 'new SolidColorBrush(ConvertUtil.DimColor($P?.Color ?? Colors.Transparent, 50))', P={Binding PieceOwner}}" />
             <Setter Property="Width"
-                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 60 / 100.0'}}" />
-            <Setter Property="Height"
-                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualHeight, Converter={qc:QuickConverter '$P * 60 / 100.0'}}" />
+                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 40 / 100.0'}}" />
+            <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
         </Style>
 
     </UserControl.Resources>
     <Grid
-        Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:TileView}}, Path=ActualHeight}"
-        Style="{StaticResource TileStyle}">
+        Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:TileView}}, Path=ActualHeight}">
+
+
+        <Button
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Command="{Binding SelectMarkedMoveCommand}" />
 
         <!-- The button changes color when it's selected. -->
         <!-- It's disabled when the current player is the opponent. -->

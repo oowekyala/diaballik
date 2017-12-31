@@ -6,6 +6,7 @@ using Diaballik.AlgoLib;
 using Diaballik.Core;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
+using static DiaballikWPF.ViewModel.PlayGameScreenViewModel;
 using static DiaballikWPF.ViewModel.TilePresenterConstants;
 
 namespace DiaballikWPF.ViewModel {
@@ -20,7 +21,7 @@ namespace DiaballikWPF.ViewModel {
         /// </summary>
         /// <param name="state">New state</param>
         /// <param name="action">Transition to the new state</param>
-        void UpdateState(BoardLike state, MoveAction action);
+        void UpdateState(GameState state, MoveAction action);
     }
 
     /// <summary>
@@ -31,40 +32,27 @@ namespace DiaballikWPF.ViewModel {
     ///     to a MoveAction.
     /// </summary>
     public class BoardViewModel : ViewModelBase, IBoardPresenter {
-        #region Fields
-
-        private readonly Dictionary<Player, HashSet<Position2D>> _positionsByPlayer
-            = new Dictionary<Player, HashSet<Position2D>>();
-
-        private readonly Player _player1;
-        private readonly Player _player2;
-
-        #endregion
-
-
         #region Constructor
 
         /// <summary>
         ///     Builds a board presenter, initially with no unlocked player.
         /// </summary>
+        /// <param name="messenger">Messenger for this presenter and its descendants</param>
         /// <param name="state">Initial state</param>
-        public BoardViewModel(BoardLike state) {
+        public BoardViewModel(IMessenger messenger, GameState state) {
             CurrentState = state;
             BoardSize = state.BoardSize;
+            MessengerInstance = messenger;
 
             var range = Enumerable.Range(0, BoardSize).ToList();
-            var tiles = range.SelectMany(x => range.Select(y => new TileViewModel(Position2D.New(x, y))))
-                             .Cast<ITilePresenter>();
-
-            _player1 = state.Player1;
-            _player2 = state.Player2;
-
-            _positionsByPlayer.Add(state.Player1, new HashSet<Position2D>(state.Player1Positions));
-            _positionsByPlayer.Add(state.Player2, new HashSet<Position2D>(state.Player2Positions));
+            var tiles
+                = range.SelectMany(x => range.Select(y => new TileViewModel(MessengerInstance, Position2D.New(x, y))))
+                       .Cast<ITilePresenter>();
 
             // Register message handlers
-            MessengerInstance.Register<NotificationMessage<ITilePresenter>>(this, token: SelectedTileMessageToken,
-                                                       action: message => SelectedTile = message.Content);
+            MessengerInstance.Register<NotificationMessage<ITilePresenter>>(this,
+                                                                            SelectedTileMessageToken,
+                                                                            message => SelectedTile = message.Content);
 
             foreach (var tile in tiles) {
                 tile.Update(state.PlayerOn(tile.Position), state.HasBall(tile.Position));
@@ -79,19 +67,14 @@ namespace DiaballikWPF.ViewModel {
         public int BoardSize { get; }
 
 
-        public BoardLike CurrentState { get; private set; }
+        /// State currently represented by the game
+        public GameState CurrentState { get; private set; }
 
 
         #region Tiles
 
         /// Stores the tiles linearly. Use TileAt to retrieve one.
         public ObservableCollection<ITilePresenter> Tiles { get; } = new ObservableCollection<ITilePresenter>();
-
-        #endregion
-
-        #region MessengerInstance
-
-//        protected new IMessenger MessengerInstance => Messenger.Default;
 
         #endregion
 
@@ -106,26 +89,28 @@ namespace DiaballikWPF.ViewModel {
                 if (UnlockedPlayer != value) {
                     if (value != null && UnlockedPlayer != null) {
                         // change player
-                        foreach (var tile in _positionsByPlayer[value]) {
+                        foreach (var tile in CurrentState.PositionsForPlayer(value)) {
                             TileAt(tile).IsSelectable = true;
                         }
-                        var opponent = value == _player1 ? _player2 : _player1;
-                        foreach (var tile in _positionsByPlayer[opponent]) {
+                        var opponent = CurrentState.GetOtherPlayer(value);
+                        foreach (var tile in CurrentState.PositionsForPlayer(opponent)) {
                             TileAt(tile).IsSelectable = false;
                         }
                     } else if (value == null) {
+                        // UnlockedPlayer != null
                         // then we put the board in readonly state, the other player is already locked
-                        foreach (var tile in _positionsByPlayer[UnlockedPlayer]) {
+                        foreach (var tile in CurrentState.PositionsForPlayer(UnlockedPlayer)) {
                             TileAt(tile).IsSelectable = false;
                         }
-                    } else if (value != null) {
+                    } else {
+                        // value != null, UnlockedPlayer == null
                         // then we unlock the value player, the other is already locked
-                        foreach (var tile in _positionsByPlayer[value]) {
+                        foreach (var tile in CurrentState.PositionsForPlayer(value)) {
                             TileAt(tile).IsSelectable = true;
                         }
                     }
                     SelectedTile = null;
-                    Set(ref _unlockedPlayer, value, "UnlockedPlayer");
+                    Set(ref _unlockedPlayer, value);
                 }
             }
         }
@@ -144,9 +129,12 @@ namespace DiaballikWPF.ViewModel {
                     _selectedTile = value;
                     if (SelectedTile != null) {
                         SuggestMoves(SelectedTile);
+                    } else {
+                        _markedTiles.ForEach(t => t.UnMark());
+                        _markedTiles.Clear();
                     }
 
-                    RaisePropertyChanged("SelectedTile");
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -155,15 +143,37 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
-        #region Methods
+        #region Public interface
 
-        public ITilePresenter TileAt(Position2D p) {
-            Debug.WriteLine($"{p} : {Tiles[p.X * BoardSize + p.Y].Position}");
+        /// <summary>
+        ///     Update the visual state of the game. This also updates the
+        ///     selectable tiles if need be.
+        /// </summary>
+        /// <param name="state">The new state to display</param>
+        /// <param name="action">The transition from the previous state to the current one</param>
+        public void UpdateState(GameState state, MoveAction action) {
+            CurrentState = state;
+
+            UpdateTile(action.Src, state);
+            UpdateTile(action.Dst, state);
+
+            if (action is MovePieceAction) {
+                TileAt(action.Src).IsSelectable = false;
+                TileAt(action.Dst).IsSelectable = true;
+            }
+        }
+
+        #endregion
+
+        #region Private members
+
+        private ITilePresenter TileAt(Position2D p) {
             return Tiles[p.X * BoardSize + p.Y];
         }
 
-        private readonly List<ITilePresenter> _markedTiles = new List<ITilePresenter>();
 
+        // Remembers the last selected tiles
+        private readonly List<ITilePresenter> _markedTiles = new List<ITilePresenter>();
 
         private void SuggestMoves(ITilePresenter sourceTile) {
             _markedTiles.ForEach(t => t.UnMark());
@@ -176,12 +186,6 @@ namespace DiaballikWPF.ViewModel {
                 target.MarkMove(UnlockedPlayer, move);
                 _markedTiles.Add(target);
             }
-        }
-
-        public void UpdateState(BoardLike state, MoveAction action) {
-            CurrentState = state;
-            UpdateTile(action.Src, state);
-            UpdateTile(action.Dst, state);
         }
 
 

@@ -159,8 +159,9 @@ namespace DiaballikWPF.ViewModel {
 
         #region Constructors
 
-        public TileViewModel(Position2D position) {
+        public TileViewModel(IMessenger messenger, Position2D position) {
             Position = position;
+            MessengerInstance = messenger;
         }
 
         #endregion
@@ -200,8 +201,8 @@ namespace DiaballikWPF.ViewModel {
 
         private void SelectMarkedMoveExecute() {
             Debug.WriteLine("Send move committed");
-            MessengerInstance.Send(new NotificationMessage<MoveAction>(MarkedMove.Item2,
-                                                                       "Move was committed by the player"),
+            MessengerInstance.Send(new NotificationMessage<IUpdateAction>(MarkedMove.Item2,
+                                                                          "Move was committed by the player"),
                                    token: CommittedMoveMessageToken);
         }
 

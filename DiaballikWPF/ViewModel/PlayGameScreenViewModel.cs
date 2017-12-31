@@ -18,28 +18,7 @@ namespace DiaballikWPF.ViewModel {
 
         public PlayGameScreenViewModel(Game game) {
             Game = game;
-            BoardViewModel = new BoardViewModel(game.State);
-
-
-            // Loops until the current player is human, then unlocks the human player
-            void AiDecisionLoop() {
-                while (Game.State.CurrentPlayer.IsAi) {
-                    Debug.WriteLine("inside loop");
-                    Thread.Sleep(250);
-                    StepAi(Game.State.CurrentPlayer);
-                }
-                Debug.WriteLine("outside loop");
-                BoardViewModel.UnlockedPlayer = Game.State.CurrentPlayer;
-            }
-
-            _loopThread = new Thread(AiDecisionLoop);
-
-            // Receive any move and update the game's state.
-            MessengerInstance.Register(
-                this,
-                token: CommittedMoveMessageToken,
-                receiveDerivedMessagesToo: true, // receive MoveAction and PassAction
-                action: LogReception<IUpdateAction>(UpdateGame));
+            BoardViewModel = new BoardViewModel(MessengerInstance, game.State);
         }
 
         #endregion
@@ -53,14 +32,29 @@ namespace DiaballikWPF.ViewModel {
         public GameMemento Memento => Game.Memento;
         public int BoardSize => Game.State.BoardSize;
 
+        public const int AiStepTimeMillis = 500;
+
         #endregion
 
         #region Public methods
 
-        private readonly Thread _loopThread;
-
         public void StartGameLoop() {
-            _loopThread.Start();
+            if (Game.State.CurrentPlayer.IsAi) {
+                StartAiStepThread();
+            } else {
+                // Receive any move and update the game's state.
+                Messenger.Default.Register<NotificationMessage<IUpdateAction>>(
+                    this,
+                    token: CommittedMoveMessageToken,
+                    receiveDerivedMessagesToo: true, // receive MoveAction and PassAction
+                    action: message => {
+                        Debug.WriteLine(message.Notification);
+                        UpdateGame(message.Content);
+                        BoardViewModel.SelectedTile = null;
+                    });
+
+                BoardViewModel.UnlockedPlayer = Game.State.CurrentPlayer;
+            }
         }
 
         #endregion
@@ -81,6 +75,33 @@ namespace DiaballikWPF.ViewModel {
             if (action is MoveAction move) {
                 DispatcherHelper.UIDispatcher.Invoke(() => BoardViewModel.UpdateState(Game.State, move));
             }
+
+            var player = Game.State.CurrentPlayer;
+            if (player.IsAi) {
+                StartAiStepThread();
+            } else {
+                BoardViewModel.UnlockedPlayer = player;
+            }
+        }
+
+        private Thread _loopThread;
+
+        /// Start a loop which queries and applies the moves of an AI player automatically.
+        /// The loop stops when the current player is human.
+        private void StartAiStepThread() {
+            // Loops until the current player is human, then unlocks the human player
+            void AiDecisionLoop() {
+                while (Game.State.CurrentPlayer.IsAi) {
+                    Debug.WriteLine("inside loop");
+                    Thread.Sleep(AiStepTimeMillis);
+                    StepAi(Game.State.CurrentPlayer);
+                }
+                Debug.WriteLine("outside loop");
+                BoardViewModel.UnlockedPlayer = Game.State.CurrentPlayer;
+            }
+
+            _loopThread = new Thread(AiDecisionLoop);
+            _loopThread.Start();
         }
 
 
@@ -100,18 +121,12 @@ namespace DiaballikWPF.ViewModel {
             }
 
             UpdateGame(algo.NextMove(Game.State, player));
-
-//            MessengerInstance.Send(token: CommittedMoveMessageToken,
-//                                   message: new NotificationMessage<IUpdateAction>(algo.NextMove(Game.State, player),
-//                                                                                   "An AI player took their decision"));
         }
 
 
-        private static Action<NotificationMessage<T>> LogReception<T>(Action<T> action) {
-            return message => {
-                Debug.WriteLine(message.Notification);
-                action(message.Content);
-            };
+        public static void LogReception<T>(NotificationMessage<T> message, Action<T> action) {
+            Debug.WriteLine(message.Notification);
+            action(message.Content);
         }
 
         #endregion
