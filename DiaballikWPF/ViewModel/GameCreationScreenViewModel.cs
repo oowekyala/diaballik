@@ -89,10 +89,8 @@ namespace DiaballikWPF.ViewModel {
         public bool CanStart() => Builder.CanBuild;
 
         public void StartGame() {
-            var game = Builder.Build();
-            Console.WriteLine(game.Memento.State.FullDescription());
 
-            var playGameVm = new PlayGameScreenViewModel(game);
+            var playGameVm = new PlayGameScreenViewModel(Builder);
             var screen = new PlayGameScreen {
                 DataContext = playGameVm
             };

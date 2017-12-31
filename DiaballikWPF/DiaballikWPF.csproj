@@ -93,6 +93,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\ConvertUtil.cs" />
     <Compile Include="ViewModel\DockWindowViewModel.cs" />
+    <Compile Include="ViewModel\GameInfo\PlayerTagViewModel.cs" />
     <Compile Include="ViewModel\GamePlay\PlayGameScreenViewModel.cs" />
     <Compile Include="ViewModel\StartupScreenViewModel.cs" />
     <Compile Include="ViewModel\PlayerBuilderViewModel.cs" />
@@ -101,6 +102,9 @@
     </Compile>
     <Compile Include="View\DockWindow.xaml.cs">
       <DependentUpon>DockWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GameInfo\PlayerTag.xaml.cs">
+      <DependentUpon>PlayerTag.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\GamePlay\PlayGameScreen.xaml.cs">
       <DependentUpon>PlayGameScreen.xaml</DependentUpon>
@@ -120,6 +124,10 @@
       <DependentUpon>PlayerBuilderView.xaml</DependentUpon>
     </Compile>
     <Page Include="View\DockWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\GameInfo\PlayerTag.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
