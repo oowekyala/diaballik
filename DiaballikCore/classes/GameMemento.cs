@@ -22,14 +22,22 @@ namespace Diaballik.Core {
     ///     hashes (think Git commit hash).
     /// </summary>
     public abstract class GameMemento {
-        #region Properties
+        #region Base constructor
+
+        protected GameMemento(GameMemento parent) {
+            Parent = parent;
+        }
+
+        #endregion
+
+        #region Inheritance-specific members
 
         /// <summary>
-        ///     Gets the previous memento. Returns null if this is the root.
+        ///     Turns this memento into a GameState. Used to compute
+        ///     the value of the <see cref="State"/> property.
         /// </summary>
-        /// <returns>The parent memento</returns>
-        public GameMemento Parent { get; }
-
+        /// <returns>A game corresponding to this memento</returns>
+        protected abstract GameState ToState();
 
         /// <summary>
         ///     Gets a lazy enumeration of all the parents of this memento.
@@ -47,25 +55,21 @@ namespace Diaballik.Core {
 
         #endregion
 
-        #region Base constructor
-
-        protected GameMemento(GameMemento parent) {
-            Parent = parent;
-        }
-
-        #endregion
-
-        #region Abstract members
+        #region Public members
 
         /// <summary>
-        ///     Turns this memento into a GameState.
+        ///     Gets the previous memento. Returns null if this is the root.
         /// </summary>
-        /// <returns>A game corresponding to this memento</returns>
-        public abstract GameState ToState();
+        /// <returns>The parent memento</returns>
+        public GameMemento Parent { get; }
 
-        #endregion
+        private GameState _state;
 
-        #region Methods
+        /// <summary>
+        ///     Gets the state this memento represents.
+        /// </summary>
+        public GameState State => _state ?? (_state = ToState());
+
 
         /// <summary>
         ///     Gets a new memento based on this one.
@@ -82,11 +86,9 @@ namespace Diaballik.Core {
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
-        public GameMemento GetNthParent(int n) {
-            return Parents.ElementAt(n);
-        }
-
-
+//        public GameMemento GetNthParent(int n) {
+//            return Parents.ElementAt(n);
+//        }
         /// <summary>
         ///     Deconstructs this memento into its root and an enumerable of
         ///     MementoNodes, ordered chronologically.
@@ -169,12 +171,8 @@ namespace Diaballik.Core {
 
         #region Methods
 
-        /// Cached game state
-        private GameState _thisGameState;
-
-
-        public override GameState ToState() {
-            return _thisGameState ?? (_thisGameState = Action.UpdateState(Parent.ToState()));
+        protected override GameState ToState() {
+            return Action.UpdateState(Parent.State);
         }
 
         #endregion
@@ -242,11 +240,8 @@ namespace Diaballik.Core {
 
         #region Methods
 
-        // Cached state
-        private GameState _initialState;
-
-        public override GameState ToState() {
-            return _initialState ?? (_initialState = GameState.InitialState(BoardSize, Specs, IsFirstPlayerPlaying));
+        protected override GameState ToState() {
+            return GameState.InitialState(BoardSize, Specs, IsFirstPlayerPlaying);
         }
 
         #endregion

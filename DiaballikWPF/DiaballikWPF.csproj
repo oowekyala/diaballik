@@ -93,7 +93,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\ConvertUtil.cs" />
     <Compile Include="ViewModel\DockWindowViewModel.cs" />
-    <Compile Include="ViewModel\PlayGameScreenViewModel.cs" />
+    <Compile Include="ViewModel\GamePlay\PlayGameScreenViewModel.cs" />
     <Compile Include="ViewModel\StartupScreenViewModel.cs" />
     <Compile Include="ViewModel\PlayerBuilderViewModel.cs" />
     <Compile Include="View\GameCreationScreen.xaml.cs">
@@ -105,10 +105,10 @@
     <Compile Include="View\GamePlay\PlayGameScreen.xaml.cs">
       <DependentUpon>PlayGameScreen.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\BoardViewModel.cs" />
+    <Compile Include="ViewModel\GamePlay\BoardViewModel.cs" />
     <Compile Include="ViewModel\GameCreationScreenViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\TileViewModel.cs" />
+    <Compile Include="ViewModel\GamePlay\TileViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\GamePlay\BoardView.xaml.cs">
       <DependentUpon>BoardView.xaml</DependentUpon>

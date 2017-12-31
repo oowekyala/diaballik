@@ -12,15 +12,13 @@
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance viewModel:TileViewModel}">
 
     <UserControl.Resources>
-        <qc:QuickConverter x:Key="BoolToVisibility" Convert="$P ? Visibility.Visible : Visibility.Hidden" />
-        <qc:QuickConverter x:Key="ColorToBrush" Convert="new SolidColorBrush($P)" />
+     
 
-        
         <Style x:Key="MarkStyle" TargetType="Ellipse">
             <Setter Property="Visibility" Value="{Binding IsMarked, Converter={StaticResource BoolToVisibility}}" />
             <Setter Property="StrokeThickness" Value="0" />
             <Setter Property="Fill" Value="{Binding MarkingColor, Converter={StaticResource ColorToBrush}}" />
-            <Setter Property="IsHitTestVisible" Value="False"/> <!-- Make it clickthrough -->
+            <Setter Property="IsHitTestVisible" Value="False" /> <!-- Make it clickthrough -->
             <Setter Property="Width"
                     Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 20 / 100.0'}}" />
             <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
@@ -52,7 +50,8 @@
     <Grid
         Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:TileView}}, Path=ActualHeight}">
 
-
+        <!-- The tile is covered with a button that activates only -->
+        <!-- when a move can be accomplished. -->
         <Button
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"

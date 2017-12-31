@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using System.Timers;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
+using Diaballik.Core.Builders;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
@@ -11,27 +11,43 @@ using static DiaballikWPF.ViewModel.TilePresenterConstants;
 
 namespace DiaballikWPF.ViewModel {
     /// <summary>
-    ///     TODO Share MessengerInstance across only a game screen and descendants
+    ///     View model for the screen in which the game can be played.
     /// </summary>
     public class PlayGameScreenViewModel : ViewModelBase {
         #region Constructor
 
-        public PlayGameScreenViewModel(Game game) {
-            Game = game;
-            BoardViewModel = new BoardViewModel(MessengerInstance, game.State);
+        /// <summary>
+        ///     Creates a new Game presenter, with the given game builder.
+        /// </summary>
+        /// <param name="builder">The builder used to build the game</param>
+        public PlayGameScreenViewModel(GameBuilder builder) {
+            Game = builder.Build();
+            BoardViewModel = new BoardViewModel(MessengerInstance, Game.State);
+
+            // Receive any move and update the game's state.
+            Messenger.Default.Register<NotificationMessage<IUpdateAction>>(
+                this,
+                token: CommittedMoveMessageToken,
+                receiveDerivedMessagesToo: true, // receive MoveAction and PassAction
+                action: message => {
+                    Debug.WriteLine(message.Notification);
+                    UpdateGame(message.Content);
+                    BoardViewModel.SelectedTile = null;
+                });
         }
 
         #endregion
 
         #region Properties
 
-        public BoardViewModel BoardViewModel { get; set; }
+        public BoardViewModel BoardViewModel { get; }
 
-        public Game Game { get; }
-
+        private Game Game { get; }
         public GameMemento Memento => Game.Memento;
+
         public int BoardSize => Game.State.BoardSize;
 
+        /// Delay in ms before an AI move. We don't want it to play as fast as it can.
         public const int AiStepTimeMillis = 500;
 
         #endregion
@@ -42,17 +58,6 @@ namespace DiaballikWPF.ViewModel {
             if (Game.State.CurrentPlayer.IsAi) {
                 StartAiStepThread();
             } else {
-                // Receive any move and update the game's state.
-                Messenger.Default.Register<NotificationMessage<IUpdateAction>>(
-                    this,
-                    token: CommittedMoveMessageToken,
-                    receiveDerivedMessagesToo: true, // receive MoveAction and PassAction
-                    action: message => {
-                        Debug.WriteLine(message.Notification);
-                        UpdateGame(message.Content);
-                        BoardViewModel.SelectedTile = null;
-                    });
-
                 BoardViewModel.UnlockedPlayer = Game.State.CurrentPlayer;
             }
         }
@@ -69,6 +74,8 @@ namespace DiaballikWPF.ViewModel {
 
         #region Private methods
 
+        /// Update the underlying Game instance and requests a visual update.
+        /// Changes the current player if need be.
         private void UpdateGame(IUpdateAction action) {
             Game.Update(action);
 
@@ -104,7 +111,7 @@ namespace DiaballikWPF.ViewModel {
             _loopThread.Start();
         }
 
-
+        /// If the player is an AI, updates the game with their next move.
         public void StepAi(Player player) {
             AiDecisionAlgo algo;
             switch (player.Type) {
@@ -121,12 +128,6 @@ namespace DiaballikWPF.ViewModel {
             }
 
             UpdateGame(algo.NextMove(Game.State, player));
-        }
-
-
-        public static void LogReception<T>(NotificationMessage<T> message, Action<T> action) {
-            Debug.WriteLine(message.Notification);
-            action(message.Content);
         }
 
         #endregion

@@ -24,7 +24,7 @@ namespace DiaballikWPF.ViewModel {
 
         bool IsSelectable { get; set; }
 
-        Tuple<Player, MoveAction> MarkedMove { get; }
+        bool IsSelected { get; set; }
 
         /// <summary>
         ///     Updates the view for this tile.
@@ -34,7 +34,10 @@ namespace DiaballikWPF.ViewModel {
         void Update(Player player, bool hasBall);
 
         /// <summary>
-        ///     Marks an available move on this tile.
+        ///     Marks an available move on this tile. After doing so,
+        ///     selection of the move will become possible for the 
+        ///     unlocked player. That action will send a message with
+        ///     token <see cref="CommittedMoveMessageToken"/>.
         /// </summary>
         /// <param name="actor">The player who can play the move</param>
         /// <param name="action">The move itself</param>
@@ -137,21 +140,14 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
-        #region IsSelected
+        #region IsActive
 
         private bool _isSelected;
 
         public bool IsSelected {
             get => _isSelected;
-            set => Set(ref _isSelected, value, "IsSelected");
+            set => Set(ref _isSelected, value, "IsActive");
         }
-
-        #endregion
-
-
-        #region MessengerInstance
-
-//        protected new IMessenger MessengerInstance => Messenger.Default;
 
         #endregion
 

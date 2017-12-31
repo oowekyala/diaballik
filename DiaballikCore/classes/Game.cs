@@ -10,7 +10,7 @@ namespace Diaballik.Core {
     ///     Represents a game. This class is mutable, to provide a nice interface
     ///     to clients.
     /// 
-    ///     Internally it wraps around a GameMemento, which already 
+    ///     Internally it wraps a GameMemento, which already 
     ///     contains all the information about the current and past states of 
     ///     the game. 
     /// 
@@ -32,7 +32,7 @@ namespace Diaballik.Core {
         public GameMemento Memento { get; private set; }
 
         /// Current state of the game
-        public GameState State => Memento.ToState();
+        public GameState State => Memento.State;
 
         /// Size of the board
         public int BoardSize => State.BoardSize;
@@ -88,7 +88,7 @@ namespace Diaballik.Core {
         /// <param name="specs">Board configuration for each player</param>
         /// <returns>A new game</returns>
         public static Game Init(int size, FullPlayerSpecPair specs) {
-            return new Game(size, specs, Rng.Next(0, 1) == 1);
+            return new Game(size, specs, Rng.Next(0, 2) == 1);
         }
 
         /// <summary>

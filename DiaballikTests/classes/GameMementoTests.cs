@@ -19,8 +19,8 @@ namespace Diaballik.Tests {
             var specs = DummyPlayerSpecPair(size);
             var game = Game.Init(size, specs, true);
 
-            Assert.AreEqual(game.State, game.Memento.ToState());
-            Assert.AreEqual(game.State, new RootMemento(specs, size, true).ToState());
+            Assert.AreEqual(game.State, game.Memento.State);
+            Assert.AreEqual(game.State, new RootMemento(specs, size, true).State);
         }
 
 

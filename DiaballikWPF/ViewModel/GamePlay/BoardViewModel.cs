@@ -126,14 +126,14 @@ namespace DiaballikWPF.ViewModel {
             set {
                 Debug.WriteLine($"Selected {value?.Position}");
                 if (_selectedTile != value) {
-                    _selectedTile = value;
                     if (SelectedTile != null) {
-                        SuggestMoves(SelectedTile);
+                        SuggestMoves(value);
                     } else {
+                        SelectedTile.IsSelected = false;
                         _markedTiles.ForEach(t => t.UnMark());
                         _markedTiles.Clear();
                     }
-
+                    _selectedTile = value;
                     RaisePropertyChanged();
                 }
             }
@@ -147,7 +147,7 @@ namespace DiaballikWPF.ViewModel {
 
         /// <summary>
         ///     Update the visual state of the game. This also updates the
-        ///     selectable tiles if need be.
+        ///     selectable tiles if need be, and resets piece selection.
         /// </summary>
         /// <param name="state">The new state to display</param>
         /// <param name="action">The transition from the previous state to the current one</param>

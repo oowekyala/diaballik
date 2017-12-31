@@ -23,11 +23,10 @@
             <Button Content="Quit" />
             <Label Content="Player 1" />
         </StackPanel>
-<!--        <Viewbox Stretch="Uniform">-->
-            <view:BoardView HorizontalAlignment="Left"
-                            VerticalAlignment="Stretch"
-                            DataContext="{Binding BoardViewModel}" />
-<!--        </Viewbox>-->
+        
+        <view:BoardView HorizontalAlignment="Left"
+                        VerticalAlignment="Stretch"
+                        DataContext="{Binding BoardViewModel}" />
     </DockPanel>
 
 </UserControl>

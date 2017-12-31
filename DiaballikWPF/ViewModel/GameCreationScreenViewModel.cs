@@ -90,7 +90,7 @@ namespace DiaballikWPF.ViewModel {
 
         public void StartGame() {
             var game = Builder.Build();
-            Console.WriteLine(game.Memento.ToState().FullDescription());
+            Console.WriteLine(game.Memento.State.FullDescription());
 
             var playGameVm = new PlayGameScreenViewModel(game);
             var screen = new PlayGameScreen {
