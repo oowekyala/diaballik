@@ -59,6 +59,13 @@ namespace Diaballik.Core {
 
         #region Methods
 
+        protected abstract MoveAction GetReversed();
+
+        /// Returns the opposite of this action, that is, MoveAction(Dst, Src).
+        public MoveAction Reverse() {
+            return GetReversed();
+        }
+
         public override string ToString() {
             return $"{GetType().Name}(src: {Src}, dst: {Dst})";
         }
@@ -115,6 +122,15 @@ namespace Diaballik.Core {
 
         #region Overridden methods
 
+        protected override MoveAction GetReversed() {
+            return Reverse();
+        }
+
+        public new MoveBallAction Reverse() {
+            return new MoveBallAction(Dst, Src);
+        }
+
+
         // [R21_9_GAMEPLAY_MOVE_BALL]
         // A ball carried by a piece shall be moved to another piece 
         // of the same player if there is a horizontal, vertical,
@@ -153,6 +169,15 @@ namespace Diaballik.Core {
         #endregion
 
         #region Overridden methods
+
+        protected override MoveAction GetReversed() {
+            return Reverse();
+        }
+
+        public new MovePieceAction Reverse() {
+            return new MovePieceAction(Dst, Src);
+        }
+
 
         // [R21_11_GAMEPLAY_MOVE_PIECE_WITH_BALL]
         // A piece shall not move if it carries the ball.

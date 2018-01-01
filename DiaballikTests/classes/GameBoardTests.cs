@@ -109,11 +109,11 @@ namespace Diaballik.Tests {
 
             var board = GameBoard.Create(size, specs);
 
-            Assert.IsFalse(board.IsVictoriousPlayer(board.Player1));
+            Assert.IsFalse(board.IsVictory);
             board = board.MovePiece(new Position2D(0, 0), new Position2D(1, 0));
             board = board.MovePiece(new Position2D(size - 1, size - 1), new Position2D(0, 0));
             board = board.MoveBall(board.BallCarrier1, new Position2D(0, 0));
-            Assert.IsTrue(board.IsVictoriousPlayer(board.Player1));
+            Assert.IsTrue(board.VictoriousPlayer == board.Player1);
         }
     }
 }

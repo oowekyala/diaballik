@@ -39,8 +39,7 @@ namespace Diaballik.Core {
 
 
         /// True if <see cref="Undo"/> can be executed.
-        /// A player can only undo actions they have played themselves.
-        public bool CanUndo => Memento.Parent != null && State.NumMovesLeft < MaxMovesPerTurn;
+        public bool CanUndo => Memento.Parent != null;
 
         /// True if <see cref="Redo"/> can be executed.
         /// A player can only call Redo if the last action taken was to call Undo.
@@ -100,6 +99,18 @@ namespace Diaballik.Core {
             return new Game(memento);
         }
 
+        /// <summary>
+        ///     Forks a new game from the given one, clearing the redo 
+        ///     stack.
+        /// </summary>
+        /// <param name="game">The game to fork</param>
+        /// <returns>
+        ///     A new game, with the same current state as the given one.
+        /// </returns>
+        public static Game Fork(Game game) {
+            return FromMemento(game.Memento);
+        }
+
         #endregion
 
         #region Behavior
@@ -120,15 +131,23 @@ namespace Diaballik.Core {
             }
         }
 
+        /// <summary>
+        ///     Undoes the last action taken. The action can be retaken
+        ///     using <see cref="Redo"/>, if there were no 
+        ///     <see cref="Update"/> calls in between.
+        /// </summary>
         public void Undo() {
             if (CanUndo) {
                 _breadCrumbs.Push(Memento);
                 Memento = Memento.Parent;
             } else {
-                throw new ArgumentException("Cannot undo");
+                throw new ArgumentException("Nothing to undo");
             }
         }
 
+        /// <summary>
+        ///     Redoes the last undone action.
+        /// </summary>
         public void Redo() {
             if (CanRedo) {
                 Memento = _breadCrumbs.Pop();

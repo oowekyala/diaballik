@@ -18,6 +18,7 @@ namespace Diaballik.Core {
         /// Current player of the game
         public Player CurrentPlayer { get; }
 
+
         #endregion
 
         #region Constructors

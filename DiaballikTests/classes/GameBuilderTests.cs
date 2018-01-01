@@ -12,6 +12,8 @@ namespace Diaballik.Tests {
         [Test]
         public void TestSetSize([Range(1, 15)] int size) {
             var builder = new GameBuilder();
+            builder.PlayerBuilder1.Color = Colors.Black;
+            builder.PlayerBuilder2.Color = Colors.White;
 
             if (size % 2 == 0 || size < 2) {
                 Assert.That(() => {
@@ -49,6 +51,9 @@ namespace Diaballik.Tests {
                 BoardSize = size,
                 Scenario = GameScenario.Standard
             };
+            builder.PlayerBuilder1.Color = Colors.Black;
+            builder.PlayerBuilder2.Color = Colors.White;
+
             var game = builder.Build();
             var (p1Pos, p2Pos) = game.State.PositionsPair.Map(x => x.ToList());
 
@@ -69,6 +74,9 @@ namespace Diaballik.Tests {
                 BoardSize = size,
                 Scenario = GameScenario.BallRandom
             };
+            builder.PlayerBuilder1.Color = Colors.Black;
+            builder.PlayerBuilder2.Color = Colors.White;
+
             var game = builder.Build();
             var (p1Pos, p2Pos) = game.State.PositionsPair.Map(x => x.ToList());
 
@@ -87,6 +95,9 @@ namespace Diaballik.Tests {
                 BoardSize = size,
                 Scenario = GameScenario.EnemyAmongUs
             };
+            builder.PlayerBuilder1.Color = Colors.Black;
+            builder.PlayerBuilder2.Color = Colors.White;
+
             var game = builder.Build();
             var positionsTuple = game.State.PositionsPair.Map(x => x.ToList());
 

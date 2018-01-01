@@ -51,6 +51,41 @@ namespace Diaballik.Core {
         /// </summary>
         public (Position2D, Position2D) BallCarrierPair => (BallCarrier1, BallCarrier2);
 
+        private bool? _isVictory = null;
+
+        /// True if one player is victorious.
+        public bool IsVictory {
+            get {
+                if (_isVictory.HasValue) return _isVictory.Value;
+                ComputeVictory();
+                return _isVictory.Value;
+            }
+        }
+
+        /// Sets values for IsVictory and VictoriousPlayer via side effects.
+        private void ComputeVictory() {
+            if (IsVictoriousPlayer(Player1)) {
+                _victoriousPlayer = Player1;
+                _isVictory = true;
+            } else if (IsVictoriousPlayer(Player2)) {
+                _victoriousPlayer = Player2;
+                _isVictory = true;
+            }
+
+            _isVictory = false;
+        }
+
+        private Player _victoriousPlayer;
+
+        /// The victorious player, or null if there isn't one.
+        public Player VictoriousPlayer {
+            get {
+                if (_isVictory.HasValue) return _victoriousPlayer;
+                ComputeVictory();
+                return _victoriousPlayer;
+            }
+        }
+
         #endregion
 
         #region Properties depending on the player
@@ -99,7 +134,7 @@ namespace Diaballik.Core {
         ///     Returns true if the given player is victorious in the current
         ///     configuration.
         /// </summary>
-        public bool IsVictoriousPlayer(Player player) {
+        private bool IsVictoriousPlayer(Player player) {
             return PositionsForPlayer(player)
                 .Select(p => p.X)
                 .Any(i => BoardSize - 1 - GetRowIndexOfInitialLine(player) == i);
