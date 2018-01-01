@@ -1,0 +1,92 @@
+﻿<UserControl x:Class="DiaballikWPF.View.PlayGameScreen"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:DiaballikWPF"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+
+             xmlns:view="clr-namespace:DiaballikWPF.View"
+             xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
+             mc:Ignorable="d"
+
+
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+
+             d:DataContext="{d:DesignInstance viewModel:GameScreenViewModel}">
+    <DockPanel>
+
+
+        <ToolBarTray DockPanel.Dock="Top">
+
+            <ToolBar
+                DataContext="{Binding PlayModeToolBarViewModel}"
+                Margin="10"
+                Style="{DynamicResource MaterialDesignToolBar}">
+                <Button
+                    Command="{Binding UndoCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <materialDesign:PackIcon Kind="UndoVariant" />
+                </Button>
+
+                <Button
+                    Command="{Binding RedoCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <materialDesign:PackIcon Kind="RedoVariant" />
+                </Button>
+                <Separator VerticalAlignment="Stretch" />
+                <Button
+                    ToolTip="Validate and pass your turn"
+                    Command="{Binding PassCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <materialDesign:PackIcon Kind="Check" />
+                </Button>
+            </ToolBar>
+
+            <ToolBar>
+
+                <view:PlayerTag DataContext="{Binding Player2Tag}" />
+
+                <view:PlayerTag DataContext="{Binding Player1Tag}" />
+            </ToolBar>
+
+
+        </ToolBarTray>
+
+        <!--        <StackPanel DockPanel.Dock="Right"-->
+        <!--                    Orientation="Vertical"-->
+        <!--                    HorizontalAlignment="Right"-->
+        <!--                    VerticalAlignment="Center">-->
+        <!--            <StackPanel.Resources>-->
+        <!--                <Style TargetType="{x:Type Button}">-->
+        <!--                    <Setter Property="Margin" Value="0,20,0,0" />-->
+        <!--                </Style>-->
+        <!--            </StackPanel.Resources>-->
+
+
+        <!--            <view:PlayModeToolBar-->
+        <!--                DataContext="{Binding PlayModeToolBarViewModel}"-->
+        <!--                VerticalAlignment="Center" />-->
+
+        <!--            <Button-->
+        <!--                ToolTip="Enter replay mode"-->
+        <!--                Command="{Binding SwitchModeCommand}"-->
+        <!--                Style="{DynamicResource MaterialDesignToolButton}">-->
+
+        <!--                <materialDesign:PackIcon Kind="Television" />-->
+        <!--            </Button>-->
+
+
+        <!--        </StackPanel>-->
+
+        <view:BoardView
+            DockPanel.Dock="Bottom"
+            VerticalAlignment="Stretch"
+            DataContext="{Binding BoardViewModel}" />
+    </DockPanel>
+
+</UserControl>

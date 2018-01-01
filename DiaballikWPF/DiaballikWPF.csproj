@@ -100,7 +100,9 @@
     <Compile Include="Converters\ConvertUtil.cs" />
     <Compile Include="ViewModel\DockWindowViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\PlayerTagViewModel.cs" />
-    <Compile Include="ViewModel\GamePlay\PlayGameScreenViewModel.cs" />
+    <Compile Include="ViewModel\GameInfo\PlayModeToolBarViewModel.cs" />
+    <Compile Include="ViewModel\GamePlay\MessengerChannels.cs" />
+    <Compile Include="ViewModel\GamePlay\GameScreenViewModel.cs" />
     <Compile Include="ViewModel\StartupScreenViewModel.cs" />
     <Compile Include="ViewModel\PlayerBuilderViewModel.cs" />
     <Compile Include="View\GameCreationScreen.xaml.cs">
@@ -112,8 +114,11 @@
     <Compile Include="View\GameInfo\PlayerTag.xaml.cs">
       <DependentUpon>PlayerTag.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\GamePlay\PlayGameScreen.xaml.cs">
-      <DependentUpon>PlayGameScreen.xaml</DependentUpon>
+    <Compile Include="View\GameInfo\PlayModeToolBar.xaml.cs">
+      <DependentUpon>PlayModeToolBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GamePlay\GameScreen.xaml.cs">
+      <DependentUpon>GameScreen.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\GamePlay\BoardViewModel.cs" />
     <Compile Include="ViewModel\GameCreationScreenViewModel.cs" />
@@ -137,9 +142,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\GameInfo\PlayModeToolBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\GamePlay\TileView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ResourceDictionaries\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\StartupScreen.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -157,7 +170,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\GamePlay\PlayGameScreen.xaml">
+    <Page Include="View\GamePlay\GameScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

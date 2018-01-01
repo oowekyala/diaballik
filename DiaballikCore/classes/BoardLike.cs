@@ -70,9 +70,9 @@ namespace Diaballik.Core {
             } else if (IsVictoriousPlayer(Player2)) {
                 _victoriousPlayer = Player2;
                 _isVictory = true;
+            } else {
+                _isVictory = false;
             }
-
-            _isVictory = false;
         }
 
         private Player _victoriousPlayer;

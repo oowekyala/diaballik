@@ -1,0 +1,46 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:qc="http://QuickConverter.CodePlex.com/"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <Viewbox x:Key="SkipNextIcon" Width="48" Height="48">
+        <Canvas Width="24" Height="24">
+            <Path Data="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" Fill="Black" />
+        </Canvas>
+    </Viewbox>
+
+    <Viewbox x:Key="SkipPreviousIcon" Width="48" Height="48">
+        <Canvas Width="24" Height="24">
+            <Path Data="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z" Fill="Black" />
+        </Canvas>
+    </Viewbox>
+
+    <Viewbox x:Key="SkipBackwardIcon" Width="48" Height="48">
+        <Canvas Width="24" Height="24">
+            <Path Data="M20,5V19L13,12M6,5V19H4V5M13,5V19L6,12" Fill="Black" />
+        </Canvas>
+    </Viewbox>
+
+    <Viewbox x:Key="SkipForwardIcon" Width="48" Height="48">
+        <Canvas Width="24" Height="24">
+            <Path Data="M4,5V19L11,12M18,5V19H20V5M11,5V19L18,12" Fill="Black" />
+        </Canvas>
+    </Viewbox>
+
+    <Viewbox x:Key="RedoVariantIcon" Width="48" Height="48">
+        <Canvas Width="24" Height="24">
+            <Path
+                Data="M10.5,7A6.5,6.5 0 0,0 4,13.5A6.5,6.5 0 0,0 10.5,20H14V18H10.5C8,18 6,16 6,13.5C6,11 8,9 10.5,9H16.17L13.09,12.09L14.5,13.5L20,8L14.5,2.5L13.08,3.91L16.17,7H10.5M18,18H16V20H18V18Z"
+                Fill="Black" />
+        </Canvas>
+    </Viewbox>
+
+    <Viewbox x:Key="UndoVariantIcon" Width="48" Height="48">
+        <Canvas Width="24" Height="24">
+            <Path
+                Data="M13.5,7A6.5,6.5 0 0,1 20,13.5A6.5,6.5 0 0,1 13.5,20H10V18H13.5C16,18 18,16 18,13.5C18,11 16,9 13.5,9H7.83L10.91,12.09L9.5,13.5L4,8L9.5,2.5L10.92,3.91L7.83,7H13.5M6,18H8V20H6V18Z"
+                Fill="Black" />
+        </Canvas>
+    </Viewbox>
+
+</ResourceDictionary>

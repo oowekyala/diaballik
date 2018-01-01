@@ -6,15 +6,9 @@ using DiaballikWPF.Converters;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.TilePresenterConstants;
+using static DiaballikWPF.ViewModel.MessengerChannels;
 
 namespace DiaballikWPF.ViewModel {
-    public static class TilePresenterConstants {
-        public const string SelectedTileMessageToken = "selectedTile";
-        public const string CommittedMoveMessageToken = "committedMove";
-    }
-
-
     // Model-side interface of the ViewModel
     public interface ITilePresenter {
         /// <summary>
@@ -197,8 +191,7 @@ namespace DiaballikWPF.ViewModel {
 
         private void SelectMarkedMoveExecute() {
             Debug.WriteLine("Send move committed");
-            MessengerInstance.Send(new NotificationMessage<IUpdateAction>(MarkedMove.Item2,
-                                                                          "Move was committed by the player"),
+            MessengerInstance.Send(message: MarkedMove.Item2,
                                    token: CommittedMoveMessageToken);
         }
 

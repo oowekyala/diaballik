@@ -6,8 +6,8 @@ using Diaballik.AlgoLib;
 using Diaballik.Core;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.PlayGameScreenViewModel;
-using static DiaballikWPF.ViewModel.TilePresenterConstants;
+using static DiaballikWPF.ViewModel.GameScreenViewModel;
+using static DiaballikWPF.ViewModel.MessengerChannels;
 
 namespace DiaballikWPF.ViewModel {
     public interface IBoardPresenter {

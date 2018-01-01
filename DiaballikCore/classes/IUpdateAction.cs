@@ -210,10 +210,14 @@ namespace Diaballik.Core {
     public class PassAction : IUpdateAction {
         #region Overridden methods
 
+        public static bool IsValid(GameState state) {
+            return state.NumMovesLeft < Game.MaxMovesPerTurn; // at least one move has been played
+        }
+
         // [R21_8_GAMEPLAY_ACTIONS]
         // A player shall do one to three actions per turn.
         public bool IsValidOn(GameState state) {
-            return state.NumMovesLeft < Game.MaxMovesPerTurn; // at least one move has been played
+            return IsValid(state);
         }
 
 

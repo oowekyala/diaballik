@@ -67,10 +67,10 @@
 
         </Grid>
 
-        <Separator Margin="20" />
+        <Separator Margin="10" />
 
-        <TextBlock HorizontalAlignment="Center"
-                   Style="{DynamicResource MaterialDesignSubheadingTextBlock}" Text="Board" />
+        <TextBlock Margin="10" HorizontalAlignment="Left"
+                   Style="{DynamicResource MaterialDesignSubheadingTextBlock}" Text="Board configuration" />
 
         <Grid Margin="10">
             <Grid.ColumnDefinitions>

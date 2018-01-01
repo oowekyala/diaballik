@@ -5,6 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:DiaballikWPF.View.GamePlay"
              xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
+
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+
+
              mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModel:PlayerTagViewModel }">
     <Grid>
         <!-- Tag representing a player. -->
@@ -14,13 +22,16 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Column="1"
-               Style="{StaticResource SectionTitle}"
-               Content="{Binding Player.Name}" />
+        <TextBlock
+            Grid.Column="1"
+            Margin="10,0,10,0"
+            VerticalAlignment="Center"
+            Style="{DynamicResource MaterialDesignTextBlock}"
+            Text="{Binding Player.Name}" />
 
         <Ellipse Grid.Column="0"
                  Stroke="Black"
-                 Fill="{Binding Player.Color}"
+                 Fill="{Binding Player.Color, Converter={StaticResource ColorToBrush}}"
                  Width="30"
                  Height="30"
                  HorizontalAlignment="Center"

@@ -37,6 +37,9 @@ namespace Diaballik.Core {
         /// Size of the board
         public int BoardSize => State.BoardSize;
 
+        public Player Player1 => State.Player1;
+        public Player Player2 => State.Player2;
+
 
         /// True if <see cref="Undo"/> can be executed.
         public bool CanUndo => Memento.Parent != null;

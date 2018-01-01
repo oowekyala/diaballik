@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
 using Diaballik.Core;
 using Diaballik.Core.Builders;
+using Diaballik.Core.Util;
 using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -86,17 +88,34 @@ namespace DiaballikWPF.ViewModel {
 
         #region Methods
 
+        private static readonly List<string> _defaultPlayerNames = new List<string> {
+            "Didier",
+            "Jacques",
+            "Foobar",
+            "Gorgonzola"
+        };
+
+        private static string GetDefaultPlayerName(Random rng) {
+            var name = _defaultPlayerNames[rng.Next(_defaultPlayerNames.Count)];
+            _defaultPlayerNames.Remove(name);
+            return name;
+        }
+
+
         public bool CanStart() => Builder.CanBuild;
 
         public void StartGame() {
+            var rng = new Random();
+            (Builder.PlayerBuilder1, Builder.PlayerBuilder2).Foreach(b => {
+                if (string.IsNullOrWhiteSpace(b.Name)) b.Name = GetDefaultPlayerName(rng);
+            });
 
-            var playGameVm = new PlayGameScreenViewModel(Builder);
+            var playGameVm = new GameScreenViewModel(Builder.Build(), ViewMode.Play);
             var screen = new PlayGameScreen {
                 DataContext = playGameVm
             };
 
             _dock.ContentViewModel = playGameVm;
-
             playGameVm.StartGameLoop();
         }
 
