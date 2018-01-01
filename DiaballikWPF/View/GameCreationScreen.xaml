@@ -6,54 +6,97 @@
              xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
              xmlns:view="clr-namespace:DiaballikWPF.View"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance viewModel:GameCreationScreenViewModel}"
-             Background="#FFAD8FD8">
+
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+
+             d:DataContext="{d:DesignInstance viewModel:GameCreationScreenViewModel}">
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml" />-->
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml" />-->
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />-->
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml" />-->
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />-->
+            </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Margin" Value="0,10,0,0" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <StackPanel Orientation="Vertical" Margin="10">
 
 
-    <Grid Margin="10">
+        <TextBlock Text="Game configuration"
+                   Style="{DynamicResource MaterialDesignHeadlineTextBlock}"
+                   HorizontalAlignment="Center" />
+
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center"
+                       Style="{DynamicResource MaterialDesignSubheadingTextBlock}" Text="Player 1" />
+            <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center"
+                       Style="{DynamicResource MaterialDesignSubheadingTextBlock}" Text="Player 2" />
 
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="45" />
-            <RowDefinition Height="30" />
-            <RowDefinition />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-        </Grid.RowDefinitions>
+            <view:PlayerBuilderView Grid.Row="1" Grid.Column="0" DataContext="{Binding PlayerBuilder1}" />
+            <view:PlayerBuilderView Grid.Row="1" Grid.Column="1" DataContext="{Binding PlayerBuilder2}" />
 
-        <Label Grid.Row="0" Grid.ColumnSpan="2" Content="Configuration" Style="{StaticResource PageTitle}"
-               Margin="198,0,198.8,6.6" Width="144" />
+        </Grid>
 
+        <Separator Margin="20" />
 
-        <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource SectionTitle}" Content="Player 1" />
-        <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource SectionTitle}" Content="Player 2" />
+        <TextBlock HorizontalAlignment="Center"
+                   Style="{DynamicResource MaterialDesignSubheadingTextBlock}" Text="Board" />
 
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-        <view:PlayerBuilderView Grid.Row="2" Grid.Column="0" DataContext="{Binding PlayerBuilder1}" />
-        <view:PlayerBuilderView Grid.Row="2" Grid.Column="1" DataContext="{Binding PlayerBuilder2}" />
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Board size" VerticalAlignment="Center" />
+            <Slider Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                    Minimum="5" Value="{Binding Size}" Maximum="17" TickFrequency="2" IsSnapToTickEnabled="True"
+                    TickPlacement="BottomRight" AutoToolTipPlacement="BottomRight" AutoToolTipPrecision="0" />
 
-
-        <Label Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource SectionTitle}"
-               Content="Game Config" />
-
-        <Label Grid.Row="4" Grid.Column="0" Style="{StaticResource ControlLabel}" Content="Board size" />
-        <Slider Grid.Row="4" Grid.Column="1" Style="{StaticResource ControlBase}" HorizontalAlignment="Stretch"
-                Minimum="5" Value="{Binding Size}" Maximum="17" TickFrequency="2" IsSnapToTickEnabled="True"
-                TickPlacement="BottomRight" AutoToolTipPlacement="BottomRight" AutoToolTipPrecision="0" />
-
-        <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource ControlLabel}" Content="Game scenario" />
-        <ComboBox Grid.Row="5" Grid.Column="1" Style="{StaticResource ControlBase}" HorizontalAlignment="Stretch"
-                  ItemsSource="{Binding GameScenarios}" SelectedItem="{Binding Scenario}" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Game scenario" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                      ItemsSource="{Binding GameScenarios}" SelectedItem="{Binding Scenario}" />
 
 
-        <Button Grid.Row="6" Grid.Column="1" Content="Start game"
-                Style="{StaticResource GameStartButton}"
+        </Grid>
+
+
+        <Button Content="Start game"
+                Style="{DynamicResource MaterialDesignRaisedButton}"
                 Command="{Binding StartGameCommand}"
                 HorizontalAlignment="Right"
                 ToolTipService.ShowOnDisabled="True">
@@ -61,5 +104,5 @@
                 <TextBlock Text="{Binding ErrorMessage}" />
             </Button.ToolTip>
         </Button>
-    </Grid>
+    </StackPanel>
 </UserControl>

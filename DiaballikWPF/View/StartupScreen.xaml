@@ -6,8 +6,57 @@
              xmlns:local="clr-namespace:DiaballikWPF.View"
              xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
              mc:Ignorable="d"
-             Background="#FFAD8FD8"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="13"
+             TextOptions.TextFormattingMode="Ideal"
+             TextOptions.TextRenderingMode="Auto"
+             Background="{DynamicResource MaterialDesignPaper}"
+             FontFamily="{DynamicResource MaterialDesignFont}"
              d:DataContext="{d:DesignInstance viewModel:StartupScreenViewModel}">
+
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="MainTitle" BasedOn="{StaticResource MaterialDesignHeadlineTextBlock}" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="MV Boli" />
+                <Setter Property="FontSize" Value="72" />
+                <Setter Property="Foreground" Value="{DynamicResource MaterialDesignLightForeground}" />
+
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="Text" Value="Diaballik" />
+                <Setter Property="Margin" Value="40" />
+            </Style>
+
+            <Style x:Key="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                <Setter Property="FontSize" Value="16pt" />
+                <!--                <Setter Property="Width" Value="200" />-->
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="20,0,20,0" />
+            </Style>
+
+
+            <Style x:Key="AccentButton" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}" TargetType="Button">
+                <Setter Property="FontSize" Value="16pt" />
+                <!--                <Setter Property="Width" Value="200" />-->
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="20,0,20,0" />
+            </Style>
+
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -19,37 +68,23 @@
             <RowDefinition Height="60" />
             <RowDefinition Height="60" />
         </Grid.RowDefinitions>
-        <Grid.Resources>
-            <Style x:Key="MainTitle" TargetType="Label">
-                <Setter Property="FontFamily" Value="MV Boli" />
-                <Setter Property="FontSize" Value="72pt" />
 
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="HorizontalAlignment" Value="Center" />
-                <Setter Property="Content" Value="Diaballik" />
-                <Setter Property="Margin" Value="40" />
-            </Style>
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Style="{StaticResource MainTitle}" />
 
-            <Style x:Key="Button" TargetType="Button">
-                <Setter Property="FontFamily" Value="Segoe UI" />
-                <Setter Property="FontSize" Value="18pt" />
-                <Setter Property="Width" Value="200" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="HorizontalAlignment" Value="Center" />
-                <Setter Property="Margin" Value="20,0,20,0" />
-            </Style>
+        <Button Grid.Row="1" Grid.Column="0"
+                Style="{StaticResource AccentButton}"
+                Content="New Game"
+                Command="{Binding NewGameCommand}" />
 
-        </Grid.Resources>
 
-        <Label Grid.Row="0" Grid.ColumnSpan="3" Style="{StaticResource MainTitle}" />
-
-        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource Button}"
-                Content="New Game" Command="{Binding NewGameCommand}" />
-        <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource Button}"
+        <Button Grid.Row="1" Grid.Column="1"
+                Style="{StaticResource Button}"
                 Content="Load Game" />
-        <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource Button}"
+        <Button Grid.Row="1" Grid.Column="2"
+                Style="{StaticResource Button}"
                 Content="Replay Game" />
-        <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource Button}"
+        <Button Grid.Row="2" Grid.Column="1"
+                Style="{StaticResource Button}"
                 Content="Quit" />
     </Grid>
 </UserControl>

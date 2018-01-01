@@ -3,42 +3,43 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:view="clr-namespace:DiaballikWPF.View"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
-    xmlns:converters="clr-namespace:DiaballikWPF.Converters"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     x:Class="DiaballikWPF.View.PlayerBuilderView"
     d:DataContext="{d:DesignInstance viewModel:PlayerBuilderViewModel}"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <Style x:Key="Control" TargetType="Control" BasedOn="{StaticResource ControlBase}">
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Stretch" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Slider.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Thickness x:Key="Spacing">0,10,0,0</Thickness>
+        </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Margin="10,0,10,0">
+    <StackPanel Margin="10,0,10,0" Orientation="Vertical">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="22*" />
-            <RowDefinition Height="18*" />
-            <RowDefinition Height="22*" />
-            <RowDefinition Height="18*" />
-            <RowDefinition Height="22*" />
-            <RowDefinition Height="18*" />
-        </Grid.RowDefinitions>
-
-
-        <Label Grid.Row="0" Style="{StaticResource ControlLabel}" Content="Player type" />
-        <ComboBox Grid.Row="1" Style="{StaticResource Control}" ItemsSource="{Binding PlayerTypes, Mode=OneTime}"
+        <ComboBox materialDesign:HintAssist.Hint="Player type"
+                  Style="{DynamicResource MaterialDesignFloatingHintComboBox}"
+                  ItemsSource="{Binding PlayerTypes, Mode=OneTime}"
                   SelectedItem="{Binding SelectedPlayerType, Mode=TwoWay}" />
 
-        <Label Grid.Row="2" Style="{StaticResource ControlLabel}" Content="Color" />
-        <xctk:ColorPicker Grid.Row="3" Style="{StaticResource Control}"
-                          SelectedColor="{Binding Color, Mode=TwoWay}" />
+        <xctk:ColorPicker
+            VerticalAlignment="Center"
+            materialDesign:HintAssist.Hint="Color"
+            Margin="{StaticResource Spacing}"
+            SelectedColor="{Binding Color, Mode=TwoWay}" />
 
-        <Label Grid.Row="4" Style="{StaticResource ControlLabel}" Content="Name" />
-        <TextBox Grid.Row="5" Style="{StaticResource Control}"
+        <TextBox materialDesign:HintAssist.Hint="Name"
+                 Style="{DynamicResource MaterialDesignTextBox}"
+                 Margin="{StaticResource Spacing}"
                  Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
 
-    </Grid>
+    </StackPanel>
 </UserControl>

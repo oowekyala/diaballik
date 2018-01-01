@@ -126,7 +126,7 @@ namespace DiaballikWPF.ViewModel {
             set {
                 Debug.WriteLine($"Selected {value?.Position}");
                 if (_selectedTile != value) {
-                    if (SelectedTile != null) {
+                    if (value != null) {
                         SuggestMoves(value);
                     } else {
                         SelectedTile.IsSelected = false;

@@ -12,39 +12,47 @@
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance viewModel:TileViewModel}">
 
     <UserControl.Resources>
-     
-
-        <Style x:Key="MarkStyle" TargetType="Ellipse">
-            <Setter Property="Visibility" Value="{Binding IsMarked, Converter={StaticResource BoolToVisibility}}" />
-            <Setter Property="StrokeThickness" Value="0" />
-            <Setter Property="Fill" Value="{Binding MarkingColor, Converter={StaticResource ColorToBrush}}" />
-            <Setter Property="IsHitTestVisible" Value="False" /> <!-- Make it clickthrough -->
-            <Setter Property="Width"
-                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 20 / 100.0'}}" />
-            <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
-
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
 
-        <Style x:Key="PieceStyle" TargetType="Ellipse">
-            <Setter Property="Stroke" Value="Black" />
-            <Setter Property="StrokeThickness" Value="2" />
-            <Setter Property="Fill"
-                    Value="{qc:MultiBinding Converter='new SolidColorBrush($P0 ? ConvertUtil.DimColor($P1, 70) : $P1)', P0={Binding IsSelected}, P1={Binding PieceOwner.Color}}" />
-            <Setter Property="Width"
-                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 70 / 100.0'}}" />
-            <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
+            <Style x:Key="MarkStyle" TargetType="Ellipse">
+                <Setter Property="Visibility" Value="{Binding IsMarked, Converter={StaticResource BoolToVisibility}}" />
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="Fill" Value="{Binding MarkingColor, Converter={StaticResource ColorToBrush}}" />
+                <Setter Property="IsHitTestVisible" Value="False" /> <!-- Make it clickthrough -->
+                <Setter Property="Width"
+                        Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 20 / 100.0'}}" />
+                <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
 
-        </Style>
+            </Style>
 
-        <Style x:Key="BallStyle" TargetType="Ellipse">
-            <Setter Property="Visibility" Value="{Binding HasBall, Converter={StaticResource BoolToVisibility}}" />
-            <Setter Property="Fill"
-                    Value="{qc:Binding 'new SolidColorBrush(ConvertUtil.DimColor($P?.Color ?? Colors.Transparent, 50))', P={Binding PieceOwner}}" />
-            <Setter Property="Width"
-                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 40 / 100.0'}}" />
-            <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
-        </Style>
+
+            <Style x:Key="PieceStyle" TargetType="Ellipse">
+                <Setter Property="Stroke" Value="Black" />
+                <Setter Property="StrokeThickness" Value="2" />
+                <Setter Property="Fill"
+                        Value="{qc:MultiBinding Converter='new SolidColorBrush($P0 ? ConvertUtil.DimColor($P1, 70) : $P1)', P0={Binding IsSelected}, P1={Binding PieceOwner.Color}}" />
+                <Setter Property="Width"
+                        Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 70 / 100.0'}}" />
+                <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
+
+            </Style>
+
+            <Style x:Key="BallStyle" TargetType="Ellipse">
+                <Setter Property="Visibility" Value="{Binding HasBall, Converter={StaticResource BoolToVisibility}}" />
+                <Setter Property="Fill"
+                        Value="{qc:Binding 'new SolidColorBrush(ConvertUtil.DimColor($P?.Color ?? Colors.Transparent, 50))', P={Binding PieceOwner}}" />
+                <Setter Property="Width"
+                        Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 40 / 100.0'}}" />
+                <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
+            </Style>
+        </ResourceDictionary>
 
     </UserControl.Resources>
     <Grid
@@ -55,6 +63,9 @@
         <Button
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
+            Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth}"
+            Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+            Style="{x:Null}"
             Command="{Binding SelectMarkedMoveCommand}" />
 
         <!-- The button changes color when it's selected. -->

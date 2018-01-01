@@ -25,7 +25,7 @@
                 <UniformGrid Columns="{Binding BoardSize}"
                              Rows="{Binding BoardSize}"
                              IsItemsHost="True"
-                             Background="{StaticResource BoardBackGroundBrush}" />
+                             Background="{DynamicResource MaterialDesignBackground}" />
 
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
