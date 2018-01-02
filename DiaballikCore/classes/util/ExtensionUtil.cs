@@ -23,6 +23,10 @@ namespace Diaballik.Core.Util {
 
         public static (B, B) Map<A, B>(this (A, A) tuple, Func<A, B> f) => (f(tuple.Item1), f(tuple.Item2));
 
+
+        public static IEnumerable<B> FlatMap<A, B>(this (A, A) tuple, Func<A, IEnumerable<B>> f)
+            => f(tuple.Item1).Concat(f(tuple.Item2));
+
         public static (B, B) ZipWithPair<A, B, C>(this (A, A) tuple, C z, Func<A, C, B> f)
             => tuple.Zip(Pair(z), f);
 
@@ -43,6 +47,12 @@ namespace Diaballik.Core.Util {
 
         public static (C, C) Zip<A, B, C>(this (A, A) t1, (B, B) t2, Func<A, B, C> f)
             => (f(t1.Item1, t2.Item1), f(t1.Item2, t2.Item2));
+
+        public static (A, A) Zip<A, B>(this (A, A) t1, (B, B) t2, Action<A, B> f) {
+            f(t1.Item1, t2.Item1);
+            f(t1.Item2, t2.Item2);
+            return t1;
+        }
 
 
         public static ((A, B), (A, B)) Zip<A, B>(this (A, A) t1, (B, B) t2)

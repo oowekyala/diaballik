@@ -21,7 +21,7 @@ namespace DiaballikWPF {
             // Add our conversion extensions
             QuickConverter.EquationTokenizer.AddExtensionMethods(typeof(Converters.ConvertUtil));
             QuickConverter.EquationTokenizer.AddNamespace(typeof(Converters.ConvertUtil));
-
+            QuickConverter.EquationTokenizer.AddNamespace(typeof(ViewMode));
             DispatcherHelper.Initialize();
 
         }

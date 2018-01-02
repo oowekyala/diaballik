@@ -110,7 +110,7 @@ namespace DiaballikWPF.ViewModel {
             get => _markedMove;
             set {
                 if (!Equals(value, MarkedMove)) {
-                    Set(ref _markedMove, value, propertyName: "MarkedMove");
+                    Set(ref _markedMove, value);
                     SelectMarkedMoveCommand.RaiseCanExecuteChanged();
                     RaisePropertyChanged("MarkingColor");
                     RaisePropertyChanged("IsMarked");
@@ -127,7 +127,7 @@ namespace DiaballikWPF.ViewModel {
         public bool IsSelectable {
             get => _isSelectable;
             set {
-                Set(ref _isSelectable, value, "IsSelectable");
+                Set(ref _isSelectable, value);
                 SelectPieceCommand.RaiseCanExecuteChanged();
             }
         }

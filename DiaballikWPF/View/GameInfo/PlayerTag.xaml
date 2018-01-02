@@ -37,14 +37,23 @@
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center" />
 
-        <Ellipse Grid.Column="0"
-                 Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}}"
-                 StrokeThickness="0"
-                 Fill="White"
-                 Width="10"
-                 Height="10"
-                 HorizontalAlignment="Center"
-                 VerticalAlignment="Center" />
+<!--        <Ellipse Grid.Column="0"-->
+<!--                 Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}}"-->
+<!--                 StrokeThickness="0"-->
+<!--                 Fill="White"-->
+<!--                 Width="10"-->
+<!--                 Height="10"-->
+<!--                 HorizontalAlignment="Center"-->
+<!--                 VerticalAlignment="Center" />-->
+
+        <TextBlock Grid.Column="0"
+                   Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}}"
+                   Foreground="White"
+                   Text="{Binding NumMovesLeft}"
+                   Background="Transparent"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+
 
     </Grid>
 </UserControl>

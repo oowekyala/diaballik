@@ -62,6 +62,17 @@ namespace Diaballik.Core {
             }
         }
 
+        private Player _victoriousPlayer;
+
+        /// The victorious player, or null if there isn't one.
+        public Player VictoriousPlayer {
+            get {
+                if (_isVictory.HasValue) return _victoriousPlayer;
+                ComputeVictory();
+                return _victoriousPlayer;
+            }
+        }
+
         /// Sets values for IsVictory and VictoriousPlayer via side effects.
         private void ComputeVictory() {
             if (IsVictoriousPlayer(Player1)) {
@@ -72,17 +83,6 @@ namespace Diaballik.Core {
                 _isVictory = true;
             } else {
                 _isVictory = false;
-            }
-        }
-
-        private Player _victoriousPlayer;
-
-        /// The victorious player, or null if there isn't one.
-        public Player VictoriousPlayer {
-            get {
-                if (_isVictory.HasValue) return _victoriousPlayer;
-                ComputeVictory();
-                return _victoriousPlayer;
             }
         }
 

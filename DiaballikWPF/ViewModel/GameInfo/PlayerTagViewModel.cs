@@ -3,7 +3,6 @@ using GalaSoft.MvvmLight;
 
 namespace DiaballikWPF.ViewModel {
     public class PlayerTagViewModel : ViewModelBase {
-
         public Player Player { get; }
 
 
@@ -11,12 +10,18 @@ namespace DiaballikWPF.ViewModel {
             Player = player;
         }
 
-        private bool _isActive;
 
         /// True if the tag represents the current player.
-        public bool IsActive {
-            get => _isActive;
-            set => Set(ref _isActive, value);
+        public bool IsActive => NumMovesLeft > 0;
+
+        private int _numMovesLeft;
+
+        public int NumMovesLeft {
+            get => _numMovesLeft;
+            set {
+                Set(ref _numMovesLeft, value);
+                RaisePropertyChanged("IsActive");
+            }
         }
     }
 }

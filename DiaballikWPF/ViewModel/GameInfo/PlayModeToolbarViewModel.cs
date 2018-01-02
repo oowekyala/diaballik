@@ -81,7 +81,7 @@ namespace DiaballikWPF.ViewModel {
             _replayModeCommand ?? (_replayModeCommand =
                 new RelayCommand(ReplayModeCommandExecute, ReplayModeCommandCanExecute));
 
-        private bool ReplayModeCommandCanExecute() => PassAction.IsValid(Game.State);
+        private bool ReplayModeCommandCanExecute() => true;
 
         private void ReplayModeCommandExecute() {
             MessengerInstance.Send(new NotificationMessage("player requests replay mode"),

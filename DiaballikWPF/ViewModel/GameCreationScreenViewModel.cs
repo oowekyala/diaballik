@@ -110,13 +110,13 @@ namespace DiaballikWPF.ViewModel {
                 if (string.IsNullOrWhiteSpace(b.Name)) b.Name = GetDefaultPlayerName(rng);
             });
 
-            var playGameVm = new GameScreenViewModel(Builder.Build(), ViewMode.Play);
+            var playGameVm = new GameScreenViewModel(Builder.Build());
             var screen = new PlayGameScreen {
                 DataContext = playGameVm
             };
 
             _dock.ContentViewModel = playGameVm;
-            playGameVm.StartGameLoop();
+            playGameVm.ActiveMode = ViewMode.Play;
         }
 
         #endregion
