@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
-using Diaballik.Core;
 using Diaballik.Core.Builders;
 using Diaballik.Core.Util;
-using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
@@ -29,7 +27,6 @@ namespace DiaballikWPF.ViewModel {
         }
 
         #endregion
-
 
         #region Properties
 
@@ -78,8 +75,16 @@ namespace DiaballikWPF.ViewModel {
         private RelayCommand _startGameCommand;
 
         public RelayCommand StartGameCommand {
-            get => _startGameCommand ?? (_startGameCommand = new RelayCommand(StartGame, CanStart));
+            get => _startGameCommand ??
+                   (_startGameCommand = new RelayCommand(StartGameCommandExecute, StartGameCommandCanExecute));
             set => _startGameCommand = value;
+        }
+
+
+        public bool StartGameCommandCanExecute() => Builder.CanBuild;
+
+        public void StartGameCommandExecute() {
+            Messages.ShowGameScreenMessage.Send(MessengerInstance, (Builder.Build(), ViewMode.Play));
         }
 
         #endregion
@@ -97,16 +102,6 @@ namespace DiaballikWPF.ViewModel {
             var name = DefaultPlayerNames[rng.Next(DefaultPlayerNames.Count)];
             DefaultPlayerNames.Remove(name);
             return name;
-        }
-
-
-        public bool CanStart() => Builder.CanBuild;
-
-        public void StartGame() {
-            MessengerInstance.Send(message: new NotificationMessage<(Game, ViewMode)>(
-                                       (Builder.Build(), ViewMode.Play),
-                                       "show game creation"),
-                                   token: MessengerChannels.ShowGameScreenMessageToken);
         }
 
         #endregion

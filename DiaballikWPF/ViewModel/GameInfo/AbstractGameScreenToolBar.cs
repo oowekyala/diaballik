@@ -1,11 +1,9 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.ViewModel.Messages;
 
 namespace DiaballikWPF.ViewModel {
     public abstract class AbstractGameScreenToolBar : ViewModelBase {
-
         #region BackToMainMenuCommand
 
         private RelayCommand _backToMainMenuCommand;
@@ -17,9 +15,7 @@ namespace DiaballikWPF.ViewModel {
         private bool BackToMainMenuCommandCanExecute() => true;
 
         private void BackToMainMenuCommandExecute() {
-            // TODO show save popup
-            MessengerInstance.Send(new NotificationMessage("go back to main menu"),
-                                   token: ShowMainMenuMessageToken);
+            ShowMainMenuMessage.Send(MessengerInstance);
         }
 
         #endregion

@@ -1,16 +1,18 @@
-﻿using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System;
+using System.Diagnostics;
 using System.Windows.Controls.Primitives;
-using System.Windows.Media.Animation;
 using Diaballik.Core;
 using Diaballik.Mock;
 using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.ViewModel.Messages;
 
 namespace DiaballikWPF.ViewModel {
+    using GameId = String;
+    using DecoratedMemento = ValueTuple<GameMetadataBundle, GameMemento>;
+
+
     /// <summary>
     ///     Main window of the app, in which the various screens dock.
     /// </summary>
@@ -23,46 +25,44 @@ namespace DiaballikWPF.ViewModel {
             GameScreenViewModel = new GameScreenViewModel(MessengerInstance, dummyGame);
             GameCreationScreenViewModel = new GameCreationScreenViewModel(MessengerInstance);
             StartupScreenViewModel = new StartupScreenViewModel(MessengerInstance);
+            LoadGameScreenViewModel = new LoadGameScreenViewModel(MessengerInstance);
 
             RegisterScreenSwitchHandlers();
         }
 
 
         private void RegisterScreenSwitchHandlers() {
-            // switch to game creation mode
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: ShowGameCreationScreenMessageToken,
-                action: message => ContentViewModel = GameCreationScreenViewModel);
+            ShowNewGameMessage.Register(MessengerInstance, this, () => ContentViewModel = GameCreationScreenViewModel);
+            ShowMainMenuMessage.Register(MessengerInstance, this, () => ContentViewModel = StartupScreenViewModel);
+            ShowLoadMenuMessage.Register(MessengerInstance, this, () => ContentViewModel = LoadGameScreenViewModel);
 
-            // switch to main menu
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: ShowMainMenuMessageToken,
-                action: message => ContentViewModel = StartupScreenViewModel);
+            // switch to game screen with a newly created game
+            ShowGameScreenMessage.Register(MessengerInstance, this, payload => {
+                var (game, mode) = payload;
+                GameScreenViewModel.Load(game);
+                GameScreenViewModel.ActiveMode = mode;
 
-            // switch to game mode
-            MessengerInstance.Register<NotificationMessage<(Game, ViewMode)>>(
-                recipient: this,
-                token: ShowGameScreenMessageToken,
-                action: message => {
-                    var (game, mode) = message.Content;
-                    GameScreenViewModel.Reset(game);
-                    GameScreenViewModel.ActiveMode = mode;
+                ContentViewModel = GameScreenViewModel;
+            });
 
-                    ContentViewModel = GameScreenViewModel;
-                });
 
-            // show victory popup
-            MessengerInstance.Register<NotificationMessage<Player>>(
-                recipient: this,
-                token: ShowVictoryPopupMessageToken,
-                action: message => HandleVictory(message.Content));
+            // switch to game with game loaded from a save, which already has an id
+            LoadGameFromSaveMessage.Register(MessengerInstance, this, payload => {
+                var ((metadata, memento), mode) = payload;
+                GameScreenViewModel.LoadWithId(metadata.Id, Game.FromMemento(memento));
+                GameScreenViewModel.ActiveMode = mode;
+
+                ContentViewModel = GameScreenViewModel;
+            });
+
+
+            ShowVictoryPopupMessage.Register(MessengerInstance, this, HandleVictory);
         }
 
         public StartupScreenViewModel StartupScreenViewModel { get; }
         public GameScreenViewModel GameScreenViewModel { get; }
         public GameCreationScreenViewModel GameCreationScreenViewModel { get; }
+        public LoadGameScreenViewModel LoadGameScreenViewModel { get; }
 
         #endregion
 
@@ -94,14 +94,10 @@ namespace DiaballikWPF.ViewModel {
             VictoryPopup.DataContext = new VictoryPopupViewModel(MessengerInstance, player);
             VictoryPopup.IsOpen = true;
 
-            MessengerInstance.Register<NotificationMessage>(
-                this,
-                token: CloseVictoryPopupMessageToken,
-                action: message => {
-                    VictoryPopup.IsOpen = false;
-                    MessengerInstance.Unregister<NotificationMessage>(recipient: this,
-                                                                      token: CloseVictoryPopupMessageToken);
-                });
+            CloseVictoryPopupMessage.Register(MessengerInstance, this, () => {
+                VictoryPopup.IsOpen = false;
+                CloseVictoryPopupMessage.Unregister(MessengerInstance, this);
+            });
         }
     }
 }

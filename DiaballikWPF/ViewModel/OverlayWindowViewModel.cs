@@ -1,13 +1,10 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Media;
+﻿using System.Windows;
 using System.Windows.Media.Animation;
 using Diaballik.Core;
 using Diaballik.Mock;
 using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.ViewModel.Messages;
 
 namespace DiaballikWPF.ViewModel {
     public class OverlayWindowViewModel : ViewModelBase {
@@ -37,22 +34,17 @@ namespace DiaballikWPF.ViewModel {
 
 
         private void RegisterScreenSwitchHandlers() {
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: ShowGameCreationScreenMessageToken,
-                action: message => { BeginWindowStoryBoard(GameCreationSlideInStoryBoard); });
+            ShowNewGameMessage.Register(MessengerInstance, this,
+                                        () => BeginWindowStoryBoard(GameCreationSlideInStoryBoard));
 
-            MessengerInstance.Register<NotificationMessage<(Game, ViewMode)>>(
-                recipient: this,
-                token: ShowGameScreenMessageToken,
-                action: message => {
-                    var (game, mode) = message.Content;
-                    GameScreenViewModel.Reset(game);
-                    GameScreenViewModel.ActiveMode = mode;
+            ShowGameScreenMessage.Register(MessengerInstance, this, payload => {
+                var (game, mode) = payload;
+                GameScreenViewModel.Load(game);
+                GameScreenViewModel.ActiveMode = mode;
 
-                    BeginWindowStoryBoard(GameCreationSlideOutStoryBoard);
-                    BeginWindowStoryBoard(MainMenuSlideOutStoryBoard);
-                });
+                BeginWindowStoryBoard(GameCreationSlideOutStoryBoard);
+                BeginWindowStoryBoard(MainMenuSlideOutStoryBoard);
+            });
         }
 
         public StartupScreenViewModel StartupScreenViewModel { get; }

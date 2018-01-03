@@ -105,7 +105,7 @@
     <Compile Include="ViewModel\GameInfo\PlayerTagViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\PlayModeToolBarViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\VictoryPopupViewModel.cs" />
-    <Compile Include="ViewModel\GamePlay\MessengerChannels.cs" />
+    <Compile Include="ViewModel\Messages.cs" />
     <Compile Include="ViewModel\GamePlay\GameScreenViewModel.cs" />
     <Compile Include="ViewModel\OverlayWindowViewModel.cs" />
     <Compile Include="ViewModel\StartupScreenViewModel.cs" />
@@ -240,8 +240,6 @@
       <Name>DiaballikMockLib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

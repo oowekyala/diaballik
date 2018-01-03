@@ -44,7 +44,9 @@
                    Style="{DynamicResource MaterialDesignTitleTextBlock}"
                    Text="{Binding VictoriousPlayer.Name, StringFormat='Player {0} is victorious!'}" />
 
-        <ToolBar VerticalAlignment="Bottom" HorizontalAlignment="Center" Style="{DynamicResource MaterialDesignToolBar}">
+        <ToolBar VerticalAlignment="Bottom" HorizontalAlignment="Center" 
+                 ToolBarTray.IsLocked="True"
+                 Style="{DynamicResource MaterialDesignToolBar}">
 
             <Button
                 ToolBar.OverflowMode="Never"

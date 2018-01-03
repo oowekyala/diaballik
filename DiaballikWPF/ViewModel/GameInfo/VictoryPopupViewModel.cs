@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.ViewModel.Messages;
 
 namespace DiaballikWPF.ViewModel {
     public class VictoryPopupViewModel : ViewModelBase {
@@ -16,8 +16,7 @@ namespace DiaballikWPF.ViewModel {
 
 
         private void ClosePopup() {
-            MessengerInstance.Send(new NotificationMessage("close the victory popup"),
-                                   token: CloseVictoryPopupMessageToken);
+            CloseVictoryPopupMessage.Send(MessengerInstance);
         }
 
         #region ReplayModeCommand
@@ -31,8 +30,7 @@ namespace DiaballikWPF.ViewModel {
         private bool ReplayModeCommandCanExecute() => true;
 
         private void ReplayModeCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("player requests replay mode"),
-                                   token: SwitchToReplayModeMessageToken);
+            SwitchGameViewMode.Send(MessengerInstance, ViewMode.Replay);
             ClosePopup();
         }
 
@@ -50,8 +48,7 @@ namespace DiaballikWPF.ViewModel {
         private bool BackToMainMenuCommandCanExecute() => true;
 
         private void BackToMainMenuCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("go back to main menu"),
-                                   token: ShowMainMenuMessageToken);
+            ShowMainMenuMessage.Send(MessengerInstance);
             ClosePopup();
         }
 

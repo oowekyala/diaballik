@@ -4,7 +4,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using static DiaballikWPF.ViewModel.GameScreenViewModel;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.ViewModel.Messages;
 
 namespace DiaballikWPF.ViewModel {
     public class ReplayModeToolBarViewModel : AbstractGameScreenToolBar {
@@ -54,8 +54,7 @@ namespace DiaballikWPF.ViewModel {
 
 
         private void UndoCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("player has requested Undo"),
-                                   token: UndoMessageToken);
+            UndoMessage.Send(MessengerInstance);
         }
 
         #endregion
@@ -71,8 +70,7 @@ namespace DiaballikWPF.ViewModel {
 
 
         private void RedoCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("player requests redo"),
-                                   token: RedoMessageToken);
+            RedoMessage.Send(MessengerInstance);
         }
 
         #endregion
@@ -89,8 +87,7 @@ namespace DiaballikWPF.ViewModel {
 
 
         private void RedoTillLastCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("player requests redo till last"),
-                                   token: RedoTillLastMessageToken);
+            RedoTillLastMessage.Send(MessengerInstance);
         }
 
         #endregion
@@ -107,8 +104,7 @@ namespace DiaballikWPF.ViewModel {
 
 
         private void UndoTillRootCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("player has requested Undo till root"),
-                                   token: UndoTillRootMessageToken);
+            UndoTillRootMessage.Send(MessengerInstance);
         }
 
         #endregion
@@ -125,9 +121,7 @@ namespace DiaballikWPF.ViewModel {
 
 
         private void ResumeCommandExecute() {
-            Debug.WriteLine("Resume sent");
-            MessengerInstance.Send(new NotificationMessage("player has requested resume game"),
-                                   token: ResumeGameMessageToken);
+            ResumeGameMessage.Send(MessengerInstance);
         }
 
         #endregion
@@ -144,9 +138,7 @@ namespace DiaballikWPF.ViewModel {
 
 
         private void ForkGameCommandExecute() {
-            MessengerInstance.Send(
-                new NotificationMessage<OptionStrategy>(OptionStrategy.Force, "player has requested fork game"),
-                token: ForkGameMessageToken);
+            ForkGameMessage.Send(MessengerInstance);
         }
 
         #endregion

@@ -86,9 +86,10 @@ namespace Diaballik.Core {
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
-//        public GameMemento GetNthParent(int n) {
-//            return Parents.ElementAt(n);
-//        }
+        public GameMemento GetNthParent(int n) {
+            return Parents.ElementAt(n);
+        }
+
         /// <summary>
         ///     Deconstructs this memento into its root and an enumerable of
         ///     MementoNodes, ordered chronologically.

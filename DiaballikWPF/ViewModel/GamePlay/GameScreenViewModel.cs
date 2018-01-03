@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using System.Windows;
-using System.Windows.Controls.Primitives;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
-using Diaballik.Core.Builders;
-using Diaballik.Core.Util;
-using DiaballikWPF.View;
+using DiaballikWPF.Util;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.ViewModel.Messages;
 
 namespace DiaballikWPF.ViewModel {
+    using GameId = String;
+
+
     /// <summary>
     ///     View modes for the game view.
     /// </summary>
@@ -50,8 +47,16 @@ namespace DiaballikWPF.ViewModel {
             InitMessageHandlers();
         }
 
-        public void Reset(Game game) {
+        /// Sets the given game as the current played game, assigning it a new ID.
+        /// The previous game is discarded.
+        public void Load(Game game) {
+            LoadWithId(SaveManager.Instance.NextId(), game);
+        }
+
+        /// Sets the given game as the currently played game, using the given ID.
+        public void LoadWithId(GameId id, Game game) {
             PrimaryGame = game;
+            GameId = id;
             BoardViewModel.Reset(PrimaryGame);
             PlayModeToolBarViewModel.Game = PrimaryGame;
             Player1Tag.Player = PrimaryGame.Player1;
@@ -61,80 +66,36 @@ namespace DiaballikWPF.ViewModel {
         }
 
 
+        #region Message handling
+
         private void InitMessageHandlers() {
             // Receive any move and update the primary game's state.
-            MessengerInstance.Register<IUpdateAction>(
-                recipient: this,
-                token: CommittedMoveMessageToken,
-                receiveDerivedMessagesToo: true, // receive MoveAction and PassAction
-                action: action => {
-                    UpdateGame(action, PrimaryGame);
-                    BoardViewModel.SelectedTile = null;
-                });
+            CommitMoveMessage.Register(MessengerInstance, this, action => {
+                UpdateGame(action, PrimaryGame);
+                BoardViewModel.SelectedTile = null;
+            });
+
 
             // These message handlers stay irrespective of the ActiveMode
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: UndoMessageToken,
-                action: message => Undo(ModeSpecificGame()));
-
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: RedoMessageToken,
-                action: message => Redo(ModeSpecificGame()));
-
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: SwitchToReplayModeMessageToken,
-                action: message => ActiveMode = ViewMode.Replay);
+            UndoMessage.Register(MessengerInstance, this, () => Undo(ModeSpecificGame()));
+            RedoMessage.Register(MessengerInstance, this, () => Redo(ModeSpecificGame()));
+            SwitchGameViewMode.Register(MessengerInstance, this, mode => ActiveMode = mode);
 
 
             // These are specific to the Replay mode
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: UndoTillRootMessageToken,
-                action: message => UndoTillRoot(ReplayGame)
-            );
-
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: RedoTillLastMessageToken,
-                action: message => RedoTillLast(ReplayGame)
-            );
-
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: ResumeGameMessageToken,
-                action: message => {
-                    Debug.WriteLine("Resume received");
-                    BoardViewModel.Reset(PrimaryGame);
-                    ActiveMode = ViewMode.Play;
-                });
-
-
-            MessengerInstance.Register<NotificationMessage<OptionStrategy>>(
-                recipient: this,
-                token: ForkGameMessageToken,
-                action: message => ForkGame(message.Content)
-            );
+            UndoTillRootMessage.Register(MessengerInstance, this, () => UndoTillRoot(ReplayGame));
+            RedoTillLastMessage.Register(MessengerInstance, this, () => RedoTillLast(ReplayGame));
+            ResumeGameMessage.Register(MessengerInstance, this, () => {
+                BoardViewModel.Reset(PrimaryGame);
+                ActiveMode = ViewMode.Play;
+            });
+            ForkGameMessage.Register(MessengerInstance, this, () => {
+                PrimaryGame = ReplayGame;
+                ActiveMode = ViewMode.Play;
+            });
         }
 
-        private void ForkGame(OptionStrategy strat) {
-            if (strat == OptionStrategy.Save) {
-                // save game
-            }
-
-            PrimaryGame = ReplayGame;
-            ActiveMode = ViewMode.Play;
-        }
-
-        public enum OptionStrategy {
-            // Save the game before resume
-            Save,
-
-            // Lose previous state of the game and fork
-            Force
-        }
+        #endregion
 
         #endregion
 
@@ -174,7 +135,6 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
-
         #region ViewModels
 
         public BoardViewModel BoardViewModel { get; }
@@ -192,6 +152,8 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
+        #region Games
+
         private Game _primaryGame;
 
         /// Game which is updated when in Play mode
@@ -203,22 +165,28 @@ namespace DiaballikWPF.ViewModel {
             }
         }
 
+
         /// Copy used for navigation when in Replay mode.
         /// No update action must ever be taken on that one.
         private Game ReplayGame { get; set; }
 
-        public GameMemento Memento => PrimaryGame.Memento;
+
         public int BoardSize => PrimaryGame.State.BoardSize;
 
+        #endregion
+
+        #region GameId
+
+        /// Identifies the current game for save operations
+        public GameId GameId { get; private set; }
+
+        #endregion
 
         /// Delay in ms before an AI move. We don't want it to play as fast as it can.
-        private const int AiStepTimeMillis = 1000;
+        private const int AiStepTimeMillis = 500;
 
         #endregion
 
-        #region Public methods
-
-        #endregion
 
         #region Private methods
 
@@ -308,7 +276,6 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
-
         #region Replay mode specific methods
 
         private void UndoTillRoot(Game game) {
@@ -344,10 +311,9 @@ namespace DiaballikWPF.ViewModel {
         private void HandleVictory() {
             Debug.WriteLine($"Victory of {PrimaryGame.State.VictoriousPlayer}");
             _aiLoopCanRun = false;
-            BoardViewModel.UnlockedPlayer = null;
+            DispatcherHelper.UIDispatcher.Invoke(() => BoardViewModel.UnlockedPlayer = null);
 
-            MessengerInstance.Send(new NotificationMessage<Player>(PrimaryGame.State.VictoriousPlayer, "show popup"),
-                                   token: ShowVictoryPopupMessageToken);
+            ShowVictoryPopupMessage.Send(MessengerInstance, PrimaryGame.State.VictoriousPlayer);
         }
 
         #endregion

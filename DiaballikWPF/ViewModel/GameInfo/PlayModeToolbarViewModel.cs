@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.ViewModel.Messages;
 
 namespace DiaballikWPF.ViewModel {
     /// <summary>
@@ -42,8 +42,7 @@ namespace DiaballikWPF.ViewModel {
 
 
         private void UndoCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("player has requested Undo"),
-                                   token: UndoMessageToken);
+            UndoMessage.Send(MessengerInstance);
         }
 
         #endregion
@@ -59,8 +58,7 @@ namespace DiaballikWPF.ViewModel {
 
 
         private void RedoCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("player requests redo"),
-                                   token: RedoMessageToken);
+            RedoMessage.Send(MessengerInstance);
         }
 
         #endregion
@@ -75,8 +73,7 @@ namespace DiaballikWPF.ViewModel {
         private bool PassCommandCanExecute() => !Game.State.CurrentPlayer.IsAi && PassAction.IsValid(Game.State);
 
         private void PassCommandExecute() {
-            MessengerInstance.Send(message: new PassAction(),
-                                   token: CommittedMoveMessageToken);
+            CommitMoveMessage.Send(MessengerInstance, new PassAction());
         }
 
         #endregion
@@ -92,8 +89,7 @@ namespace DiaballikWPF.ViewModel {
         private bool ReplayModeCommandCanExecute() => true;
 
         private void ReplayModeCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("player requests replay mode"),
-                                   token: SwitchToReplayModeMessageToken);
+            SwitchGameViewMode.Send(MessengerInstance, ViewMode.Replay);
         }
 
         #endregion

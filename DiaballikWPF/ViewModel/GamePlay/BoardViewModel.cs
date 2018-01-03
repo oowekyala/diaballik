@@ -9,7 +9,7 @@ using Diaballik.Core.Util;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using static DiaballikWPF.ViewModel.GameScreenViewModel;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.ViewModel.Messages;
 
 namespace DiaballikWPF.ViewModel {
     public interface IBoardPresenter {
@@ -43,13 +43,7 @@ namespace DiaballikWPF.ViewModel {
         /// <param name="state">Initial state</param>
         public BoardViewModel(IMessenger messenger, Game game) {
             MessengerInstance = messenger;
-
-
-            // Register message handlers
-            MessengerInstance.Register<NotificationMessage<ITilePresenter>>(this,
-                                                                            SelectedTileMessageToken,
-                                                                            message => SelectedTile = message.Content);
-
+            SetSelectedTileMessage.Register(MessengerInstance, this, tile => SelectedTile = tile);
             Reset(game);
         }
 

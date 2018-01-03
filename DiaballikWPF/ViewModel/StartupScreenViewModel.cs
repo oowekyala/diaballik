@@ -1,8 +1,9 @@
-﻿using DiaballikWPF.View;
+﻿using System.Windows;
+using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.ViewModel.Messages;
 
 namespace DiaballikWPF.ViewModel {
     public class StartupScreenViewModel : ViewModelBase {
@@ -14,27 +15,44 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
-        #region Commands
+        #region New game
 
         private RelayCommand _newGameCommand;
 
-        public RelayCommand NewGameCommand => _newGameCommand ?? (_newGameCommand = new RelayCommand(NewGame));
+        public RelayCommand NewGameCommand =>
+            _newGameCommand ?? (_newGameCommand = new RelayCommand(NewGameCommandExecute));
+
+
+        private void NewGameCommandExecute() {
+            ShowNewGameMessage.Send(MessengerInstance);
+        }
 
         #endregion
 
-        #region Methods
+        #region Load game
 
-        private void NewGame() {
+        private RelayCommand _loadGameCommand;
 
-            MessengerInstance.Send(new NotificationMessage("show game creation"), token: ShowGameCreationScreenMessageToken);
+        public RelayCommand LoadGameCommand =>
+            _loadGameCommand ?? (_loadGameCommand = new RelayCommand(LoadGameCommandExecute));
 
 
-//            var vm = new GameCreationScreenViewModel(_dock);
-//            var view = new GameCreationScreen {
-//                DataContext = vm
-//            };
+        private void LoadGameCommandExecute() {
+            ShowLoadMenuMessage.Send(MessengerInstance);
+        }
 
-//            _dock.ContentViewModel = vm;
+        #endregion
+
+        #region Load game
+
+        private RelayCommand _quitCommand;
+
+        public RelayCommand QuitCommand =>
+            _quitCommand ?? (_quitCommand = new RelayCommand(QuitCommandExecute));
+
+
+        private void QuitCommandExecute() {
+            Application.Current.Shutdown(0);
         }
 
         #endregion
