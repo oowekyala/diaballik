@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Controls.Primitives;
 using Diaballik.Core;
 using Diaballik.Mock;
+using DiaballikWPF.Util;
 using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
@@ -96,6 +97,29 @@ namespace DiaballikWPF.ViewModel {
 
             CloseVictoryPopupMessage.Register(MessengerInstance, this, () => {
                 VictoryPopup.IsOpen = false;
+                CloseVictoryPopupMessage.Unregister(MessengerInstance, this);
+            });
+        }
+
+
+        private Popup SavePopup => _savePopup ?? (_savePopup = new Popup {
+            Child = new VictoryPopup(),
+            Height = 70,
+            Width = 300,
+            PopupAnimation = PopupAnimation.Slide,
+            PlacementTarget = View,
+            Placement = PlacementMode.Center
+        });
+
+        private Popup _savePopup;
+
+        public void DisplaySavePopup(Player player) {
+            // TODODODODODO
+            SavePopup.DataContext = new VictoryPopupViewModel(MessengerInstance, player);
+            SavePopup.IsOpen = true;
+
+            CloseVictoryPopupMessage.Register(MessengerInstance, this, () => {
+                SavePopup.IsOpen = false;
                 CloseVictoryPopupMessage.Unregister(MessengerInstance, this);
             });
         }

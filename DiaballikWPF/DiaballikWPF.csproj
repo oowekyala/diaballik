@@ -101,13 +101,16 @@
     <Compile Include="ViewModel\DockWindowViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\AbstractGameScreenToolBar.cs" />
     <Compile Include="ViewModel\GameInfo\ReplayModeToolBarViewModel.cs" />
+    <Compile Include="ViewModel\GameInfo\SavePopupViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\ToolBarItemsCollection.cs" />
     <Compile Include="ViewModel\GameInfo\PlayerTagViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\PlayModeToolBarViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\VictoryPopupViewModel.cs" />
+    <Compile Include="ViewModel\LoadGameScreenViewModel.cs" />
     <Compile Include="ViewModel\Messages.cs" />
     <Compile Include="ViewModel\GamePlay\GameScreenViewModel.cs" />
     <Compile Include="ViewModel\OverlayWindowViewModel.cs" />
+    <Compile Include="Util\SaveManager.cs" />
     <Compile Include="ViewModel\StartupScreenViewModel.cs" />
     <Compile Include="ViewModel\PlayerBuilderViewModel.cs" />
     <Compile Include="View\GameCreationScreen.xaml.cs">
@@ -118,6 +121,9 @@
     </Compile>
     <Compile Include="View\GameInfo\PlayerTag.xaml.cs">
       <DependentUpon>PlayerTag.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GameInfo\SavePopup.xaml.cs">
+      <DependentUpon>SavePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\GameInfo\VictoryPopup.xaml.cs">
       <DependentUpon>VictoryPopup.xaml</DependentUpon>
@@ -136,6 +142,9 @@
     <Compile Include="View\GamePlay\TileView.xaml.cs">
       <DependentUpon>TileView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\LoadGameScreen.xaml.cs">
+      <DependentUpon>LoadGameScreen.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\PlayerBuilderView.xaml.cs">
       <DependentUpon>PlayerBuilderView.xaml</DependentUpon>
     </Compile>
@@ -147,11 +156,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\GameInfo\SavePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\GameInfo\VictoryPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\GamePlay\TileView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\LoadGameScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
