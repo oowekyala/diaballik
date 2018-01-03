@@ -99,6 +99,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\ConvertUtil.cs" />
     <Compile Include="ViewModel\DockWindowViewModel.cs" />
+    <Compile Include="ViewModel\GameInfo\AbstractGameScreenToolBar.cs" />
     <Compile Include="ViewModel\GameInfo\ReplayModeToolBarViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\ToolBarItemsCollection.cs" />
     <Compile Include="ViewModel\GameInfo\PlayerTagViewModel.cs" />

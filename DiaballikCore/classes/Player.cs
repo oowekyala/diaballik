@@ -20,12 +20,14 @@ namespace Diaballik.Core {
         public PlayerType Type { get; }
 
 
+        public bool IsHuman => !IsAi;
+
         /// <summary>
         ///     Is true if this player is an AI.
         /// </summary>
         public bool IsAi => Type == PlayerType.NoobAi
-                             || Type == PlayerType.ProgressiveAi
-                             || Type == PlayerType.StartingAi;
+                            || Type == PlayerType.ProgressiveAi
+                            || Type == PlayerType.StartingAi;
 
         #endregion
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows.Media;
 using Diaballik.Core;
 using DiaballikWPF.Converters;
@@ -170,7 +169,6 @@ namespace DiaballikWPF.ViewModel {
         }
 
         private void SelectPieceExecute() {
-            Debug.WriteLine("Send piece selected");
             MessengerInstance.Send(new NotificationMessage<ITilePresenter>(this, "New selected tile"),
                                    token: SelectedTileMessageToken);
         }
@@ -190,7 +188,6 @@ namespace DiaballikWPF.ViewModel {
         }
 
         private void SelectMarkedMoveExecute() {
-            Debug.WriteLine("Send move committed");
             MessengerInstance.Send(message: MarkedMove.Item2,
                                    token: CommittedMoveMessageToken);
         }

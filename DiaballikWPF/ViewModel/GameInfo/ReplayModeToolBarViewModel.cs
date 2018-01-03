@@ -7,7 +7,7 @@ using static DiaballikWPF.ViewModel.GameScreenViewModel;
 using static DiaballikWPF.ViewModel.MessengerChannels;
 
 namespace DiaballikWPF.ViewModel {
-    public class ReplayModeToolBarViewModel : ViewModelBase {
+    public class ReplayModeToolBarViewModel : AbstractGameScreenToolBar {
         private Game _game;
 
         public Game Game {

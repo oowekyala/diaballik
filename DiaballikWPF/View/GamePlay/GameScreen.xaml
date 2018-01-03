@@ -18,6 +18,28 @@
              FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
 
              d:DataContext="{d:DesignInstance viewModel:GameScreenViewModel}">
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml" />
+                                <ResourceDictionary
+                                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Menu.xaml" />
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />-->
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml" />-->
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />-->
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <UserControl.Style>
         <Style>
             <Style.Triggers>
@@ -37,11 +59,34 @@
         <ToolBarTray DockPanel.Dock="Top">
 
             <ToolBar ToolBarTray.IsLocked="True">
-                <!--                Style="{DynamicResource MaterialDesignToolBar}"-->
-
 
                 <ToolBar.Resources>
+                    <Menu x:Key="NavigationMenu" Style="{DynamicResource MaterialDesignMenu}">
+
+                        <MenuItem Style="{DynamicResource MaterialDesignMenuItem}">
+                            <MenuItem.Header>
+                                <materialDesign:PackIcon Kind="Menu" />
+                            </MenuItem.Header>
+
+                            <MenuItem Command="{Binding BackToMainMenuCommand}" Style="{DynamicResource MaterialDesignMenuItem}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="ExitToApp" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                        <ContentPresenter Content="Back to main menu" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                        </MenuItem>
+                        
+                       
+
+                    </Menu>
                     <viewModel:ToolBarItemsCollection x:Key="PlayModeItems">
+                        <ContentControl
+                            ToolBar.OverflowMode="Never"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource NavigationMenu}" />
+
 
                         <Button
                             Style="{DynamicResource MaterialDesignToolButton}">
@@ -72,7 +117,7 @@
                                     <LineBreak />
                                     In Play mode, you can undo and redo actions like in a web browser.
                                     <LineBreak />
-                                    Performing a new action after undoing one will prevent you from 
+                                    Performing a new action after undoing one will prevent you from
                                     <LineBreak />
                                     redoing the undone action. To view past moves more freely and safely,
                                     <LineBreak />
@@ -127,6 +172,7 @@
 
                     <viewModel:ToolBarItemsCollection x:Key="ReplayModeItems">
 
+                        <ContentControl Content="{StaticResource NavigationMenu}" />
 
                         <Button
                             Style="{DynamicResource MaterialDesignToolButton}">
