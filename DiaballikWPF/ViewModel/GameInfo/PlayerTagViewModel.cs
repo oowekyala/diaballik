@@ -3,7 +3,12 @@ using GalaSoft.MvvmLight;
 
 namespace DiaballikWPF.ViewModel {
     public class PlayerTagViewModel : ViewModelBase {
-        public Player Player { get; }
+        private Player _player;
+
+        public Player Player {
+            get => _player;
+            set => Set(ref _player, value);
+        }
 
 
         public PlayerTagViewModel(Player player) {

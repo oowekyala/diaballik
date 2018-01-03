@@ -3,6 +3,12 @@
     ///     Tokens for messenger communication.
     /// </summary>
     public static class MessengerChannels {
+        public const string ShowGameCreationScreenMessageToken = "showNewGame";
+        public const string ShowGameScreenMessageToken = "showGameScreen";
+        public const string ShowLoadScreenMessageToken = "showLoadScreen";
+        public const string ShowMainMenuMessageToken = "showLoadScreen";
+
+
         public const string SelectedTileMessageToken = "selectedTile";
         public const string CommittedMoveMessageToken = "committedMove";
         public const string UndoMessageToken = "undo";

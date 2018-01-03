@@ -12,9 +12,13 @@
              TextElement.FontSize="13"
              TextOptions.TextFormattingMode="Ideal"
              TextOptions.TextRenderingMode="Auto"
-             Background="{DynamicResource MaterialDesignPaper}"
+             
              FontFamily="{DynamicResource MaterialDesignFont}"
              d:DataContext="{d:DesignInstance viewModel:StartupScreenViewModel}">
+    <UserControl.Background>
+        <SolidColorBrush Color="WhiteSmoke" Opacity="0.7"/>
+    </UserControl.Background>
+
 
     <UserControl.Resources>
 

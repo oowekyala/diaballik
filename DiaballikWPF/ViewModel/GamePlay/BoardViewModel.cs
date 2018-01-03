@@ -76,17 +76,13 @@ namespace DiaballikWPF.ViewModel {
         private void ResetDifferential(Game game) {
             DiaballikUtil.Assert(game.BoardSize == BoardSize, "Cannot reset differentially when changing board size");
 
-            var modifiedPositions = CurrentState.PositionsPair
-                                                .Map(ps => new HashSet<Position2D>(ps))
-                                                .Zip(game.State.PositionsPair,
-                                                     (set, ps) => set.SymmetricExceptWith(ps))
-                                                .FlatMap(ps => ps);
 
-            var toUpdate = modifiedPositions.ToList();
-            CurrentState.BallCarrierPair.Foreach(p => toUpdate.Add(p));
-            game.State.BallCarrierPair.Foreach(p => toUpdate.Add(p));
-
-            toUpdate.ForEach(p => UpdateTile(p, game.State));
+            var modifiedPs = new HashSet<Position2D>();
+            CurrentState.PositionsPair.Foreach(ps => modifiedPs.UnionWith(ps));
+            game.State.PositionsPair.Foreach(ps => modifiedPs.UnionWith(ps));
+            foreach (var p in modifiedPs) {
+                UpdateTile(p, game.State);
+            }
             CurrentState = game.State;
         }
 

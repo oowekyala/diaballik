@@ -20,8 +20,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary
                     Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
-                <!--                <ResourceDictionary-->
-                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml" />-->
+                                <ResourceDictionary
+                                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml" />
                 <!--                <ResourceDictionary-->
                 <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml" />-->
                 <!--                <ResourceDictionary-->
@@ -74,7 +74,7 @@
 
         <Grid Margin="10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="150"/>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -83,13 +83,27 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Board size" VerticalAlignment="Center" />
-            <Slider Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+            <Slider Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Width="200" VerticalAlignment="Center"
+                    
                     Minimum="5" Value="{Binding Size}" Maximum="17" TickFrequency="2" IsSnapToTickEnabled="True"
                     TickPlacement="BottomRight" AutoToolTipPlacement="BottomRight" AutoToolTipPrecision="0" />
 
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Game scenario" VerticalAlignment="Center" />
-            <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                      ItemsSource="{Binding GameScenarios}" SelectedItem="{Binding Scenario}" />
+            <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Width="200" VerticalAlignment="Center"
+                      ItemsSource="{Binding GameScenarios}" SelectedItem="{Binding Scenario}" >
+                <ComboBox.Style>
+                    <Style TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}">
+                        <Style.Triggers>
+                            <Trigger Property="ComboBox.SelectedValue"  Value="Standard">
+                                <Setter Property="ComboBox.ToolTip" Value="abc"/>
+                            </Trigger>
+                            <Trigger Property="ComboBox.SelectedValue" Value="EnemyAmongUs">
+                                <Setter Property="ComboBox.ToolTip" Value="def"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ComboBox.Style>
+                </ComboBox>
 
 
         </Grid>

@@ -1,21 +1,15 @@
 ﻿using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
+using static DiaballikWPF.ViewModel.MessengerChannels;
 
 namespace DiaballikWPF.ViewModel {
     public class StartupScreenViewModel : ViewModelBase {
-        #region Fields
-
-        private readonly StartupScreen _view;
-        private readonly DockWindowViewModel _dock;
-
-        #endregion
-
         #region Constructors
 
-        public StartupScreenViewModel(StartupScreen view, DockWindowViewModel dock) {
-            _view = view;
-            _dock = dock;
+        public StartupScreenViewModel(IMessenger messenger) {
+            MessengerInstance = messenger;
         }
 
         #endregion
@@ -31,12 +25,16 @@ namespace DiaballikWPF.ViewModel {
         #region Methods
 
         private void NewGame() {
-            var vm = new GameCreationScreenViewModel(_dock);
-            var view = new GameCreationScreen {
-                DataContext = vm
-            };
 
-            _dock.ContentViewModel = vm;
+            MessengerInstance.Send(new NotificationMessage("show game creation"), token: ShowGameCreationScreenMessageToken);
+
+
+//            var vm = new GameCreationScreenViewModel(_dock);
+//            var view = new GameCreationScreen {
+//                DataContext = vm
+//            };
+
+//            _dock.ContentViewModel = vm;
         }
 
         #endregion

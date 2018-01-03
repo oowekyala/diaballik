@@ -9,6 +9,7 @@ using Diaballik.Core.Util;
 using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Messaging;
 using static DiaballikWPF.ViewModel.PlayerBuilderViewModel;
 
 namespace DiaballikWPF.ViewModel {
@@ -21,13 +22,19 @@ namespace DiaballikWPF.ViewModel {
 
         #region Constructors
 
-        public GameCreationScreenViewModel(DockWindowViewModel dock) {
+        public GameCreationScreenViewModel(DockWindowViewModel dock) : this() {
             _dock = dock;
+        }
+
+        public GameCreationScreenViewModel() {
             Builder = new GameBuilder();
             OnValidationChanged += StartGameCommand.RaiseCanExecuteChanged;
 
             PlayerBuilder1 = new PlayerBuilderViewModel(Builder.PlayerBuilder1, Colors.RoyalBlue, OnValidationChanged);
             PlayerBuilder2 = new PlayerBuilderViewModel(Builder.PlayerBuilder2, Colors.DarkRed, OnValidationChanged);
+
+            var rng = new Random();
+            (Builder.PlayerBuilder1, Builder.PlayerBuilder2).Foreach(b => b.Name = GetDefaultPlayerName(rng));
         }
 
         #endregion
@@ -92,7 +99,7 @@ namespace DiaballikWPF.ViewModel {
             "Didier",
             "Jacques",
             "Foobar",
-            "Gorgonzola"
+            "Tatiana"
         };
 
         private static string GetDefaultPlayerName(Random rng) {
@@ -105,18 +112,9 @@ namespace DiaballikWPF.ViewModel {
         public bool CanStart() => Builder.CanBuild;
 
         public void StartGame() {
-            var rng = new Random();
-            (Builder.PlayerBuilder1, Builder.PlayerBuilder2).Foreach(b => {
-                if (string.IsNullOrWhiteSpace(b.Name)) b.Name = GetDefaultPlayerName(rng);
-            });
-
-            var playGameVm = new GameScreenViewModel(Builder.Build());
-            var screen = new PlayGameScreen {
-                DataContext = playGameVm
-            };
-
-            _dock.ContentViewModel = playGameVm;
-            playGameVm.ActiveMode = ViewMode.Play;
+            MessengerInstance.Send(
+                new NotificationMessage<(Game, ViewMode)>((Builder.Build(), ViewMode.Play), "show game creation"),
+                token: MessengerChannels.ShowGameScreenMessageToken);
         }
 
         #endregion

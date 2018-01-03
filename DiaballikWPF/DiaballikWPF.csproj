@@ -103,8 +103,10 @@
     <Compile Include="ViewModel\GameInfo\ToolBarItemsCollection.cs" />
     <Compile Include="ViewModel\GameInfo\PlayerTagViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\PlayModeToolBarViewModel.cs" />
+    <Compile Include="ViewModel\GameInfo\VictoryPopupViewModel.cs" />
     <Compile Include="ViewModel\GamePlay\MessengerChannels.cs" />
     <Compile Include="ViewModel\GamePlay\GameScreenViewModel.cs" />
+    <Compile Include="ViewModel\OverlayWindowViewModel.cs" />
     <Compile Include="ViewModel\StartupScreenViewModel.cs" />
     <Compile Include="ViewModel\PlayerBuilderViewModel.cs" />
     <Compile Include="View\GameCreationScreen.xaml.cs">
@@ -116,8 +118,8 @@
     <Compile Include="View\GameInfo\PlayerTag.xaml.cs">
       <DependentUpon>PlayerTag.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\GameInfo\PlayModeToolBar.xaml.cs">
-      <DependentUpon>PlayModeToolBar.xaml</DependentUpon>
+    <Compile Include="View\GameInfo\VictoryPopup.xaml.cs">
+      <DependentUpon>VictoryPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\GamePlay\GameScreen.xaml.cs">
       <DependentUpon>GameScreen.xaml</DependentUpon>
@@ -144,7 +146,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\GameInfo\PlayModeToolBar.xaml">
+    <Page Include="View\GameInfo\VictoryPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -156,6 +158,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\ScreenOverlayWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\StartupScreen.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -163,6 +169,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="View\ScreenOverlayWindow.xaml.cs">
+      <DependentUpon>ScreenOverlayWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\StartupScreen.xaml.cs">
       <DependentUpon>StartupScreen.xaml</DependentUpon>
@@ -224,6 +233,10 @@
     <ProjectReference Include="..\DiaballikCore\DiaballikCore.csproj">
       <Project>{fcdb9834-c071-40b0-84b8-2bc325abfd35}</Project>
       <Name>DiaballikCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiaballikMockLib\DiaballikMockLib.csproj">
+      <Project>{ec3b4719-8636-45e1-af93-4f8e989adf69}</Project>
+      <Name>DiaballikMockLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

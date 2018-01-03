@@ -2,8 +2,9 @@
 using System.Linq;
 using Diaballik.Core;
 using Diaballik.Core.Util;
+using Diaballik.Mock;
 using NUnit.Framework;
-using static Diaballik.Tests.MockUtil;
+using static Diaballik.Mock.MockUtil;
 
 namespace Diaballik.Tests {
     [TestFixture]

@@ -9,8 +9,7 @@ namespace DiaballikWPF {
     /// Logique d'interaction pour App.xaml
     /// </summary>
     public partial class App : Application {
-
-        public App() : base() {
+        public App() {
             // Setup Quick Converter.
             // Add the System namespace so we can use primitive types (i.e. int, etc.).
             QuickConverter.EquationTokenizer.AddNamespace(typeof(object));
@@ -23,22 +22,24 @@ namespace DiaballikWPF {
             QuickConverter.EquationTokenizer.AddNamespace(typeof(Converters.ConvertUtil));
             QuickConverter.EquationTokenizer.AddNamespace(typeof(ViewMode));
             DispatcherHelper.Initialize();
-
         }
-
 
 
         protected override void OnStartup(StartupEventArgs e) {
             base.OnStartup(e);
 
-            var dockView = new DockWindow();
-            var dock = new DockWindowViewModel(dockView);
-            dockView.DataContext = dock;
+//            var dockView = new DockWindow();
+//            var dock = new DockWindowViewModel(dockView);
+//            dockView.DataContext = dock;
 
-            var mainScreen = new StartupScreen();
-            var mainScreenVm = new StartupScreenViewModel(mainScreen, dock);
+//            var mainScreen = new StartupScreen();
+//            var mainScreenVm = new StartupScreenViewModel(mainScreen, dock);
 
-            dock.ContentViewModel = mainScreenVm;
+//            dock.ContentViewModel = mainScreenVm;
+
+            var dockView = new ScreenOverlayWindow();
+            var vm = new OverlayWindowViewModel(dockView);
+            dockView.DataContext = vm;
 
             dockView.Show();
         }

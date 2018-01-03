@@ -6,6 +6,13 @@
         xmlns:local="clr-namespace:DiaballikWPF.View"
         xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
         mc:Ignorable="d"
+        
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        
         Title="Diaballik" Height="{StaticResource AppWindowHeight}" Width="{StaticResource AppWindowWidth}"
         d:DataContext="{d:DesignInstance viewModel:DockWindowViewModel }">
 
@@ -19,7 +26,7 @@
             <local:GameCreationScreen />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:GameScreenViewModel}">
-            <local:PlayGameScreen />
+            <local:GameScreen />
         </DataTemplate>
     </Window.Resources>
 

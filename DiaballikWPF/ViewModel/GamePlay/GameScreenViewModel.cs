@@ -46,6 +46,16 @@ namespace DiaballikWPF.ViewModel {
             InitMessageHandlers();
         }
 
+        public void Reset(Game game) {
+            BoardViewModel.Reset(game);
+            PlayModeToolBarViewModel.Game = game;
+            Player1Tag.Player = game.Player1;
+            Player2Tag.Player = game.Player2;
+            PrimaryGame = game;
+            ActiveMode = ViewMode.Play;
+            UpdatePlayerTags(game);
+        }
+
 
         private void InitMessageHandlers() {
             // Receive any move and update the primary game's state.
@@ -144,7 +154,7 @@ namespace DiaballikWPF.ViewModel {
             if (mode == ViewMode.Play) {
                 Debug.WriteLine("Start game loop bc ActivMode = Play");
 
-                UpdatePlayerTags(PrimaryGame);
+                //UpdatePlayerTags(PrimaryGame);
                 StartGameLoop();
             } else {
                 // Enter replay mode
@@ -247,7 +257,7 @@ namespace DiaballikWPF.ViewModel {
 
             var action = (game.Memento as MementoNode)?.Action;
 
-            if (action == null) { 
+            if (action == null) {
                 // can happen when clicking repeatedly on the undo button
                 // and the game has no time to update 
                 return;

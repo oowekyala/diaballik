@@ -9,7 +9,15 @@ namespace DiaballikWPF.ViewModel {
     ///     Controls the toolbar when in play mode.
     /// </summary>
     public class PlayModeToolBarViewModel : ViewModelBase {
-        public Game Game { get; }
+        private Game _game;
+
+        public Game Game {
+            get => _game;
+            set {
+                Set(ref _game, value);
+                NotifyGameUpdate();
+            }
+        }
 
         public PlayModeToolBarViewModel(IMessenger messenger, Game game) {
             Game = game;
