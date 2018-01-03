@@ -86,6 +86,14 @@ namespace Diaballik.Core {
             }
         }
 
+        /// <summary>
+        ///     Returns true if the given player is victorious in the current
+        ///     configuration.
+        /// </summary>
+        private bool IsVictoriousPlayer(Player player) {
+            return BallCarrierForPlayer(player).X == BoardSize - 1 - GetRowIndexOfInitialLine(player);
+        }
+
         #endregion
 
         #region Properties depending on the player
@@ -128,16 +136,6 @@ namespace Diaballik.Core {
         // Gets the index of the starting row of a player. Used to check for victory
         protected int GetRowIndexOfInitialLine(Player player) {
             return GetPlayerProperty(player, (BoardSize - 1, 0));
-        }
-
-        /// <summary>
-        ///     Returns true if the given player is victorious in the current
-        ///     configuration.
-        /// </summary>
-        private bool IsVictoriousPlayer(Player player) {
-            return PositionsForPlayer(player)
-                .Select(p => p.X)
-                .Any(i => BoardSize - 1 - GetRowIndexOfInitialLine(player) == i);
         }
 
         #endregion

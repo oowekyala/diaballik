@@ -18,6 +18,16 @@ namespace DiaballikWPF.ViewModel {
             }
         }
 
+        private bool _canResume;
+
+        public bool CanResume {
+            get => _canResume;
+            set {
+                Set(ref _canResume, value);
+                NotifyGameUpdate();
+            }
+        }
+
         public void NotifyGameUpdate() {
             UndoCommand.RaiseCanExecuteChanged();
             RedoCommand.RaiseCanExecuteChanged();
@@ -111,7 +121,7 @@ namespace DiaballikWPF.ViewModel {
             _resumeCommand ?? (_resumeCommand =
                 new RelayCommand(ResumeCommandExecute, ResumeCommandCanExecute));
 
-        private bool ResumeCommandCanExecute() => true;
+        private bool ResumeCommandCanExecute() => CanResume;
 
 
         private void ResumeCommandExecute() {
@@ -134,8 +144,9 @@ namespace DiaballikWPF.ViewModel {
 
 
         private void ForkGameCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage<OptionStrategy>(OptionStrategy.Force, "player has requested fork game"),
-                                   token: ForkGameMessageToken);
+            MessengerInstance.Send(
+                new NotificationMessage<OptionStrategy>(OptionStrategy.Force, "player has requested fork game"),
+                token: ForkGameMessageToken);
         }
 
         #endregion

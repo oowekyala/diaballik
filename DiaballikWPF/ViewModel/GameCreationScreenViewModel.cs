@@ -14,19 +14,10 @@ using static DiaballikWPF.ViewModel.PlayerBuilderViewModel;
 
 namespace DiaballikWPF.ViewModel {
     public class GameCreationScreenViewModel : ViewModelBase {
-        #region Fields
-
-        private readonly DockWindowViewModel _dock;
-
-        #endregion
-
         #region Constructors
 
-        public GameCreationScreenViewModel(DockWindowViewModel dock) : this() {
-            _dock = dock;
-        }
-
-        public GameCreationScreenViewModel() {
+        public GameCreationScreenViewModel(IMessenger messenger) {
+            MessengerInstance = messenger;
             Builder = new GameBuilder();
             OnValidationChanged += StartGameCommand.RaiseCanExecuteChanged;
 
@@ -95,7 +86,7 @@ namespace DiaballikWPF.ViewModel {
 
         #region Methods
 
-        private static readonly List<string> _defaultPlayerNames = new List<string> {
+        private static readonly List<string> DefaultPlayerNames = new List<string> {
             "Didier",
             "Jacques",
             "Foobar",
@@ -103,8 +94,8 @@ namespace DiaballikWPF.ViewModel {
         };
 
         private static string GetDefaultPlayerName(Random rng) {
-            var name = _defaultPlayerNames[rng.Next(_defaultPlayerNames.Count)];
-            _defaultPlayerNames.Remove(name);
+            var name = DefaultPlayerNames[rng.Next(DefaultPlayerNames.Count)];
+            DefaultPlayerNames.Remove(name);
             return name;
         }
 
@@ -112,9 +103,10 @@ namespace DiaballikWPF.ViewModel {
         public bool CanStart() => Builder.CanBuild;
 
         public void StartGame() {
-            MessengerInstance.Send(
-                new NotificationMessage<(Game, ViewMode)>((Builder.Build(), ViewMode.Play), "show game creation"),
-                token: MessengerChannels.ShowGameScreenMessageToken);
+            MessengerInstance.Send(message: new NotificationMessage<(Game, ViewMode)>(
+                                       (Builder.Build(), ViewMode.Play),
+                                       "show game creation"),
+                                   token: MessengerChannels.ShowGameScreenMessageToken);
         }
 
         #endregion

@@ -8,6 +8,9 @@
         public const string ShowLoadScreenMessageToken = "showLoadScreen";
         public const string ShowMainMenuMessageToken = "showLoadScreen";
 
+        public const string CloseVictoryPopupMessageToken = "closeVictoryPopup";
+        public const string ShowVictoryPopupMessageToken = "closeVictoryPopup";
+
 
         public const string SelectedTileMessageToken = "selectedTile";
         public const string CommittedMoveMessageToken = "committedMove";

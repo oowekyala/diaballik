@@ -3,10 +3,12 @@ using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
 using Diaballik.Core.Builders;
 using Diaballik.Core.Util;
+using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
@@ -31,8 +33,9 @@ namespace DiaballikWPF.ViewModel {
         ///     Creates a new Game presenter, with the given game builder.
         /// </summary>
         /// <param name="builder">The builder used to build the game</param>
-        public GameScreenViewModel(Game game) {
+        public GameScreenViewModel(IMessenger UImessenger, Game game) {
             PrimaryGame = game;
+            MessengerInstance = UImessenger;
 
             BoardViewModel = new BoardViewModel(MessengerInstance, PrimaryGame);
             PlayModeToolBarViewModel = new PlayModeToolBarViewModel(MessengerInstance, PrimaryGame);
@@ -48,10 +51,10 @@ namespace DiaballikWPF.ViewModel {
 
         public void Reset(Game game) {
             BoardViewModel.Reset(game);
-            PlayModeToolBarViewModel.Game = game;
-            Player1Tag.Player = game.Player1;
-            Player2Tag.Player = game.Player2;
             PrimaryGame = game;
+            PlayModeToolBarViewModel.Game = PrimaryGame;
+            Player1Tag.Player = PrimaryGame.Player1;
+            Player2Tag.Player = PrimaryGame.Player2;
             ActiveMode = ViewMode.Play;
             UpdatePlayerTags(game);
         }
@@ -160,6 +163,7 @@ namespace DiaballikWPF.ViewModel {
                 // Enter replay mode
                 ReplayGame = Game.Fork(PrimaryGame);
                 ReplayModeToolBarViewModel.Game = ReplayGame;
+                ReplayModeToolBarViewModel.CanResume = !PrimaryGame.State.IsVictory;
                 BoardViewModel.UnlockedPlayer = null;
             }
         }
@@ -301,7 +305,7 @@ namespace DiaballikWPF.ViewModel {
             DispatcherHelper.UIDispatcher.Invoke(() => PlayModeToolBarViewModel.NotifyGameUpdate());
             DispatcherHelper.UIDispatcher.Invoke(() => ReplayModeToolBarViewModel.NotifyGameUpdate());
 
-            if (game.State.IsVictory) {
+            if (game.State.IsVictory && ActiveMode == ViewMode.Play) {
                 HandleVictory();
             }
         }
@@ -330,8 +334,12 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
+
         public void HandleVictory() {
             Debug.WriteLine($"Victory of {PrimaryGame.State.VictoriousPlayer}");
+
+            MessengerInstance.Send(new NotificationMessage<Player>(PrimaryGame.State.VictoriousPlayer, "show popup"),
+                                   token: ShowVictoryPopupMessageToken);
         }
 
         private Thread _loopThread;
