@@ -14,7 +14,7 @@
              Background="{DynamicResource MaterialDesignPaper}"
 
 
-             d:DesignHeight="70" d:DesignWidth="300"
+             d:DesignHeight="80" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance viewModel:SavePopupViewModel }">
     <UserControl.Resources>
 
@@ -37,23 +37,50 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <StackPanel Orientation="Vertical" Background="{DynamicResource MaterialDesignBackground}" >
         <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Top"
                    Margin="10"
-                   Style="{DynamicResource MaterialDesignTitleTextBlock}"
+                   TextWrapping="Wrap"
+                   Style="{DynamicResource MaterialDesignBody1TextBlock}"
                    Text="{Binding Message}" />
 
-        <ToolBar VerticalAlignment="Bottom" HorizontalAlignment="Center"
+        <ToolBar HorizontalAlignment="Center"
+                 VerticalAlignment="Bottom"
                  ToolBarTray.IsLocked="True"
+                 Background="{DynamicResource MaterialDesignBackground}"
                  Style="{DynamicResource MaterialDesignToolBar}">
 
             
-            
+          
+            <Button
+                Visibility="{Binding HasCancelButton, Converter={StaticResource BoolToVisibility}}"
+                ToolBar.OverflowMode="Never"
+                ToolTip="Cancel"
+                Command="{Binding CancelCommand}"
+                Style="{DynamicResource MaterialDesignToolButton}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Close" />
+                    <TextBlock VerticalAlignment="Center" Text="Cancel" />
+                </StackPanel>
+            </Button>
+
             <Button
                 ToolBar.OverflowMode="Never"
-                ToolTip="Save your game"
-                Command="{Binding ReplayModeCommand}"
+                ToolTip="Continue without saving"
+                Command="{Binding ConfirmCommand}"
+                Style="{DynamicResource MaterialDesignToolButton}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Delete" />
+                    <TextBlock VerticalAlignment="Center" Text="Discard" />
+                </StackPanel>
+            </Button>
+
+
+            <Button
+                ToolBar.OverflowMode="Never"
+                ToolTip="Save your game and continue"
+                Command="{Binding SaveCommand}"
                 Style="{DynamicResource MaterialDesignToolButton}">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="ContentSave" />
@@ -61,28 +88,7 @@
                 </StackPanel>
             </Button>
 
-            <Button
-                Visibility="{Binding HasCancelButton}"
-                ToolBar.OverflowMode="Never"
-                ToolTip="Back to the main menu"
-                Command="{Binding BackToMainMenuCommand}"
-                Style="{DynamicResource MaterialDesignToolButton}">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Check" />
-                    <TextBlock VerticalAlignment="Center" Text="Cancel" />
-                </StackPanel>
-            </Button>
-
-            <Button
-                ToolBar.OverflowMode="Never"
-                ToolTip="Back to the main menu"
-                Command="{Binding BackToMainMenuCommand}"
-                Style="{DynamicResource MaterialDesignToolButton}">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Check" />
-                    <TextBlock VerticalAlignment="Center" Text="Confirm" />
-                </StackPanel>
-            </Button>
         </ToolBar>
-    </Grid>
+
+    </StackPanel>
 </UserControl>

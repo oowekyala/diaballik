@@ -2,14 +2,12 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Resources;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
 using Diaballik.Core.Util;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.GameScreenViewModel;
-using static DiaballikWPF.ViewModel.Messages;
+using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
     public interface IBoardPresenter {
@@ -41,43 +39,43 @@ namespace DiaballikWPF.ViewModel {
         /// </summary>
         /// <param name="messenger">Messenger for this presenter and its descendants</param>
         /// <param name="state">Initial state</param>
-        public BoardViewModel(IMessenger messenger, Game game) {
+        public BoardViewModel(IMessenger messenger, GameState state) {
             MessengerInstance = messenger;
             SetSelectedTileMessage.Register(MessengerInstance, this, tile => SelectedTile = tile);
-            Reset(game);
+            Reset(state);
         }
 
-        public void Reset(Game game) {
-            if (game.BoardSize == BoardSize) {
-                ResetDifferential(game);
+        public void Reset(GameState state) {
+            if (state.BoardSize == BoardSize) {
+                ResetDifferential(state);
                 return;
             }
 
             Tiles.Clear();
-            CurrentState = game.State;
-            BoardSize = game.BoardSize;
+            CurrentState = state;
+            BoardSize = state.BoardSize;
             var range = Enumerable.Range(0, BoardSize).ToList();
             var tiles
                 = range.SelectMany(x => range.Select(y => new TileViewModel(MessengerInstance, Position2D.New(x, y))))
                        .Cast<ITilePresenter>();
 
             foreach (var tile in tiles) {
-                tile.Update(game.State.PlayerOn(tile.Position), game.State.HasBall(tile.Position));
+                tile.Update(state.PlayerOn(tile.Position), state.HasBall(tile.Position));
                 Tiles.Add(tile);
             }
         }
 
-        private void ResetDifferential(Game game) {
-            DiaballikUtil.Assert(game.BoardSize == BoardSize, "Cannot reset differentially when changing board size");
+        private void ResetDifferential(GameState state) {
+            DiaballikUtil.Assert(state.BoardSize == BoardSize, "Cannot reset differentially when changing board size");
 
 
             var modifiedPs = new HashSet<Position2D>();
             CurrentState.PositionsPair.Foreach(ps => modifiedPs.UnionWith(ps));
-            game.State.PositionsPair.Foreach(ps => modifiedPs.UnionWith(ps));
+            state.PositionsPair.Foreach(ps => modifiedPs.UnionWith(ps));
             foreach (var p in modifiedPs) {
-                UpdateTile(p, game.State);
+                UpdateTile(p, state);
             }
-            CurrentState = game.State;
+            CurrentState = state;
         }
 
         #endregion
@@ -152,7 +150,7 @@ namespace DiaballikWPF.ViewModel {
             set {
                 if (_selectedTile != value) {
                     if (value != null) {
-                        SelectedTile.IsSelected = true;
+                        value.IsSelected = true;
                         SuggestMoves(value);
                     } else {
                         SelectedTile.IsSelected = false;

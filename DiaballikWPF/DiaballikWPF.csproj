@@ -58,6 +58,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -97,7 +98,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\ConvertUtil.cs" />
+    <Compile Include="Util\ConvertUtil.cs" />
     <Compile Include="ViewModel\DockWindowViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\AbstractGameScreenToolBar.cs" />
     <Compile Include="ViewModel\GameInfo\ReplayModeToolBarViewModel.cs" />
@@ -107,7 +108,7 @@
     <Compile Include="ViewModel\GameInfo\PlayModeToolBarViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\VictoryPopupViewModel.cs" />
     <Compile Include="ViewModel\LoadGameScreenViewModel.cs" />
-    <Compile Include="ViewModel\Messages.cs" />
+    <Compile Include="Util\Messages.cs" />
     <Compile Include="ViewModel\GamePlay\GameScreenViewModel.cs" />
     <Compile Include="ViewModel\OverlayWindowViewModel.cs" />
     <Compile Include="Util\SaveManager.cs" />
@@ -121,6 +122,9 @@
     </Compile>
     <Compile Include="View\GameInfo\PlayerTag.xaml.cs">
       <DependentUpon>PlayerTag.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GameInfo\SaveItem.xaml.cs">
+      <DependentUpon>SaveItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\GameInfo\SavePopup.xaml.cs">
       <DependentUpon>SavePopup.xaml</DependentUpon>
@@ -153,6 +157,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\GameInfo\PlayerTag.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\GameInfo\SaveItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -31,56 +31,76 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <DockPanel Background="{DynamicResource MaterialDesignBackground}">
+    <Grid Background="{DynamicResource MaterialDesignBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <ListView ItemsSource="{Binding Source={StaticResource SavesSource}}"
-                  SelectionChanged="ListView_SelectionChanged">
+        <Menu Grid.Row="0" Style="{DynamicResource MaterialDesignMenu}" Background="Transparent">
+
+            <MenuItem Style="{DynamicResource MaterialDesignMenuItem}" Background="Transparent">
+                <MenuItem.Header>
+                    <materialDesign:PackIcon Kind="Menu" />
+                </MenuItem.Header>
+
+                <MenuItem Command="{Binding BackToMainMenuCommand}"
+                          Style="{DynamicResource MaterialDesignMenuItem}">
+                    <MenuItem.Header>
+                        <StackPanel Orientation="Horizontal" Background="{DynamicResource MaterialDesignBackground}">
+                            <materialDesign:PackIcon Kind="ExitToApp" Margin="0,0,10,0"
+                                                     VerticalAlignment="Center" />
+                            <ContentPresenter Content="Back to main menu" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </MenuItem.Header>
+                </MenuItem>
+            </MenuItem>
+
+
+        </Menu>
+
+        <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Center"
+                   Text="Load Game"
+                   Style="{DynamicResource MaterialDesignTitleTextBlock}" 
+                   Margin="15"/>
+
+
+        <ListView Grid.Column="0" Grid.Row="1"
+                  SelectedItem="{Binding SelectedSaveItem, Mode=OneWayToSource}"
+                  ItemsSource="{Binding Source={StaticResource SavesSource}}">
+            <ListView.Style>
+                <Style TargetType="ListView">
+                    <Style.Triggers>
+                        <Trigger Property="HasItems"
+                                 Value="False">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListView">
+                                        <TextBlock Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                                                   Text="No previously saved game" />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.Style>
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type viewModel:SaveItemViewModel}">
-
-                    <StackPanel DataContext="{Binding}"
-                                Background="{DynamicResource MaterialDesignCardBackground}"
-                                Orientation="Horizontal">
-
-
-                        <local:PlayerTag DataContext="{Binding Player1Tag}" />
-                        <TextBlock Margin="10" VerticalAlignment="Center" Text="vs" />
-                        <local:PlayerTag DataContext="{Binding Player2Tag}" />
-                        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTip="Delete this save"
-                            Command="{Binding DeleteSaveCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Delete" />
-                            </StackPanel>
-                        </Button>
-                        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTip="Enter replay mode"
-                            Command="{Binding ReplayModeCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Television" />
-                            </StackPanel>
-                        </Button>
-
-
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTip="Resume where you left off"
-                            Command="{Binding ResumeCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="ArrowRightDropCircle" />
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
+                    <local:SaveItem DataContext="{Binding}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </DockPanel>
+        
+        <local:BoardView Grid.Row="1" Grid.Column="1" 
+                         DataContext="{Binding BoardViewModel}" 
+                         Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch"/>
+
+    </Grid>
 </UserControl>

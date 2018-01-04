@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.Messages;
+using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
     public class VictoryPopupViewModel : ViewModelBase {

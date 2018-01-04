@@ -7,13 +7,34 @@
              xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
 
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignBackground}"
+             Background="Transparent"
              TextElement.FontWeight="Medium"
              TextElement.FontSize="14"
              FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
 
 
              mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModel:PlayerTagViewModel }">
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Menu.xaml" />
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />-->
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml" />-->
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />-->
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
         <!-- Tag representing a player. -->
 
@@ -26,7 +47,6 @@
             Grid.Column="1"
             Margin="10,0,10,0"
             VerticalAlignment="Center"
-            Style="{DynamicResource MaterialDesignTextBlock}"
             Text="{Binding Player.Name}" />
 
         <Ellipse Grid.Column="0"
@@ -37,14 +57,14 @@
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center" />
 
-<!--        <Ellipse Grid.Column="0"-->
-<!--                 Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}}"-->
-<!--                 StrokeThickness="0"-->
-<!--                 Fill="White"-->
-<!--                 Width="10"-->
-<!--                 Height="10"-->
-<!--                 HorizontalAlignment="Center"-->
-<!--                 VerticalAlignment="Center" />-->
+        <!--        <Ellipse Grid.Column="0"-->
+        <!--                 Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}}"-->
+        <!--                 StrokeThickness="0"-->
+        <!--                 Fill="White"-->
+        <!--                 Width="10"-->
+        <!--                 Height="10"-->
+        <!--                 HorizontalAlignment="Center"-->
+        <!--                 VerticalAlignment="Center" />-->
 
         <TextBlock Grid.Column="0"
                    Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}}"

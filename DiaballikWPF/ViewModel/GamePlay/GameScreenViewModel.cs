@@ -7,7 +7,7 @@ using DiaballikWPF.Util;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
-using static DiaballikWPF.ViewModel.Messages;
+using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
     using GameId = String;
@@ -23,19 +23,23 @@ namespace DiaballikWPF.ViewModel {
 
     /// <summary>
     ///     View model for the screen in which the game can be played.
+    /// 
+    ///     One "master" game can be loaded at a time, which is updated when in Play mode.
+    ///     Updates on that game overwrite the previous saves for that game. The rationale
+    ///     is that previous saves are contained in the memento anyway (most of the times),
+    ///     and can be accessed from Replay mode.
+    /// 
+    ///     That game can be forked from the Replay mode, which creates a new game with a 
+    ///     new id.
     /// </summary>
     public class GameScreenViewModel : ViewModelBase {
         #region Constructor
 
-        /// <summary>
-        ///     Creates a new Game presenter, with the given game builder.
-        /// </summary>
-        /// <param name="builder">The builder used to build the game</param>
         public GameScreenViewModel(IMessenger UImessenger, Game game) {
             PrimaryGame = game;
             MessengerInstance = UImessenger;
 
-            BoardViewModel = new BoardViewModel(MessengerInstance, PrimaryGame);
+            BoardViewModel = new BoardViewModel(MessengerInstance, PrimaryGame.State);
             PlayModeToolBarViewModel = new PlayModeToolBarViewModel(MessengerInstance, PrimaryGame);
             ReplayModeToolBarViewModel = new ReplayModeToolBarViewModel(MessengerInstance);
             Player1Tag = new PlayerTagViewModel(PrimaryGame.Player1);
@@ -47,17 +51,12 @@ namespace DiaballikWPF.ViewModel {
             InitMessageHandlers();
         }
 
-        /// Sets the given game as the current played game, assigning it a new ID.
-        /// The previous game is discarded.
-        public void Load(Game game) {
-            LoadWithId(SaveManager.Instance.NextId(), game);
-        }
-
         /// Sets the given game as the currently played game, using the given ID.
-        public void LoadWithId(GameId id, Game game) {
+        /// The previous game is discarded.
+        public void Load(GameId id, Game game) {
             PrimaryGame = game;
             GameId = id;
-            BoardViewModel.Reset(PrimaryGame);
+            BoardViewModel.Reset(PrimaryGame.State);
             PlayModeToolBarViewModel.Game = PrimaryGame;
             Player1Tag.Player = PrimaryGame.Player1;
             Player2Tag.Player = PrimaryGame.Player2;
@@ -78,17 +77,25 @@ namespace DiaballikWPF.ViewModel {
             RedoMessage.Register(MessengerInstance, this, () => Redo(ModeSpecificGame()));
             SwitchGameViewMode.Register(MessengerInstance, this, mode => ActiveMode = mode);
 
+            // someone requested that the current state of the game be saved
+            RequestSaveToGameScreenMessage.Register(
+                MessengerInstance,
+                this,
+                () => SaveGameMessage.Send(MessengerInstance, (GameId, PrimaryGame.Memento)));
+
 
             // These are specific to the Replay mode
             UndoTillRootMessage.Register(MessengerInstance, this, () => UndoTillRoot(ReplayGame));
             RedoTillLastMessage.Register(MessengerInstance, this, () => RedoTillLast(ReplayGame));
             ResumeGameMessage.Register(MessengerInstance, this, () => {
-                BoardViewModel.Reset(PrimaryGame);
+                BoardViewModel.Reset(PrimaryGame.State);
                 ActiveMode = ViewMode.Play;
             });
+
+
             ForkGameMessage.Register(MessengerInstance, this, () => {
-                PrimaryGame = ReplayGame;
-                ActiveMode = ViewMode.Play;
+                // this assigns a new id to the primary game, so that we don't overwrite the previous
+                OpenNewGame.Send(MessengerInstance, (ReplayGame, ViewMode.Play));
             });
         }
 
@@ -121,7 +128,7 @@ namespace DiaballikWPF.ViewModel {
                 // Enter replay mode
                 ReplayGame = Game.Fork(PrimaryGame);
                 _aiLoopCanRun = false;
-                ReplayModeToolBarViewModel.Game = ReplayGame;
+                ReplayModeToolBarViewModel.ReplayGame = ReplayGame;
                 ReplayModeToolBarViewModel.CanResume = !PrimaryGame.State.IsVictory;
                 BoardViewModel.UnlockedPlayer = null;
             }

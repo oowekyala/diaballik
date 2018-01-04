@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DiaballikWPF.View"
         xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -15,6 +16,11 @@
         
         Title="Diaballik" Height="{StaticResource AppWindowHeight}" Width="{StaticResource AppWindowWidth}"
         d:DataContext="{d:DesignInstance viewModel:DockWindowViewModel }">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding QuitCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <!-- Main window, within which each screen docks as a UserControl. -->
 

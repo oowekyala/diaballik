@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls.Primitives;
 using Diaballik.Core;
 using Diaballik.Mock;
 using DiaballikWPF.Util;
 using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.Messages;
+using GalaSoft.MvvmLight.Command;
+using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
-    using GameId = String;
-    using DecoratedMemento = ValueTuple<GameMetadataBundle, GameMemento>;
-
-
     /// <summary>
     ///     Main window of the app, in which the various screens dock.
+    ///     Responsible for handling screen transitions.
+    ///     Mediator for components of the app, helped by the IMessenger.
     /// </summary>
     public class DockWindowViewModel : ViewModelBase {
         #region Constructors
@@ -27,43 +25,56 @@ namespace DiaballikWPF.ViewModel {
             GameCreationScreenViewModel = new GameCreationScreenViewModel(MessengerInstance);
             StartupScreenViewModel = new StartupScreenViewModel(MessengerInstance);
             LoadGameScreenViewModel = new LoadGameScreenViewModel(MessengerInstance);
+            SaveManager = new SaveManager(MessengerInstance);
 
-            RegisterScreenSwitchHandlers();
+            QuitCommand = new RelayCommand(ShutdownApplication);
+
+            RegisterMessageHandlers();
         }
 
 
-        private void RegisterScreenSwitchHandlers() {
+        private void RegisterMessageHandlers() {
             ShowNewGameMessage.Register(MessengerInstance, this, () => ContentViewModel = GameCreationScreenViewModel);
             ShowMainMenuMessage.Register(MessengerInstance, this, () => ContentViewModel = StartupScreenViewModel);
-            ShowLoadMenuMessage.Register(MessengerInstance, this, () => ContentViewModel = LoadGameScreenViewModel);
+            ShowLoadMenuMessage.Register(MessengerInstance, this, () => {
+                LoadGameScreenViewModel.Refresh(SaveManager.AllSaves());
+                ContentViewModel = LoadGameScreenViewModel;
+            });
 
-            // switch to game screen with a newly created game
-            ShowGameScreenMessage.Register(MessengerInstance, this, payload => {
+
+            void OpenGameAction(((string, GameMemento), ViewMode) payload) {
+                var ((id, memento), mode) = payload;
+                GameScreenViewModel.Load(id, Game.FromMemento(memento));
+                GameScreenViewModel.ActiveMode = mode;
+
+                ContentViewModel = GameScreenViewModel;
+            }
+
+
+            // switch to game screen with a newly created game, assigning it an id
+            OpenNewGame.Register(MessengerInstance, this, payload => {
                 var (game, mode) = payload;
-                GameScreenViewModel.Load(game);
-                GameScreenViewModel.ActiveMode = mode;
-
-                ContentViewModel = GameScreenViewModel;
+                OpenGameAction(((SaveManager.NextId(), game.Memento), mode));
             });
 
-
-            // switch to game with game loaded from a save, which already has an id
-            LoadGameFromSaveMessage.Register(MessengerInstance, this, payload => {
-                var ((metadata, memento), mode) = payload;
-                GameScreenViewModel.LoadWithId(metadata.Id, Game.FromMemento(memento));
-                GameScreenViewModel.ActiveMode = mode;
-
-                ContentViewModel = GameScreenViewModel;
-            });
+            OpenGameMessage.Register(MessengerInstance, this, OpenGameAction);
 
 
             ShowVictoryPopupMessage.Register(MessengerInstance, this, HandleVictory);
+
+            ShowSavePopupMessage.Register(MessengerInstance, this, payload => {
+                var (message, action, hasCancelButton) = payload;
+                DisplaySavePopup(message, action, hasCancelButton);
+            });
+
+            AppShutdownMessage.Register(MessengerInstance, this, ShutdownApplication);
         }
 
         public StartupScreenViewModel StartupScreenViewModel { get; }
         public GameScreenViewModel GameScreenViewModel { get; }
         public GameCreationScreenViewModel GameCreationScreenViewModel { get; }
         public LoadGameScreenViewModel LoadGameScreenViewModel { get; }
+        private SaveManager SaveManager { get; }
 
         #endregion
 
@@ -80,6 +91,13 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
+        public RelayCommand QuitCommand { get; }
+
+        public void ShutdownApplication() {
+            SaveManager.CommitSaves();
+            Application.Current.Shutdown(0);
+        }
+
         private Popup VictoryPopup => _victoryPopup ?? (_victoryPopup = new Popup {
             Child = new VictoryPopup(),
             Height = 70,
@@ -91,7 +109,7 @@ namespace DiaballikWPF.ViewModel {
 
         private Popup _victoryPopup;
 
-        public void HandleVictory(Player player) {
+        private void HandleVictory(Player player) {
             VictoryPopup.DataContext = new VictoryPopupViewModel(MessengerInstance, player);
             VictoryPopup.IsOpen = true;
 
@@ -103,8 +121,8 @@ namespace DiaballikWPF.ViewModel {
 
 
         private Popup SavePopup => _savePopup ?? (_savePopup = new Popup {
-            Child = new VictoryPopup(),
-            Height = 70,
+            Child = new SavePopup(),
+            Height = 120,
             Width = 300,
             PopupAnimation = PopupAnimation.Slide,
             PlacementTarget = View,
@@ -113,14 +131,13 @@ namespace DiaballikWPF.ViewModel {
 
         private Popup _savePopup;
 
-        public void DisplaySavePopup(Player player) {
-            // TODODODODODO
-            SavePopup.DataContext = new VictoryPopupViewModel(MessengerInstance, player);
+        private void DisplaySavePopup(string message, Action toConfirm, bool hasCancelButton) {
+            SavePopup.DataContext = new SavePopupViewModel(message, toConfirm, hasCancelButton);
             SavePopup.IsOpen = true;
 
-            CloseVictoryPopupMessage.Register(MessengerInstance, this, () => {
+            CloseSavePopupMessage.Register(MessengerInstance, this, () => {
                 SavePopup.IsOpen = false;
-                CloseVictoryPopupMessage.Unregister(MessengerInstance, this);
+                CloseSavePopupMessage.Unregister(MessengerInstance, this);
             });
         }
     }

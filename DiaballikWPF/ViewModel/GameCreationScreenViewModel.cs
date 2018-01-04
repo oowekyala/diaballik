@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Media;
 using Diaballik.Core.Builders;
 using Diaballik.Core.Util;
+using DiaballikWPF.Util;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
@@ -84,7 +85,7 @@ namespace DiaballikWPF.ViewModel {
         public bool StartGameCommandCanExecute() => Builder.CanBuild;
 
         public void StartGameCommandExecute() {
-            Messages.ShowGameScreenMessage.Send(MessengerInstance, (Builder.Build(), ViewMode.Play));
+            Messages.OpenNewGame.Send(MessengerInstance, (Builder.Build(), ViewMode.Play));
         }
 
         #endregion

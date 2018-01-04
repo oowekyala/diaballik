@@ -26,8 +26,8 @@
                     Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
                 <ResourceDictionary
                     Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml" />
-                                <ResourceDictionary
-                                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Menu.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Menu.xaml" />
                 <!--                <ResourceDictionary-->
                 <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />-->
                 <!--                <ResourceDictionary-->
@@ -61,27 +61,31 @@
             <ToolBar ToolBarTray.IsLocked="True">
 
                 <ToolBar.Resources>
-                    <Menu x:Key="NavigationMenu" Style="{DynamicResource MaterialDesignMenu}">
+                    <Menu x:Key="NavigationMenu" x:Shared="False" Style="{DynamicResource MaterialDesignMenu}"
+                          Background="Transparent">
 
-                        <MenuItem Style="{DynamicResource MaterialDesignMenuItem}">
+                        <MenuItem Style="{DynamicResource MaterialDesignMenuItem}" Background="Transparent">
                             <MenuItem.Header>
                                 <materialDesign:PackIcon Kind="Menu" />
                             </MenuItem.Header>
 
-                            <MenuItem Command="{Binding BackToMainMenuCommand}" Style="{DynamicResource MaterialDesignMenuItem}">
+                            <MenuItem Command="{Binding BackToMainMenuCommand}"
+                                      Style="{DynamicResource MaterialDesignMenuItem}">
                                 <MenuItem.Header>
-                                    <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="ExitToApp" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                                        <ContentPresenter Content="Back to main menu" VerticalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal"
+                                                Background="{DynamicResource MaterialDesignBackground}">
+                                        <materialDesign:PackIcon Kind="ExitToApp" Margin="0,0,10,0"
+                                                                 VerticalAlignment="Center" />
+                                        <ContentPresenter Content="Back to main menu" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </MenuItem.Header>
                             </MenuItem>
                         </MenuItem>
-                        
-                       
+
 
                     </Menu>
                     <viewModel:ToolBarItemsCollection x:Key="PlayModeItems">
+
                         <ContentControl
                             ToolBar.OverflowMode="Never"
                             VerticalAlignment="Center"
@@ -153,7 +157,8 @@
                             Style="{DynamicResource MaterialDesignToolButton}">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="Check" />
-                                <TextBlock VerticalAlignment="Center" Text="Pass" />
+                                <TextBlock VerticalAlignment="Center" Text="Pass"
+                                           Style="{DynamicResource MaterialDesignButtonTextBlock}" />
                             </StackPanel>
                         </Button>
                         <Separator VerticalAlignment="Stretch" />
@@ -164,7 +169,8 @@
                             Style="{DynamicResource MaterialDesignToolButton}">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="Television" />
-                                <TextBlock VerticalAlignment="Center" Text="Replay" />
+                                <TextBlock VerticalAlignment="Center" Text="Replay"
+                                           Style="{DynamicResource MaterialDesignButtonTextBlock}" />
                             </StackPanel>
                         </Button>
 
@@ -246,7 +252,8 @@
                             Style="{DynamicResource MaterialDesignToolButton}">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="DirectionsFork" />
-                                <TextBlock VerticalAlignment="Center" Text="Fork" />
+                                <TextBlock VerticalAlignment="Center" Text="Fork"
+                                           Style="{DynamicResource MaterialDesignButtonTextBlock}" />
                             </StackPanel>
                         </Button>
 
@@ -258,7 +265,8 @@
                             Style="{DynamicResource MaterialDesignToolButton}">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="ArrowRightDropCircle" />
-                                <TextBlock VerticalAlignment="Center" Text="Resume" />
+                                <TextBlock VerticalAlignment="Center" Text="Resume"
+                                           Style="{DynamicResource MaterialDesignButtonTextBlock}" />
                             </StackPanel>
 
                         </Button>
@@ -302,6 +310,7 @@
 
 
         <view:BoardView
+            Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
             DockPanel.Dock="Bottom"
             VerticalAlignment="Stretch"
             DataContext="{Binding BoardViewModel}" />

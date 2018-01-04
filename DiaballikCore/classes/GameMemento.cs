@@ -14,7 +14,7 @@ namespace Diaballik.Core {
     /// 
     ///     They can be converted to the game they represent, 
     ///     and be serialized to and deserialized from XML 
-    ///     using Diaballik.Players.MementoSerializationUtil.
+    ///     using Diaballik.Players.SerializationUtil.
     /// 
     ///     Equality between two GameMementos takes their full
     ///     ancestry into account. In the unlikely case that

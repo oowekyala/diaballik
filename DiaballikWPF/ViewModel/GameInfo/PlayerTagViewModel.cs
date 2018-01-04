@@ -15,6 +15,16 @@ namespace DiaballikWPF.ViewModel {
             Player = player;
         }
 
+        public PlayerTagViewModel(Player player, bool isVictorious) : this(player) {
+            IsVictorious = isVictorious;
+        }
+
+        private bool _isVictorious;
+
+        public bool IsVictorious {
+            get => _isVictorious;
+            set => Set(ref _isVictorious, value);
+        }
 
         /// True if the tag represents the current player.
         public bool IsActive => NumMovesLeft > 0;

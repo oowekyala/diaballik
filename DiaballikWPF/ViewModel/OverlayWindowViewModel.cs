@@ -4,9 +4,13 @@ using Diaballik.Core;
 using Diaballik.Mock;
 using DiaballikWPF.View;
 using GalaSoft.MvvmLight;
-using static DiaballikWPF.ViewModel.Messages;
+using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
+    /// <summary>
+    ///     Project intended to replace the dockwindow with something prettier.
+    ///     WIP with low priority.
+    /// </summary>
     public class OverlayWindowViewModel : ViewModelBase {
         private readonly ScreenOverlayWindow _view;
 
@@ -37,9 +41,9 @@ namespace DiaballikWPF.ViewModel {
             ShowNewGameMessage.Register(MessengerInstance, this,
                                         () => BeginWindowStoryBoard(GameCreationSlideInStoryBoard));
 
-            ShowGameScreenMessage.Register(MessengerInstance, this, payload => {
+            OpenNewGame.Register(MessengerInstance, this, payload => {
                 var (game, mode) = payload;
-                GameScreenViewModel.Load(game);
+//                GameScreenViewModel.Load(game); FIXME
                 GameScreenViewModel.ActiveMode = mode;
 
                 BeginWindowStoryBoard(GameCreationSlideOutStoryBoard);

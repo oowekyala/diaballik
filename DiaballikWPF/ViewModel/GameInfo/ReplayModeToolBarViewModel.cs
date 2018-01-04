@@ -1,22 +1,25 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Diaballik.Core;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using static DiaballikWPF.ViewModel.GameScreenViewModel;
-using static DiaballikWPF.ViewModel.Messages;
+using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
     public class ReplayModeToolBarViewModel : AbstractGameScreenToolBar {
-        private Game _game;
+        private Game _replayGame;
 
-        public Game Game {
-            get => _game;
+        public Game ReplayGame {
+            get => _replayGame;
             set {
-                Set(ref _game, value);
+                Set(ref _replayGame, value);
                 NotifyGameUpdate();
             }
         }
+
+        public Game PrimaryGame { get; set; }
 
         private bool _canResume;
 
@@ -50,7 +53,7 @@ namespace DiaballikWPF.ViewModel {
         public RelayCommand UndoCommand =>
             _undoCommand ?? (_undoCommand = new RelayCommand(UndoCommandExecute, UndoCommandCanExecute));
 
-        private bool UndoCommandCanExecute() => Game.CanUndo;
+        private bool UndoCommandCanExecute() => ReplayGame.CanUndo;
 
 
         private void UndoCommandExecute() {
@@ -66,7 +69,7 @@ namespace DiaballikWPF.ViewModel {
         public RelayCommand RedoCommand =>
             _redoCommand ?? (_redoCommand = new RelayCommand(RedoCommandExecute, RedoCommandCanExecute));
 
-        private bool RedoCommandCanExecute() => Game.CanRedo;
+        private bool RedoCommandCanExecute() => ReplayGame.CanRedo;
 
 
         private void RedoCommandExecute() {
@@ -83,7 +86,7 @@ namespace DiaballikWPF.ViewModel {
             _redoTillLastCommand ?? (_redoTillLastCommand =
                 new RelayCommand(RedoTillLastCommandExecute, RedoTillLastCommandCanExecute));
 
-        private bool RedoTillLastCommandCanExecute() => Game.CanRedo;
+        private bool RedoTillLastCommandCanExecute() => ReplayGame.CanRedo;
 
 
         private void RedoTillLastCommandExecute() {
@@ -100,7 +103,7 @@ namespace DiaballikWPF.ViewModel {
             _undoTillRootCommand ?? (_undoTillRootCommand =
                 new RelayCommand(UndoTillRootCommandExecute, UndoTillRootCommandCanExecute));
 
-        private bool UndoTillRootCommandCanExecute() => Game.CanUndo;
+        private bool UndoTillRootCommandCanExecute() => ReplayGame.CanUndo;
 
 
         private void UndoTillRootCommandExecute() {
@@ -134,11 +137,15 @@ namespace DiaballikWPF.ViewModel {
             _forkGame ?? (_forkGame =
                 new RelayCommand(ForkGameCommandExecute, ForkGameCommandCanExecute));
 
-        private bool ForkGameCommandCanExecute() => Game.CanRedo; // not the last state, it's already the primary game
+        private bool ForkGameCommandCanExecute() =>
+            ReplayGame.CanRedo; // not the last state, it's already the primary game
 
 
         private void ForkGameCommandExecute() {
-            ForkGameMessage.Send(MessengerInstance);
+            const string message = "Forking will create a new game. Would you like to save the current game ?";
+
+            void ForkAction() => ForkGameMessage.Send(MessengerInstance);
+            ShowSavePopupMessage.Send(MessengerInstance, (message, ForkAction, true));
         }
 
         #endregion

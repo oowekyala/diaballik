@@ -51,6 +51,30 @@ namespace Diaballik.Core {
         /// </summary>
         public (Position2D, Position2D) BallCarrierPair => (BallCarrier1, BallCarrier2);
 
+
+        // do *not* change that to a nullable value tuple, it causes reference errors with the cpp lib
+        private (FullPlayerBoardSpec, FullPlayerBoardSpec) _specs;
+        private bool _specsEmpty = true;
+
+        /// <summary>
+        ///     An ordered pair of player board specs, to describe concisely the full state of this boardlike.
+        /// </summary>
+        public (FullPlayerBoardSpec, FullPlayerBoardSpec) SpecPair {
+            get {
+                if (_specsEmpty) {
+                    _specs = PositionsPair.Map(Enumerable.ToList)
+                                          .Zip(BallCarrierPair,
+                                               (ps, bc) => new PlayerBoardSpec(ps, ps.IndexOf(bc)))
+                                          .Zip((Player1, Player2),
+                                               (spec, p) => new FullPlayerBoardSpec(p, spec));
+                    _specsEmpty = false;
+                }
+
+                return _specs;
+            }
+        }
+
+
         private bool? _isVictory = null;
 
         /// True if one player is victorious.

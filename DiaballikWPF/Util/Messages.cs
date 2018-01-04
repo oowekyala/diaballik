@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Diaballik.Core;
-using DiaballikWPF.Util;
+using DiaballikWPF.ViewModel;
 using GalaSoft.MvvmLight.Messaging;
 
-namespace DiaballikWPF.ViewModel {
+namespace DiaballikWPF.Util {
     using GameId = String;
-    using DecoratedMemento = ValueTuple<GameMetadataBundle, GameMemento>;
+
 
     /// <summary>
     ///     Enumerates messages available for messenger communication.
@@ -16,23 +16,34 @@ namespace DiaballikWPF.ViewModel {
     public static class Messages {
         public static Message ShowMainMenuMessage = new Message("showMainMenu");
         public static Message ShowLoadMenuMessage = new Message("showLoadMenu");
-        public static Message<(Game, ViewMode)> ShowGameScreenMessage = new Message<(Game, ViewMode)>("showGameScreen");
+        public static Message<(Game, ViewMode)> OpenNewGame = new Message<(Game, ViewMode)>("showGameScreen");
         public static Message ShowNewGameMessage = new Message("showNewGame");
+        public static Message AppShutdownMessage = new Message("appShutdown");
 
-        // victory popup
+        // popups
 
         public static Message<Player> ShowVictoryPopupMessage = new Message<Player>("showVictoryPopup");
         public static Message CloseVictoryPopupMessage = new Message("closeVictoryPopup");
 
-        // loading
+        public static Message<(string, Action, bool)> ShowSavePopupMessage =
+            new Message<(string, Action, bool)>("showSavePopup");
 
-        public static Message<(DecoratedMemento, ViewMode)> LoadGameFromSaveMessage =
-            new Message<(DecoratedMemento, ViewMode)>("loadGameFromSave");
+        public static Message CloseSavePopupMessage = new Message("closeSavePopup");
 
-        public static Message<SaveItemViewModel> DeleteSaveMessage = new Message<SaveItemViewModel>("deleteSave");
+        // load / save
 
-        public static Message<DecoratedMemento> SaveGameMessage =
-            new Message<(GameMetadataBundle, GameMemento)>("saveGame");
+        /// request the game screen to send its primary game to the save manager for saving
+        public static Message RequestSaveToGameScreenMessage = new Message("saveRequest");
+
+        public static Message<((GameId, GameMemento), ViewMode)> OpenGameMessage =
+            new Message<((GameId, GameMemento), ViewMode)>("loadGameFromSave");
+
+        public static Message<GameId> DeleteSaveInManagerMessage = new Message<GameId>("deleteSaveForReal");
+
+        // sent by a list item to the listview vm, followed by a DeleteSaveInManagerMessage
+        public static Message<SaveItemViewModel> DeleteSaveInViewMessage = new Message<SaveItemViewModel>("deleteSave");
+
+        public static Message<(GameId, GameMemento)> SaveGameMessage = new Message<(GameId, GameMemento)>("saveGame");
 
         // board and game actions
 
@@ -48,7 +59,6 @@ namespace DiaballikWPF.ViewModel {
         public static Message<ViewMode> SwitchGameViewMode = new Message<ViewMode>("switchViewMode");
     }
 
-
     /// <summary>
     ///     Encapsulates a message that can be sent or registered to on an IMessenger.
     ///     Greatly reduces the amount of boilerplate needed to register handlers.
@@ -62,8 +72,8 @@ namespace DiaballikWPF.ViewModel {
             Token = token;
         }
 
-        private readonly ConditionalWeakTable<object, Action<NotificationMessage<T>>> _subscribers
-            = new ConditionalWeakTable<object, Action<NotificationMessage<T>>>();
+        private readonly ConditionalWeakTable<object, List<Action<NotificationMessage<T>>>> _subscribers =
+            new ConditionalWeakTable<object, List<Action<NotificationMessage<T>>>>();
 
 
         public void Send(IMessenger messenger, T param) {
@@ -85,11 +95,15 @@ namespace DiaballikWPF.ViewModel {
             // otherwise it's garbage collected
             // see https://stackoverflow.com/questions/25730530/bug-in-weakaction-in-case-of-closure-action
             Action<NotificationMessage<T>> notifAction = message => {
-                Debug.WriteLine(message.Notification);
+                Debug.WriteLine($"{message.Notification} ({message.Content})");
                 action(message.Content);
             };
-
-            _subscribers.Add(recipient, notifAction);
+            var ok = _subscribers.TryGetValue(recipient, out var actions);
+            if (ok) {
+                actions.Add(notifAction);
+            } else {
+                _subscribers.Add(recipient, new List<Action<NotificationMessage<T>>> {notifAction});
+            }
 
             messenger.Register(recipient: recipient,
                                token: Token,
@@ -104,8 +118,8 @@ namespace DiaballikWPF.ViewModel {
             Token = token;
         }
 
-        private readonly ConditionalWeakTable<object, Action<NotificationMessage>> _subscribers =
-            new ConditionalWeakTable<object, Action<NotificationMessage>>();
+        private readonly ConditionalWeakTable<object, List<Action<NotificationMessage>>> _subscribers =
+            new ConditionalWeakTable<object, List<Action<NotificationMessage>>>();
 
         public void Send(IMessenger messenger) {
             Send(messenger, Token);
@@ -126,7 +140,13 @@ namespace DiaballikWPF.ViewModel {
                 action();
             };
 
-            _subscribers.Add(recipient, notifAction);
+            var ok = _subscribers.TryGetValue(recipient, out var actions);
+            if (ok) {
+                actions.Add(notifAction);
+            } else {
+                _subscribers.Add(recipient, new List<Action<NotificationMessage>> {notifAction});
+            }
+
 
             messenger.Register(recipient: recipient,
                                token: Token,

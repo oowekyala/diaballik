@@ -1,78 +1,77 @@
-﻿<UserControl x:Class="DiaballikWPF.View.VictoryPopup"
+﻿<UserControl x:Class="DiaballikWPF.View.SaveItem"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
+             xmlns:local="clr-namespace:DiaballikWPF.View"
+             xmlns:view="clr-namespace:DiaballikWPF.View"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
              mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance viewModel:SaveItemViewModel}">
 
-             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             TextElement.FontWeight="Medium"
-             TextElement.FontSize="14"
-             FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
-             Background="{DynamicResource MaterialDesignPaper}"
+    <!-- Represents one item in the load game screen listview -->
 
-
-             d:DesignHeight="70" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance viewModel:VictoryPopupViewModel }">
     <UserControl.Resources>
-
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary
                     Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
                 <ResourceDictionary
                     Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml" />
-                <ResourceDictionary 
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Menu.xaml" />
+                <ResourceDictionary
                     Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
-        <TextBlock HorizontalAlignment="Center"
-                   VerticalAlignment="Top"
-                   Margin="10"
-                   Style="{DynamicResource MaterialDesignTitleTextBlock}"
-                   Text="{Binding VictoriousPlayer.Name, StringFormat='Player {0} is victorious!'}" />
 
-        <ToolBar VerticalAlignment="Bottom" HorizontalAlignment="Center"
-                 ToolBarTray.IsLocked="True"
-                 Background="Transparent"
-                 Style="{DynamicResource MaterialDesignToolBar}">
+    <Grid Background="Transparent">
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+
+        <StackPanel Grid.Column="0" Orientation="Horizontal">
+            <view:PlayerTag DataContext="{Binding Player1Tag}" />
+            <TextBlock Margin="10" VerticalAlignment="Center" Text="vs" />
+            <view:PlayerTag DataContext="{Binding Player2Tag}" />
+            <!--                            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />-->
+        </StackPanel>
+
+        <ToolBar Grid.Column="1" ToolBarTray.IsLocked="True" Background="Transparent">
+            <Button
+                HorizontalAlignment="Right"
+                ToolBar.OverflowMode="Never"
+                ToolTip="Delete this save"
+                Command="{Binding DeleteSaveCommand}"
+                Style="{DynamicResource MaterialDesignToolButton}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Delete" />
+                </StackPanel>
+            </Button>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
             <Button
                 ToolBar.OverflowMode="Never"
-                ToolTip="Replay the game"
+                ToolTip="Enter replay mode"
                 Command="{Binding ReplayModeCommand}"
                 Style="{DynamicResource MaterialDesignToolButton}">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Television" />
-                    <TextBlock VerticalAlignment="Center" Text="Replay" />
                 </StackPanel>
             </Button>
 
 
             <Button
                 ToolBar.OverflowMode="Never"
-                ToolTip="Save your game"
-                Command="{Binding ReplayModeCommand}"
+                ToolTip="Resume where you left off"
+                Command="{Binding ResumeCommand}"
                 Style="{DynamicResource MaterialDesignToolButton}">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="ContentSave" />
-                    <TextBlock VerticalAlignment="Center" Text="Save" />
-                </StackPanel>
-            </Button>
-
-
-            <Button
-                ToolBar.OverflowMode="Never"
-                ToolTip="Back to the main menu"
-                Command="{Binding BackToMainMenuCommand}"
-                Style="{DynamicResource MaterialDesignToolButton}">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="ExitToApp" />
-                    <TextBlock VerticalAlignment="Center" Text="Main menu" />
+                    <materialDesign:PackIcon Kind="ArrowRightDropCircle" />
                 </StackPanel>
             </Button>
         </ToolBar>
