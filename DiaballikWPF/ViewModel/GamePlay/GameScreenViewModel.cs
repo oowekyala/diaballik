@@ -70,10 +70,7 @@ namespace DiaballikWPF.ViewModel {
 
         private void InitMessageHandlers() {
             // Receive any move and update the primary game's state.
-            CommitMoveMessage.Register(MessengerInstance, this, action => {
-                UpdateGame(action, PrimaryGame);
-                BoardViewModel.SelectedTile = null;
-            });
+            CommitMoveMessage.Register(MessengerInstance, this, action => UpdateGame(action, PrimaryGame));
 
 
             // These message handlers stay irrespective of the ActiveMode
@@ -250,6 +247,13 @@ namespace DiaballikWPF.ViewModel {
                     if (actor == currentPlayer) {
                         BoardViewModel.TileAt(movePiece.Dst).IsSelectable = true;
                     }
+                }
+
+                if (action is MoveAction moveAction && actor.IsHuman && actor == currentPlayer) {
+                    // select the destination to chain moves more easily
+                    BoardViewModel.SelectedTile = BoardViewModel.TileAt(moveAction.Dst);
+                } else {
+                    BoardViewModel.SelectedTile = null;
                 }
 
                 if (state.IsVictory) {

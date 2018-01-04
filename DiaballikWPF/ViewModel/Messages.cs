@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Diaballik.Core;
 using DiaballikWPF.Util;
 using GalaSoft.MvvmLight.Messaging;
@@ -10,7 +11,7 @@ namespace DiaballikWPF.ViewModel {
     using DecoratedMemento = ValueTuple<GameMetadataBundle, GameMemento>;
 
     /// <summary>
-    ///     Tokens for messenger communication.
+    ///     Enumerates messages available for messenger communication.
     /// </summary>
     public static class Messages {
         public static Message ShowMainMenuMessage = new Message("showMainMenu");
@@ -47,6 +48,7 @@ namespace DiaballikWPF.ViewModel {
         public static Message<ViewMode> SwitchGameViewMode = new Message<ViewMode>("switchViewMode");
     }
 
+
     /// <summary>
     ///     Encapsulates a message that can be sent or registered to on an IMessenger.
     ///     Greatly reduces the amount of boilerplate needed to register handlers.
@@ -60,17 +62,22 @@ namespace DiaballikWPF.ViewModel {
             Token = token;
         }
 
-        private readonly Dictionary<object, Action<NotificationMessage<T>>> subscribers
-            = new Dictionary<object, Action<NotificationMessage<T>>>();
+        private readonly ConditionalWeakTable<object, Action<NotificationMessage<T>>> _subscribers
+            = new ConditionalWeakTable<object, Action<NotificationMessage<T>>>();
 
 
         public void Send(IMessenger messenger, T param) {
-            messenger.Send(message: new NotificationMessage<T>(content: param, notification: Token),
+            Send(messenger, param, Token);
+        }
+
+        public void Send(IMessenger messenger, T param, string message) {
+            messenger.Send(message: new NotificationMessage<T>(content: param, notification: message),
                            token: Token);
         }
 
         public void Unregister(IMessenger messenger, object recipient) {
             messenger.Unregister<NotificationMessage<T>>(recipient: recipient, token: Token);
+            _subscribers.Remove(recipient);
         }
 
         public void Register(IMessenger messenger, object recipient, Action<T> action) {
@@ -82,7 +89,7 @@ namespace DiaballikWPF.ViewModel {
                 action(message.Content);
             };
 
-            subscribers.Add(recipient, notifAction);
+            _subscribers.Add(recipient, notifAction);
 
             messenger.Register(recipient: recipient,
                                token: Token,
@@ -97,12 +104,15 @@ namespace DiaballikWPF.ViewModel {
             Token = token;
         }
 
-        private readonly Dictionary<object, Action<NotificationMessage>> subscribers =
-            new Dictionary<object, Action<NotificationMessage>>();
-
+        private readonly ConditionalWeakTable<object, Action<NotificationMessage>> _subscribers =
+            new ConditionalWeakTable<object, Action<NotificationMessage>>();
 
         public void Send(IMessenger messenger) {
-            messenger.Send(message: new NotificationMessage(Token), token: Token);
+            Send(messenger, Token);
+        }
+
+        public void Send(IMessenger messenger, string message) {
+            messenger.Send(message: new NotificationMessage(Token), token: message);
         }
 
         public void Unregister(IMessenger messenger, object recipient) {
@@ -116,7 +126,7 @@ namespace DiaballikWPF.ViewModel {
                 action();
             };
 
-            subscribers.Add(recipient, notifAction);
+            _subscribers.Add(recipient, notifAction);
 
             messenger.Register(recipient: recipient,
                                token: Token,
