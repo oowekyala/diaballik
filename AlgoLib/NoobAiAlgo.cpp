@@ -6,62 +6,64 @@ using namespace Diaballik::Core::Util;
 
 
 
-namespace Diaballik::AlgoLib {
-	
-	// I couldn't write a generic method for some reason
+namespace Diaballik {
+	namespace AlgoLib {
 
-	IEnumerable<Position2D>^ Shuffle(IEnumerable<Position2D>^ l)
-	{
-		return ExtensionUtil::Shuffle(Enumerable::ToList(l));
-	}
+		// I couldn't write a generic method for some reason
 
-
-	IEnumerable<MoveAction^>^ Shuffle(IEnumerable<MoveAction^>^ l)
-	{
-		return ExtensionUtil::Shuffle(Enumerable::ToList(l));
-	}
-
-	IUpdateAction^ NoobAiAlgo::TryGetAMovePiece(GameState^ state, IEnumerable<Position2D>^ ps, Position2D ballCarrier) 
-	{
-		auto shuffledPs = Shuffle(ps);
-		for each(auto p in shuffledPs) 
+		IEnumerable<Position2D>^ Shuffle(IEnumerable<Position2D>^ l)
 		{
-			if (p == ballCarrier) continue;
-
-			auto movePieces = Shuffle(BoardAnalysis::AvailableMoves(state, p));
-			if (Enumerable::Any(movePieces)) return Enumerable::First(movePieces);
+			return ExtensionUtil::Shuffle(Enumerable::ToList(l));
 		}
-		// We make the assumption that this line is never reached,
-		// which is confirmed by coverage analysis.
-		return gcnew PassAction();
-	}
 
 
-	IUpdateAction^ NoobAiAlgo::TryGetAMoveBall(GameState^ state, IEnumerable<Position2D>^ ps, Position2D ballCarrier) 
-	{
-		auto moveBalls = Shuffle(BoardAnalysis::AvailableMoves(state, ballCarrier));
-		return Enumerable::Any(moveBalls) ? Enumerable::First(moveBalls) : TryGetAMovePiece(state, ps, ballCarrier);
-	}
-
-
-	IUpdateAction^ NoobAiAlgo::NextMove(GameState^ state, Player^ player)
-	{
-		auto ps = state->PositionsForPlayer(player);
-		auto ballCarrier = state->BallCarrierForPlayer(player);
-
-		const int movePieceProportion = 50; 
-		const int moveBallProportion = 50;
-		auto random = NoobAiAlgo::Rng->Next(100);
-
-		if (random < movePieceProportion) 
+		IEnumerable<MoveAction^>^ Shuffle(IEnumerable<MoveAction^>^ l)
 		{
-			return TryGetAMovePiece(state, ps, ballCarrier);
+			return ExtensionUtil::Shuffle(Enumerable::ToList(l));
 		}
-		if (random < movePieceProportion + moveBallProportion) 
+
+		IUpdateAction^ NoobAiAlgo::TryGetAMovePiece(GameState^ state, IEnumerable<Position2D>^ ps, Position2D ballCarrier)
 		{
-			return TryGetAMoveBall(state, ps, ballCarrier);
+			auto shuffledPs = Shuffle(ps);
+			for each(auto p in shuffledPs)
+			{
+				if (p == ballCarrier) continue;
+
+				auto movePieces = Shuffle(BoardAnalysis::AvailableMoves(state, p));
+				if (Enumerable::Any(movePieces)) return Enumerable::First(movePieces);
+			}
+			// We make the assumption that this line is never reached,
+			// which is confirmed by coverage analysis.
+			return gcnew PassAction();
 		}
-		auto pass = gcnew PassAction();
-		return pass->IsValidOn(state) ? pass : TryGetAMovePiece(state, ps, ballCarrier);
+
+
+		IUpdateAction^ NoobAiAlgo::TryGetAMoveBall(GameState^ state, IEnumerable<Position2D>^ ps, Position2D ballCarrier)
+		{
+			auto moveBalls = Shuffle(BoardAnalysis::AvailableMoves(state, ballCarrier));
+			return Enumerable::Any(moveBalls) ? Enumerable::First(moveBalls) : TryGetAMovePiece(state, ps, ballCarrier);
+		}
+
+
+		IUpdateAction^ NoobAiAlgo::NextMove(GameState^ state, Player^ player)
+		{
+			auto ps = state->PositionsForPlayer(player);
+			auto ballCarrier = state->BallCarrierForPlayer(player);
+
+			const int movePieceProportion = 50;
+			const int moveBallProportion = 50;
+			auto random = NoobAiAlgo::Rng->Next(100);
+
+			if (random < movePieceProportion)
+			{
+				return TryGetAMovePiece(state, ps, ballCarrier);
+			}
+			if (random < movePieceProportion + moveBallProportion)
+			{
+				return TryGetAMoveBall(state, ps, ballCarrier);
+			}
+			auto pass = gcnew PassAction();
+			return pass->IsValidOn(state) ? pass : TryGetAMovePiece(state, ps, ballCarrier);
+		}
 	}
 }
