@@ -26,8 +26,8 @@ namespace Diaballik {
 			int temp = board->BoardSize;
 			for each (auto pos in board->PositionsForPlayer(player))
 			{
-				if (abs(pos.X - playerBase) < abs(piece.X - playerBase) && abs(pos.Y - piece.Y) < temp) {
-					temp = abs(pos.Y - piece.Y);
+				if (Math::Abs(pos.X - playerBase) < Math::Abs(piece.X - playerBase) && Math::Abs(pos.Y - piece.Y) < temp) {
+					temp = Math::Abs(pos.Y - piece.Y);
 					nearest = pos;
 				}
 			}

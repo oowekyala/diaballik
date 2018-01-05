@@ -116,7 +116,7 @@ namespace Diaballik {
 			List<Position2D>^ threats = gcnew List<Position2D>;
 			for each(auto pos in Board->PositionsForPlayer(Board->GetOtherPlayer(player)))
 			{
-				if (abs(pos.X - Board->GetRowIndexOfInitialLine(player)) <= 2) threats->Add(pos);
+				if (Math::Abs(pos.X - Board->GetRowIndexOfInitialLine(player)) <= 2) threats->Add(pos);
 			}
 
 			return threats;

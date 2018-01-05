@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "stdafx.h"
-#include <vector>
 
 using namespace System::Collections::Generic;
 using namespace System;
