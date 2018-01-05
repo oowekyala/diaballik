@@ -65,7 +65,6 @@
     <Compile Include="classes\PlayerBuilderTest.cs" />
     <Compile Include="classes\GameBoardTests.cs" />
     <Compile Include="classes\GameStateTests.cs" />
-    <Compile Include="classes\MockUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +78,10 @@
     <ProjectReference Include="..\DiaballikCore\DiaballikCore.csproj">
       <Project>{fcdb9834-c071-40b0-84b8-2bc325abfd35}</Project>
       <Name>DiaballikCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiaballikMockLib\DiaballikMockLib.csproj">
+      <Project>{ec3b4719-8636-45e1-af93-4f8e989adf69}</Project>
+      <Name>DiaballikMockLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

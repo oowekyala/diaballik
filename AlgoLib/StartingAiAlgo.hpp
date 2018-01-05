@@ -4,24 +4,25 @@
 #include "NoobAiAlgo.hpp"
 #include "BoardAnalysis.hpp"
 
-namespace Diaballik::AlgoLib {
-	
-	public ref class StartingAiAlgo : public AiDecisionAlgo
-	{
-	private:
-		NoobAiAlgo^ _noob = gcnew NoobAiAlgo();
+namespace Diaballik{
+	namespace AlgoLib {
 
-		//Looks for the most dangerous adversary piece (i.e. the nearest for the player's starting line) among the dangerous pieces of the adversary
-		Position2D MostDangerousPiece(GameState^ board, Player^ player);
+		public ref class StartingAiAlgo : public AiDecisionAlgo
+		{
+		private:
+			NoobAiAlgo ^ _noob = gcnew NoobAiAlgo();
 
-		//Returns the nearest piece from an adversary piece
-		Position2D NearestPieceFrom(GameState^ board, Player^ player, Position2D pos);
+			//Looks for the most dangerous adversary piece (i.e. the nearest for the player's starting line) among the dangerous pieces of the adversary
+			Position2D MostDangerousPiece(GameState^ board, Player^ player);
 
-		//Returns a position to move from the src piece to the dest tile
-		Position2D moveTo(GameState ^ board, Position2D src, Position2D dest);
+			//Returns the nearest piece from an adversary piece
+			Position2D NearestPieceFrom(GameState^ board, Player^ player, Position2D pos);
 
-	public:
-		IUpdateAction^ NextMove(GameState^ board, Player^ player) override;
-	};
+			//Returns a position to move from the src piece to the dest tile
+			Position2D moveTo(GameState ^ board, Position2D src, Position2D dest);
 
+		public:
+			IUpdateAction ^ NextMove(GameState^ board, Player^ player) override;
+		};
+	}
 }

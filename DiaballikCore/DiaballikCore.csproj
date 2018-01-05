@@ -52,7 +52,7 @@
     <Compile Include="classes\GameBoard.cs" />
     <Compile Include="classes\GameMemento.cs" />
     <Compile Include="classes\builders\InitStrategy.cs" />
-    <Compile Include="classes\util\MementoSerializationUtil.cs" />
+    <Compile Include="classes\util\SerializationUtil.cs" />
     <Compile Include="classes\Player.cs" />
     <Compile Include="classes\IUpdateAction.cs" />
     <Compile Include="classes\PlayerBoardSpec.cs" />

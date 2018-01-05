@@ -52,6 +52,8 @@ namespace Diaballik.Core {
         /// Cleared whenever another action is taken.
         private readonly Stack<GameMemento> _breadCrumbs = new Stack<GameMemento>();
 
+        private readonly object _syncLock = new object();
+
         #endregion
 
         #region Constructors
@@ -126,11 +128,13 @@ namespace Diaballik.Core {
         ///     If the move is invalid. The action's validity should be verified upstream.
         /// </exception>
         public void Update(IUpdateAction action) {
-            if (action.IsValidOn(State)) {
-                Memento = Memento.Update(action);
-                _breadCrumbs.Clear();
-            } else {
-                throw new ArgumentException("Invalid move: " + action);
+            lock (_syncLock) {
+                if (action.IsValidOn(State)) {
+                    Memento = Memento.Update(action);
+                    _breadCrumbs.Clear();
+                } else {
+                    throw new ArgumentException("Invalid move: " + action);
+                }
             }
         }
 
@@ -140,11 +144,13 @@ namespace Diaballik.Core {
         ///     <see cref="Update"/> calls in between.
         /// </summary>
         public void Undo() {
-            if (CanUndo) {
-                _breadCrumbs.Push(Memento);
-                Memento = Memento.Parent;
-            } else {
-                throw new ArgumentException("Nothing to undo");
+            lock (_syncLock) {
+                if (CanUndo) {
+                    _breadCrumbs.Push(Memento);
+                    Memento = Memento.Parent;
+                } else {
+                    throw new ArgumentException("Nothing to undo");
+                }
             }
         }
 
@@ -152,10 +158,12 @@ namespace Diaballik.Core {
         ///     Redoes the last undone action.
         /// </summary>
         public void Redo() {
-            if (CanRedo) {
-                Memento = _breadCrumbs.Pop();
-            } else {
-                throw new ArgumentException("Nothing to redo");
+            lock (_syncLock) {
+                if (CanRedo) {
+                    Memento = _breadCrumbs.Pop();
+                } else {
+                    throw new ArgumentException("Nothing to redo");
+                }
             }
         }
 

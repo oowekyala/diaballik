@@ -11,7 +11,7 @@ namespace DiaballikWPF.ViewModel {
         #region Constructors
 
         public PlayerBuilderViewModel(PlayerBuilder builder, Color baseColor,
-            OnValidationChangedDelegate onValidationChanged) {
+                                      OnValidationChangedDelegate onValidationChanged) {
             Builder = builder;
             Color = baseColor;
             OnValidationChanged += onValidationChanged;

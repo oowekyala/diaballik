@@ -9,17 +9,14 @@ namespace Diaballik.Core.Util {
 
         public static List<T> ToList<T>(this (T, T) tuple) => new List<T> {tuple.Item1, tuple.Item2};
 
+        public static IEnumerable<T> ToLinq<T>(this (T, T) tuple) {
+            yield return tuple.Item1;
+            yield return tuple.Item2;
+        }
+
         public static (A, A) ToTuple<A>(this List<A> l) => (l[0], l[1]);
 
-        public static (A, A) ToTuple<A>(this IEnumerable<A> l) {
-            var it = l.GetEnumerator();
-            it.MoveNext();
-            var a0 = it.Current;
-            it.MoveNext();
-            var a1 = it.Current;
-            it.Dispose();
-            return (a0, a1);
-        }
+        public static (A, A) ToTuple<A>(this IEnumerable<A> l) => l.Take(2).ToList().ToTuple();
 
         public static (B, B) Map<A, B>(this (A, A) tuple, Func<A, B> f) => (f(tuple.Item1), f(tuple.Item2));
 
@@ -34,7 +31,7 @@ namespace Diaballik.Core.Util {
         public static (A, A) Pair<A>(A a) => (a, a);
 
 
-        public static (A, A) Foreach<A>(this(A, A) tuple, Action<A> f) {
+        public static (A, A) ForEach<A>(this(A, A) tuple, Action<A> f) {
             f(tuple.Item1);
             f(tuple.Item2);
             return tuple;
@@ -73,6 +70,12 @@ namespace Diaballik.Core.Util {
             return l.OrderBy(t => t.Item2).Select(t => t.Item1);
         }
 
+
+        public static (A, A) SortAndUnzip<A>(this ((A, int), (A, int)) t) {
+            return t.Item1.Item2 < t.Item2.Item2
+                ? (t.Item1.Item1, t.Item2.Item1)
+                : (t.Item2.Item1, t.Item1.Item1);
+        }
 
         private static readonly Random Rng = new Random();
 

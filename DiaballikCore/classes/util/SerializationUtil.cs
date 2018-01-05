@@ -13,10 +13,16 @@ namespace Diaballik.Core.Util {
     ///    Serialization and deserialization utility for game memento.
     ///    Reader and writer are kept together for encapsulation and better maintainability.
     /// </summary>
-    public static class MementoSerializationUtil {
+    public static class SerializationUtil {
         #region XML name constants
 
-        private const string DocElement = "game";
+        // public
+
+        public const string MementoElementName = "game";
+        public const string StateElementName = "initial-state";
+
+        // private
+
         private const string MoveHistoryElement = "history";
         private const string MoveElement = "action";
         private const string MoveParamsElement = "params";
@@ -60,44 +66,23 @@ namespace Diaballik.Core.Util {
         public class Serializer {
             #region Public interface
 
-            public XDocument ToXml(GameMemento memento) {
+            public static XElement MementoToElement(GameMemento memento) {
                 var (mementoRoot, nodes) = memento.Deconstruct();
 
-                return new XDocument(new XElement(DocElement,
-                                                  RootToElement(mementoRoot),
-                                                  new XElement(MoveHistoryElement,
-                                                               nodes.ZipWithIndex(NodeToElement))));
+                return new XElement(MementoElementName,
+                                    RootToElement(mementoRoot),
+                                    new XElement(MoveHistoryElement,
+                                                 nodes.ZipWithIndex(NodeToElement)));
+            }
+
+            public static XElement StateToElement(GameState state) {
+                var memento = new RootMemento(state.SpecPair, state.BoardSize, state.CurrentPlayer == state.Player1);
+                return RootToElement(memento);
             }
 
             #endregion
 
             #region Private conversion methods
-
-            private static XElement PlayerSpecToElement(FullPlayerBoardSpec spec, int id) {
-                return new XElement(PlayerBoardSpecElement,
-                                    PlayerToElement(spec.Player, id),
-                                    new XAttribute("idx", id),
-                                    new XElement(BoardSpecElement,
-                                                 new XAttribute("ballIndex", spec.BallIndex),
-                                                 new XElement(SpecPositionsElement,
-                                                              spec.Positions.ZipWithIndex(PositionToElement)
-                                                 )));
-            }
-
-            private static XElement PlayerToElement(Player player, int id) {
-                return new XElement(PlayerElement,
-                                    new XAttribute("color", new ColorConverter().ConvertToString(player.Color)),
-                                    new XAttribute("name", player.Name),
-                                    new XAttribute("type", PlayerTypesToString[player.Type])
-                );
-            }
-
-            private static XElement PositionToElement(Position2D p, int idx) {
-                return new XElement(PositionElement,
-                                    new XAttribute("x", p.X),
-                                    new XAttribute("y", p.Y),
-                                    new XAttribute("idx", idx));
-            }
 
             private static XElement RootToElement(RootMemento memento) {
                 var specs = memento.Specs.Zip((1, 2), PlayerSpecToElement);
@@ -107,6 +92,34 @@ namespace Diaballik.Core.Util {
                                     new XElement(PlayersElement,
                                                  specs.Item1,
                                                  specs.Item2));
+            }
+
+            private static XElement PlayerToElement(Player player) {
+                return new XElement(PlayerElement,
+                                    new XAttribute("color", new ColorConverter().ConvertToString(player.Color)),
+                                    new XAttribute("name", player.Name),
+                                    new XAttribute("type", PlayerTypesToString[player.Type])
+                );
+            }
+
+
+            private static XElement PlayerSpecToElement(FullPlayerBoardSpec spec, int id) {
+                return new XElement(PlayerBoardSpecElement,
+                                    PlayerToElement(spec.Player),
+                                    new XAttribute("idx", id),
+                                    new XElement(BoardSpecElement,
+                                                 new XAttribute("ballIndex", spec.BallIndex),
+                                                 new XElement(SpecPositionsElement,
+                                                              spec.Positions.ZipWithIndex(PositionToElement)
+                                                 )));
+            }
+
+
+            private static XElement PositionToElement(Position2D p, int idx) {
+                return new XElement(PositionElement,
+                                    new XAttribute("x", p.X),
+                                    new XAttribute("y", p.Y),
+                                    new XAttribute("idx", idx));
             }
 
 
@@ -135,18 +148,58 @@ namespace Diaballik.Core.Util {
         public class Deserializer {
             #region Public interface
 
-            public GameMemento FromDocument(XDocument doc) {
-                var root = RootFromElement(doc.Element(DocElement).Element(RootMementoElement));
-                return doc.Element(DocElement)
-                          .Element(MoveHistoryElement)
-                          .Elements(MoveElement)
-                          .OrderBy(elt => int.Parse(elt.Attribute("idx").Value))
-                          .Aggregate((GameMemento) root, NodeFromElement);
+            public static GameMemento MementoFromElement(XElement element) {
+                var root = RootFromElement(element.Element(RootMementoElement));
+                return element.Element(MoveHistoryElement)
+                              .Elements(MoveElement)
+                              .OrderBy(elt => (int) elt.Attribute("idx"))
+                              .Aggregate((GameMemento) root, NodeFromElement);
+            }
+
+            public static GameState StateFromElement(XElement element) {
+                return RootFromElement(element).State;
             }
 
             #endregion
 
             #region Private conversion methods
+
+            private static RootMemento RootFromElement(XElement rootElem) {
+                var isFirstPlayerPlaying = bool.Parse(rootElem.Attribute("firstPlayer").Value);
+                var boardSize = (int) rootElem.Attribute("boardSize");
+                var boardSpecs = rootElem.Element(PlayersElement)
+                                         .Elements(PlayerBoardSpecElement)
+                                         .Select(PlayerSpecFromElement)
+                                         .SortAndUnzip().ToTuple();
+                return new RootMemento(boardSpecs, boardSize, isFirstPlayerPlaying);
+            }
+
+            private static Player PlayerFromElement(XElement element) {
+                var name = element.Attribute("name").Value;
+                var color =
+                    (Color) (new ColorConverter() as TypeConverter).ConvertFromString(element.Attribute("color").Value);
+                var type = element.Attribute("type").Value;
+
+                var playerType = PlayerTypesToString.First(x => x.Value == type).Key;
+
+                return new PlayerBuilder().SetColor(color).SetName(name).SetPlayerType(playerType).Build();
+            }
+
+            /// Parses a FullPlayerBoardSpec and its index.
+            private static (FullPlayerBoardSpec, int) PlayerSpecFromElement(XElement element) {
+                var player = PlayerFromElement(element.Element(PlayerElement));
+
+                var ballIndex = (int) element.Element(BoardSpecElement).Attribute("ballIndex");
+                var positions = element.Element(BoardSpecElement)
+                                       .Element(SpecPositionsElement)
+                                       .Elements(PositionElement)
+                                       .Select(PositionFromElement)
+                                       .SortAndUnzip();
+                var idx = (int) element.Attribute("idx");
+
+                return (new FullPlayerBoardSpec(player, positions, ballIndex), idx);
+            }
+
 
             private static MementoNode NodeFromElement(GameMemento previous, XElement element) {
                 var type = element.Attribute("type").Value;
@@ -178,45 +231,11 @@ namespace Diaballik.Core.Util {
                                .ToTuple();
             }
 
-            private static RootMemento RootFromElement(XElement rootElem) {
-                var isFirstPlayerPlaying = bool.Parse(rootElem.Attribute("firstPlayer").Value);
-                var boardSize = int.Parse(rootElem.Attribute("boardSize").Value);
-                var boardSpecs = rootElem.Element(PlayersElement)
-                                         .Elements(PlayerBoardSpecElement)
-                                         .Select(PlayerSpecFromElement)
-                                         .SortAndUnzip().ToTuple();
-                return new RootMemento(boardSpecs, boardSize, isFirstPlayerPlaying);
-            }
-
-            private static (FullPlayerBoardSpec, int) PlayerSpecFromElement(XElement element) {
-                var player = PlayerFromElement(element.Element(PlayerElement));
-
-                var ballIndex = int.Parse(element.Element(BoardSpecElement).Attribute("ballIndex").Value);
-                var positions = element.Element(BoardSpecElement)
-                                       .Element(SpecPositionsElement)
-                                       .Elements(PositionElement)
-                                       .Select(PositionFromElement)
-                                       .SortAndUnzip();
-                var idx = int.Parse(element.Attribute("idx").Value);
-
-                return (new FullPlayerBoardSpec(player, positions, ballIndex), idx);
-            }
-
-            private static Player PlayerFromElement(XElement element) {
-                var name = element.Attribute("name").Value;
-                var color =
-                    (Color) (new ColorConverter() as TypeConverter).ConvertFromString(element.Attribute("color").Value);
-                var type = element.Attribute("type").Value;
-
-                var playerType = PlayerTypesToString.First(x => x.Value == type).Key;
-
-                return new PlayerBuilder().SetColor(color).SetName(name).SetPlayerType(playerType).Build();
-            }
 
             private static (Position2D, int) PositionFromElement(XElement element) {
-                var x = int.Parse(element.Attribute("x").Value);
-                var y = int.Parse(element.Attribute("y").Value);
-                var idx = int.Parse(element.Attribute("idx").Value);
+                var x = (int) element.Attribute("x");
+                var y = (int) element.Attribute("y");
+                var idx = (int) element.Attribute("idx");
                 return (new Position2D(x, y), idx);
             }
 

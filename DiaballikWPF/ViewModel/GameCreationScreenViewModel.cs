@@ -3,35 +3,31 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
-using Diaballik.Core;
 using Diaballik.Core.Builders;
 using Diaballik.Core.Util;
-using DiaballikWPF.View;
+using DiaballikWPF.Util;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Messaging;
 using static DiaballikWPF.ViewModel.PlayerBuilderViewModel;
 
 namespace DiaballikWPF.ViewModel {
     public class GameCreationScreenViewModel : ViewModelBase {
-        #region Fields
-
-        private readonly DockWindowViewModel _dock;
-
-        #endregion
-
         #region Constructors
 
-        public GameCreationScreenViewModel(DockWindowViewModel dock) {
-            _dock = dock;
+        public GameCreationScreenViewModel(IMessenger messenger) {
+            MessengerInstance = messenger;
             Builder = new GameBuilder();
             OnValidationChanged += StartGameCommand.RaiseCanExecuteChanged;
 
             PlayerBuilder1 = new PlayerBuilderViewModel(Builder.PlayerBuilder1, Colors.RoyalBlue, OnValidationChanged);
             PlayerBuilder2 = new PlayerBuilderViewModel(Builder.PlayerBuilder2, Colors.DarkRed, OnValidationChanged);
+
+            var rng = new Random();
+            (Builder.PlayerBuilder1, Builder.PlayerBuilder2).ForEach(b => b.Name = GetDefaultPlayerName(rng));
         }
 
         #endregion
-
 
         #region Properties
 
@@ -80,43 +76,33 @@ namespace DiaballikWPF.ViewModel {
         private RelayCommand _startGameCommand;
 
         public RelayCommand StartGameCommand {
-            get => _startGameCommand ?? (_startGameCommand = new RelayCommand(StartGame, CanStart));
+            get => _startGameCommand ??
+                   (_startGameCommand = new RelayCommand(StartGameCommandExecute, StartGameCommandCanExecute));
             set => _startGameCommand = value;
+        }
+
+
+        public bool StartGameCommandCanExecute() => Builder.CanBuild;
+
+        public void StartGameCommandExecute() {
+            Messages.OpenNewGame.Send(MessengerInstance, (Builder.Build(), ViewMode.Play));
         }
 
         #endregion
 
         #region Methods
 
-        private static readonly List<string> _defaultPlayerNames = new List<string> {
+        private static readonly List<string> DefaultPlayerNames = new List<string> {
             "Didier",
             "Jacques",
             "Foobar",
-            "Gorgonzola"
+            "Tatiana"
         };
 
         private static string GetDefaultPlayerName(Random rng) {
-            var name = _defaultPlayerNames[rng.Next(_defaultPlayerNames.Count)];
-            _defaultPlayerNames.Remove(name);
+            var name = DefaultPlayerNames[rng.Next(DefaultPlayerNames.Count)];
+            DefaultPlayerNames.Remove(name);
             return name;
-        }
-
-
-        public bool CanStart() => Builder.CanBuild;
-
-        public void StartGame() {
-            var rng = new Random();
-            (Builder.PlayerBuilder1, Builder.PlayerBuilder2).Foreach(b => {
-                if (string.IsNullOrWhiteSpace(b.Name)) b.Name = GetDefaultPlayerName(rng);
-            });
-
-            var playGameVm = new GameScreenViewModel(Builder.Build());
-            var screen = new PlayGameScreen {
-                DataContext = playGameVm
-            };
-
-            _dock.ContentViewModel = playGameVm;
-            playGameVm.ActiveMode = ViewMode.Play;
         }
 
         #endregion

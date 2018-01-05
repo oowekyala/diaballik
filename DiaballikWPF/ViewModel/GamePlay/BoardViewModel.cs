@@ -2,14 +2,12 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Resources;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
 using Diaballik.Core.Util;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.GameScreenViewModel;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
     public interface IBoardPresenter {
@@ -41,53 +39,46 @@ namespace DiaballikWPF.ViewModel {
         /// </summary>
         /// <param name="messenger">Messenger for this presenter and its descendants</param>
         /// <param name="state">Initial state</param>
-        public BoardViewModel(IMessenger messenger, Game game) {
+        public BoardViewModel(IMessenger messenger, GameState state) {
             MessengerInstance = messenger;
-
-
-            // Register message handlers
-            MessengerInstance.Register<NotificationMessage<ITilePresenter>>(this,
-                                                                            SelectedTileMessageToken,
-                                                                            message => SelectedTile = message.Content);
-
-            Reset(game);
+            SetSelectedTileMessage.Register(MessengerInstance, this, tile => SelectedTile = tile);
+            Reset(state);
         }
 
-        public void Reset(Game game) {
-            if (game.BoardSize == BoardSize) {
-                ResetDifferential(game);
+        /// Clears the current state and displays the given state.
+        public void Reset(GameState state) {
+            if (state.BoardSize == BoardSize) {
+                ResetDifferential(state);
                 return;
             }
 
             Tiles.Clear();
-            CurrentState = game.State;
-            BoardSize = game.BoardSize;
+            CurrentState = state;
+            BoardSize = state.BoardSize;
             var range = Enumerable.Range(0, BoardSize).ToList();
             var tiles
                 = range.SelectMany(x => range.Select(y => new TileViewModel(MessengerInstance, Position2D.New(x, y))))
                        .Cast<ITilePresenter>();
 
             foreach (var tile in tiles) {
-                tile.Update(game.State.PlayerOn(tile.Position), game.State.HasBall(tile.Position));
+                tile.Update(state.PlayerOn(tile.Position), state.HasBall(tile.Position));
                 Tiles.Add(tile);
             }
         }
 
-        private void ResetDifferential(Game game) {
-            DiaballikUtil.Assert(game.BoardSize == BoardSize, "Cannot reset differentially when changing board size");
+        /// When the board size is the same, we only need to update pieces that have changed,
+        /// no need to create everything from scratch.
+        private void ResetDifferential(GameState state) {
+            DiaballikUtil.Assert(state.BoardSize == BoardSize, "Cannot reset differentially when changing board size");
 
-            var modifiedPositions = CurrentState.PositionsPair
-                                                .Map(ps => new HashSet<Position2D>(ps))
-                                                .Zip(game.State.PositionsPair,
-                                                     (set, ps) => set.SymmetricExceptWith(ps))
-                                                .FlatMap(ps => ps);
 
-            var toUpdate = modifiedPositions.ToList();
-            CurrentState.BallCarrierPair.Foreach(p => toUpdate.Add(p));
-            game.State.BallCarrierPair.Foreach(p => toUpdate.Add(p));
-
-            toUpdate.ForEach(p => UpdateTile(p, game.State));
-            CurrentState = game.State;
+            var modifiedPs = new HashSet<Position2D>();
+            CurrentState.PositionsPair.ForEach(ps => modifiedPs.UnionWith(ps));
+            state.PositionsPair.ForEach(ps => modifiedPs.UnionWith(ps));
+            foreach (var p in modifiedPs) {
+                UpdateTile(p, state);
+            }
+            CurrentState = state;
         }
 
         #endregion
@@ -160,9 +151,9 @@ namespace DiaballikWPF.ViewModel {
         public ITilePresenter SelectedTile {
             get => _selectedTile;
             set {
-                Debug.WriteLine($"Selected {value?.Position}");
                 if (_selectedTile != value) {
                     if (value != null) {
+                        value.IsSelected = true;
                         SuggestMoves(value);
                     } else {
                         SelectedTile.IsSelected = false;

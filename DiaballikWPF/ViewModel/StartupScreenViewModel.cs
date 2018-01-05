@@ -1,44 +1,22 @@
-﻿using DiaballikWPF.View;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
+using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
     public class StartupScreenViewModel : ViewModelBase {
-        #region Fields
+        public StartupScreenViewModel(IMessenger messenger) {
+            MessengerInstance = messenger;
 
-        private readonly StartupScreen _view;
-        private readonly DockWindowViewModel _dock;
 
-        #endregion
-
-        #region Constructors
-
-        public StartupScreenViewModel(StartupScreen view, DockWindowViewModel dock) {
-            _view = view;
-            _dock = dock;
+            QuitCommand = new RelayCommand(() => AppShutdownMessage.Send(MessengerInstance));
+            LoadGameCommand = new RelayCommand(() => ShowLoadMenuMessage.Send(MessengerInstance));
+            NewGameCommand = new RelayCommand(() => ShowNewGameMessage.Send(MessengerInstance));
         }
 
-        #endregion
 
-        #region Commands
-
-        private RelayCommand _newGameCommand;
-
-        public RelayCommand NewGameCommand => _newGameCommand ?? (_newGameCommand = new RelayCommand(NewGame));
-
-        #endregion
-
-        #region Methods
-
-        private void NewGame() {
-            var vm = new GameCreationScreenViewModel(_dock);
-            var view = new GameCreationScreen {
-                DataContext = vm
-            };
-
-            _dock.ContentViewModel = vm;
-        }
-
-        #endregion
+        public RelayCommand NewGameCommand { get; }
+        public RelayCommand LoadGameCommand { get; }
+        public RelayCommand QuitCommand { get; }
     }
 }

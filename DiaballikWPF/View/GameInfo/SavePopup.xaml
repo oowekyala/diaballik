@@ -1,0 +1,94 @@
+﻿<UserControl x:Class="DiaballikWPF.View.SavePopup"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+             Background="{DynamicResource MaterialDesignPaper}"
+
+
+             d:DesignHeight="80" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance viewModel:SavePopupViewModel }">
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml" />
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml" />-->
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />-->
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml" />-->
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />-->
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <StackPanel Orientation="Vertical" Background="{DynamicResource MaterialDesignBackground}" >
+        <TextBlock HorizontalAlignment="Center"
+                   VerticalAlignment="Top"
+                   Margin="10"
+                   TextWrapping="Wrap"
+                   Style="{DynamicResource MaterialDesignBody1TextBlock}"
+                   Text="{Binding Message}" />
+
+        <ToolBar HorizontalAlignment="Center"
+                 VerticalAlignment="Bottom"
+                 ToolBarTray.IsLocked="True"
+                 Background="{DynamicResource MaterialDesignBackground}"
+                 Style="{DynamicResource MaterialDesignToolBar}">
+
+            
+          
+            <Button
+                Visibility="{Binding HasCancelButton, Converter={StaticResource BoolToVisibility}}"
+                ToolBar.OverflowMode="Never"
+                ToolTip="Cancel"
+                Command="{Binding CancelCommand}"
+                Style="{DynamicResource MaterialDesignToolButton}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Close" />
+                    <TextBlock VerticalAlignment="Center" Text="Cancel" />
+                </StackPanel>
+            </Button>
+
+            <Button
+                ToolBar.OverflowMode="Never"
+                ToolTip="Continue without saving"
+                Command="{Binding ConfirmCommand}"
+                Style="{DynamicResource MaterialDesignToolButton}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Delete" />
+                    <TextBlock VerticalAlignment="Center" Text="Discard" />
+                </StackPanel>
+            </Button>
+
+
+            <Button
+                ToolBar.OverflowMode="Never"
+                ToolTip="Save your game and continue"
+                Command="{Binding SaveCommand}"
+                Style="{DynamicResource MaterialDesignToolButton}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ContentSave" />
+                    <TextBlock VerticalAlignment="Center" Text="Save" />
+                </StackPanel>
+            </Button>
+
+        </ToolBar>
+
+    </StackPanel>
+</UserControl>

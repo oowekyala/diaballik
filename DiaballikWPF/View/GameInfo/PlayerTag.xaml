@@ -7,13 +7,34 @@
              xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
 
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
+             Background="Transparent"
              TextElement.FontWeight="Medium"
              TextElement.FontSize="14"
              FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
 
 
              mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModel:PlayerTagViewModel }">
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Menu.xaml" />
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />-->
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml" />-->
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+                <!--                <ResourceDictionary-->
+                <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />-->
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
         <!-- Tag representing a player. -->
 
@@ -26,8 +47,12 @@
             Grid.Column="1"
             Margin="10,0,10,0"
             VerticalAlignment="Center"
-            Style="{DynamicResource MaterialDesignTextBlock}"
-            Text="{Binding Player.Name}" />
+            Text="{Binding Player.Name}" 
+            TextTrimming="CharacterEllipsis"
+            ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+            MaxWidth="100"
+            MinWidth="70"
+            />
 
         <Ellipse Grid.Column="0"
                  Stroke="Black"
@@ -37,14 +62,14 @@
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center" />
 
-<!--        <Ellipse Grid.Column="0"-->
-<!--                 Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}}"-->
-<!--                 StrokeThickness="0"-->
-<!--                 Fill="White"-->
-<!--                 Width="10"-->
-<!--                 Height="10"-->
-<!--                 HorizontalAlignment="Center"-->
-<!--                 VerticalAlignment="Center" />-->
+        <!--        <Ellipse Grid.Column="0"-->
+        <!--                 Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}}"-->
+        <!--                 StrokeThickness="0"-->
+        <!--                 Fill="White"-->
+        <!--                 Width="10"-->
+        <!--                 Height="10"-->
+        <!--                 HorizontalAlignment="Center"-->
+        <!--                 VerticalAlignment="Center" />-->
 
         <TextBlock Grid.Column="0"
                    Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}}"
@@ -54,6 +79,12 @@
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center" />
 
+        <!-- That's the star in case of victory -->
+        <Viewbox Grid.Column="0" Width="26" Height="26" Visibility="{Binding IsVictorious, Converter={StaticResource BoolToVisibility}}">
+            <Canvas Width="24" Height="24">
+                <Path Data="M16.23,18L12,15.45L7.77,18L8.89,13.19L5.16,9.96L10.08,9.54L12,5L13.92,9.53L18.84,9.95L15.11,13.18L16.23,18M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" Fill="White" />
+            </Canvas>
+        </Viewbox>
 
     </Grid>
 </UserControl>

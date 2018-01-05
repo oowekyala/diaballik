@@ -14,9 +14,8 @@
     </UserControl.Resources>
 
 
-    <!-- Grid containing the tiles -->
+    <!-- Grid containing the tiles. Binding to a square must be done outside! -->
     <ItemsControl
-        Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         ItemsSource="{Binding Tiles}">

@@ -12,9 +12,13 @@
              TextElement.FontSize="13"
              TextOptions.TextFormattingMode="Ideal"
              TextOptions.TextRenderingMode="Auto"
-             Background="{DynamicResource MaterialDesignPaper}"
+
              FontFamily="{DynamicResource MaterialDesignFont}"
              d:DataContext="{d:DesignInstance viewModel:StartupScreenViewModel}">
+    <UserControl.Background>
+        <SolidColorBrush Color="WhiteSmoke" Opacity="0.7" />
+    </UserControl.Background>
+
 
     <UserControl.Resources>
 
@@ -32,7 +36,7 @@
 
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
-                <Setter Property="Text" Value="Diaballik" />
+                <Setter Property="Text" Value="Diaballik!" />
                 <Setter Property="Margin" Value="40" />
             </Style>
 
@@ -58,33 +62,36 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="200" />
-            <RowDefinition Height="60" />
-            <RowDefinition Height="60" />
-        </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Style="{StaticResource MainTitle}" />
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top"
+                   Margin="0,70,0,0"
+                   Style="{StaticResource MainTitle}" />
 
-        <Button Grid.Row="1" Grid.Column="0"
-                Style="{StaticResource AccentButton}"
-                Content="New Game"
-                Command="{Binding NewGameCommand}" />
+        <Grid VerticalAlignment="Bottom" Margin="0,0,0,60">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+            </Grid.RowDefinitions>
+
+            <Button Grid.Row="0" Grid.Column="0"
+                    Style="{StaticResource AccentButton}"
+                    Content="New Game"
+                    Command="{Binding NewGameCommand}" />
 
 
-        <Button Grid.Row="1" Grid.Column="1"
-                Style="{StaticResource Button}"
-                Content="Load Game" />
-        <Button Grid.Row="1" Grid.Column="2"
-                Style="{StaticResource Button}"
-                Content="Replay Game" />
-        <Button Grid.Row="2" Grid.Column="1"
-                Style="{StaticResource Button}"
-                Content="Quit" />
+            <Button Grid.Row="0" Grid.Column="1"
+                    Style="{StaticResource Button}"
+                    Content="Load Game"
+                    Command="{Binding LoadGameCommand}" />
+
+            <Button Grid.Row="1" Grid.ColumnSpan="2"
+                    Style="{StaticResource Button}"
+                    Content="Quit"
+                    Command="{Binding QuitCommand}" />
+        </Grid>
     </Grid>
 </UserControl>

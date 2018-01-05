@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AlgoLib", "AlgoLib\AlgoLib.
 		{FCDB9834-C071-40B0-84B8-2BC325ABFD35} = {FCDB9834-C071-40B0-84B8-2BC325ABFD35}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiaballikMockLib", "DiaballikMockLib\DiaballikMockLib.csproj", "{EC3B4719-8636-45E1-AF93-4F8E989ADF69}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,10 +72,23 @@ Global
 		{EE9B6841-0191-4494-9B6D-84BABCBDA22F}.Debug|x86.ActiveCfg = Debug|Win32
 		{EE9B6841-0191-4494-9B6D-84BABCBDA22F}.Debug|x86.Build.0 = Debug|Win32
 		{EE9B6841-0191-4494-9B6D-84BABCBDA22F}.Release|Any CPU.ActiveCfg = Release|Win32
+		{EE9B6841-0191-4494-9B6D-84BABCBDA22F}.Release|Any CPU.Build.0 = Release|Win32
 		{EE9B6841-0191-4494-9B6D-84BABCBDA22F}.Release|x64.ActiveCfg = Release|x64
 		{EE9B6841-0191-4494-9B6D-84BABCBDA22F}.Release|x64.Build.0 = Release|x64
 		{EE9B6841-0191-4494-9B6D-84BABCBDA22F}.Release|x86.ActiveCfg = Release|Win32
 		{EE9B6841-0191-4494-9B6D-84BABCBDA22F}.Release|x86.Build.0 = Release|Win32
+		{EC3B4719-8636-45E1-AF93-4F8E989ADF69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC3B4719-8636-45E1-AF93-4F8E989ADF69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC3B4719-8636-45E1-AF93-4F8E989ADF69}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EC3B4719-8636-45E1-AF93-4F8E989ADF69}.Debug|x64.Build.0 = Debug|Any CPU
+		{EC3B4719-8636-45E1-AF93-4F8E989ADF69}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EC3B4719-8636-45E1-AF93-4F8E989ADF69}.Debug|x86.Build.0 = Debug|Any CPU
+		{EC3B4719-8636-45E1-AF93-4F8E989ADF69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC3B4719-8636-45E1-AF93-4F8E989ADF69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC3B4719-8636-45E1-AF93-4F8E989ADF69}.Release|x64.ActiveCfg = Release|Any CPU
+		{EC3B4719-8636-45E1-AF93-4F8E989ADF69}.Release|x64.Build.0 = Release|Any CPU
+		{EC3B4719-8636-45E1-AF93-4F8E989ADF69}.Release|x86.ActiveCfg = Release|Any CPU
+		{EC3B4719-8636-45E1-AF93-4F8E989ADF69}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

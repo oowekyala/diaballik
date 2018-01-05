@@ -6,9 +6,9 @@ using Diaballik.AlgoLib;
 using Diaballik.Core;
 using Diaballik.Core.Util;
 
-namespace Diaballik.Tests {
+namespace Diaballik.Mock {
     /// <summary>
-    ///     Utility methods to mock model objects.
+    ///     Utility methods to mock model objects for tests.
     /// </summary>
     public static class MockUtil {
         #region Position mocking

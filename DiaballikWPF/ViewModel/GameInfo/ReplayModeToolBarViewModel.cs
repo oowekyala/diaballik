@@ -1,19 +1,28 @@
-﻿using System.Diagnostics;
-using Diaballik.Core;
-using GalaSoft.MvvmLight;
+﻿using Diaballik.Core;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.GameScreenViewModel;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
-    public class ReplayModeToolBarViewModel : ViewModelBase {
-        private Game _game;
+    public class ReplayModeToolBarViewModel : AbstractGameScreenToolBar {
+        private Game _replayGame;
 
-        public Game Game {
-            get => _game;
+        public Game ReplayGame {
+            get => _replayGame;
             set {
-                Set(ref _game, value);
+                Set(ref _replayGame, value);
+                NotifyGameUpdate();
+            }
+        }
+
+        public Game PrimaryGame { get; set; }
+
+        private bool _canResume;
+
+        public bool CanResume {
+            get => _canResume;
+            set {
+                Set(ref _canResume, value);
                 NotifyGameUpdate();
             }
         }
@@ -40,12 +49,11 @@ namespace DiaballikWPF.ViewModel {
         public RelayCommand UndoCommand =>
             _undoCommand ?? (_undoCommand = new RelayCommand(UndoCommandExecute, UndoCommandCanExecute));
 
-        private bool UndoCommandCanExecute() => Game.CanUndo;
+        private bool UndoCommandCanExecute() => ReplayGame.CanUndo;
 
 
         private void UndoCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("player has requested Undo"),
-                                   token: UndoMessageToken);
+            UndoMessage.Send(MessengerInstance);
         }
 
         #endregion
@@ -57,12 +65,11 @@ namespace DiaballikWPF.ViewModel {
         public RelayCommand RedoCommand =>
             _redoCommand ?? (_redoCommand = new RelayCommand(RedoCommandExecute, RedoCommandCanExecute));
 
-        private bool RedoCommandCanExecute() => Game.CanRedo;
+        private bool RedoCommandCanExecute() => ReplayGame.CanRedo;
 
 
         private void RedoCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("player requests redo"),
-                                   token: RedoMessageToken);
+            RedoMessage.Send(MessengerInstance);
         }
 
         #endregion
@@ -75,12 +82,11 @@ namespace DiaballikWPF.ViewModel {
             _redoTillLastCommand ?? (_redoTillLastCommand =
                 new RelayCommand(RedoTillLastCommandExecute, RedoTillLastCommandCanExecute));
 
-        private bool RedoTillLastCommandCanExecute() => Game.CanRedo;
+        private bool RedoTillLastCommandCanExecute() => ReplayGame.CanRedo;
 
 
         private void RedoTillLastCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("player requests redo till last"),
-                                   token: RedoTillLastMessageToken);
+            RedoTillLastMessage.Send(MessengerInstance);
         }
 
         #endregion
@@ -93,12 +99,11 @@ namespace DiaballikWPF.ViewModel {
             _undoTillRootCommand ?? (_undoTillRootCommand =
                 new RelayCommand(UndoTillRootCommandExecute, UndoTillRootCommandCanExecute));
 
-        private bool UndoTillRootCommandCanExecute() => Game.CanUndo;
+        private bool UndoTillRootCommandCanExecute() => ReplayGame.CanUndo;
 
 
         private void UndoTillRootCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage("player has requested Undo till root"),
-                                   token: UndoTillRootMessageToken);
+            UndoTillRootMessage.Send(MessengerInstance);
         }
 
         #endregion
@@ -111,13 +116,11 @@ namespace DiaballikWPF.ViewModel {
             _resumeCommand ?? (_resumeCommand =
                 new RelayCommand(ResumeCommandExecute, ResumeCommandCanExecute));
 
-        private bool ResumeCommandCanExecute() => true;
+        private bool ResumeCommandCanExecute() => CanResume;
 
 
         private void ResumeCommandExecute() {
-            Debug.WriteLine("Resume sent");
-            MessengerInstance.Send(new NotificationMessage("player has requested resume game"),
-                                   token: ResumeGameMessageToken);
+            ResumeGameMessage.Send(MessengerInstance);
         }
 
         #endregion
@@ -130,12 +133,18 @@ namespace DiaballikWPF.ViewModel {
             _forkGame ?? (_forkGame =
                 new RelayCommand(ForkGameCommandExecute, ForkGameCommandCanExecute));
 
-        private bool ForkGameCommandCanExecute() => Game.CanRedo; // not the last state, it's already the primary game
-
+        // not the last state, it's already the primary game
+        private bool ForkGameCommandCanExecute() => ReplayGame.CanRedo;
 
         private void ForkGameCommandExecute() {
-            MessengerInstance.Send(new NotificationMessage<OptionStrategy>(OptionStrategy.Force, "player has requested fork game"),
-                                   token: ForkGameMessageToken);
+            void ForkAction() => ForkGameMessage.Send(MessengerInstance);
+
+            if (PrimaryNeedsSaving) {
+                const string message = "Forking will create a new game. Would you like to save the current game ?";
+                ShowSavePopupMessage.Send(MessengerInstance, (message, ForkAction, true));
+            } else {
+                ForkAction();
+            }
         }
 
         #endregion

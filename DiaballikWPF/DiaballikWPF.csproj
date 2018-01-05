@@ -13,6 +13,8 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -34,6 +36,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.2\lib\net45\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="Costura, Version=1.6.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Costura.Fody.1.6.2\lib\dotnet\Costura.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
@@ -43,14 +52,11 @@
     <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
-    <Reference Include="MaterialDesignColors, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MaterialDesignColors.1.1.2\lib\net45\MaterialDesignColors.dll</HintPath>
+    <Reference Include="MaterialDesignColors, Version=1.1.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignColors.1.1.3\lib\net45\MaterialDesignColors.dll</HintPath>
     </Reference>
     <Reference Include="MaterialDesignThemes.Wpf, Version=2.3.1.953, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignThemes.2.3.1.953\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="QuickConverter, Version=1.2.5.0, Culture=neutral, PublicKeyToken=9c892aa7bc2af2cf, processorArchitecture=MSIL">
       <HintPath>..\packages\QuickConverter.1.2.5\lib\net40\QuickConverter.dll</HintPath>
@@ -58,6 +64,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -97,14 +104,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\ConvertUtil.cs" />
+    <Compile Include="Util\ConvertUtil.cs" />
     <Compile Include="ViewModel\DockWindowViewModel.cs" />
+    <Compile Include="ViewModel\GameInfo\AbstractGameScreenToolBar.cs" />
     <Compile Include="ViewModel\GameInfo\ReplayModeToolBarViewModel.cs" />
+    <Compile Include="ViewModel\GameInfo\SavePopupViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\ToolBarItemsCollection.cs" />
     <Compile Include="ViewModel\GameInfo\PlayerTagViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\PlayModeToolBarViewModel.cs" />
-    <Compile Include="ViewModel\GamePlay\MessengerChannels.cs" />
+    <Compile Include="ViewModel\GameInfo\VictoryPopupViewModel.cs" />
+    <Compile Include="ViewModel\LoadGameScreenViewModel.cs" />
+    <Compile Include="Util\Messages.cs" />
     <Compile Include="ViewModel\GamePlay\GameScreenViewModel.cs" />
+    <Compile Include="ViewModel\OverlayWindowViewModel.cs" />
+    <Compile Include="Util\SaveManager.cs" />
     <Compile Include="ViewModel\StartupScreenViewModel.cs" />
     <Compile Include="ViewModel\PlayerBuilderViewModel.cs" />
     <Compile Include="View\GameCreationScreen.xaml.cs">
@@ -116,22 +129,29 @@
     <Compile Include="View\GameInfo\PlayerTag.xaml.cs">
       <DependentUpon>PlayerTag.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\GameInfo\PlayModeToolBar.xaml.cs">
-      <DependentUpon>PlayModeToolBar.xaml</DependentUpon>
+    <Compile Include="View\GameInfo\SaveItem.xaml.cs">
+      <DependentUpon>SaveItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GameInfo\SavePopup.xaml.cs">
+      <DependentUpon>SavePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GameInfo\VictoryPopup.xaml.cs">
+      <DependentUpon>VictoryPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\GamePlay\GameScreen.xaml.cs">
       <DependentUpon>GameScreen.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\GamePlay\BoardViewModel.cs" />
     <Compile Include="ViewModel\GameCreationScreenViewModel.cs" />
-    <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\GamePlay\TileViewModel.cs" />
-    <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\GamePlay\BoardView.xaml.cs">
       <DependentUpon>BoardView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\GamePlay\TileView.xaml.cs">
       <DependentUpon>TileView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\LoadGameScreen.xaml.cs">
+      <DependentUpon>LoadGameScreen.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\PlayerBuilderView.xaml.cs">
       <DependentUpon>PlayerBuilderView.xaml</DependentUpon>
@@ -144,7 +164,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\GameInfo\PlayModeToolBar.xaml">
+    <Page Include="View\GameInfo\SaveItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\GameInfo\SavePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\GameInfo\VictoryPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -152,9 +180,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\LoadGameScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ResourceDictionaries\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\ScreenOverlayWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\StartupScreen.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -163,6 +199,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="View\ScreenOverlayWindow.xaml.cs">
+      <DependentUpon>ScreenOverlayWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\StartupScreen.xaml.cs">
       <DependentUpon>StartupScreen.xaml</DependentUpon>
@@ -225,9 +264,25 @@
       <Project>{fcdb9834-c071-40b0-84b8-2bc325abfd35}</Project>
       <Name>DiaballikCore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiaballikMockLib\DiaballikMockLib.csproj">
+      <Project>{ec3b4719-8636-45e1-af93-4f8e989adf69}</Project>
+      <Name>DiaballikMockLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\" />
+    <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Fody.2.3.15\build\net452\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.3.15\build\net452\Fody.targets'))" />
+  </Target>
+  <Import Project="..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
+  <Import Project="..\packages\Fody.2.3.15\build\net452\Fody.targets" Condition="Exists('..\packages\Fody.2.3.15\build\net452\Fody.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /Y $(SolutionDir)DiaballikWPF\bin\$(Configuration)\DiaballikWPF.exe $(SolutionDir)Diaballik.exe</PostBuildEvent>
+  </PropertyGroup>
 </Project>

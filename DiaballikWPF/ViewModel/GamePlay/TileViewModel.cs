@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows.Media;
 using Diaballik.Core;
 using DiaballikWPF.Converters;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
     // Model-side interface of the ViewModel
@@ -30,8 +29,8 @@ namespace DiaballikWPF.ViewModel {
         /// <summary>
         ///     Marks an available move on this tile. After doing so,
         ///     selection of the move will become possible for the 
-        ///     unlocked player. That action will send a message with
-        ///     token <see cref="CommittedMoveMessageToken"/>.
+        ///     unlocked player. That action will send a message
+        ///     using <see cref="CommitMoveMessage"/>.
         /// </summary>
         /// <param name="actor">The player who can play the move</param>
         /// <param name="action">The move itself</param>
@@ -140,7 +139,7 @@ namespace DiaballikWPF.ViewModel {
 
         public bool IsSelected {
             get => _isSelected;
-            set => Set(ref _isSelected, value, "IsActive");
+            set => Set(ref _isSelected, value);
         }
 
         #endregion
@@ -170,9 +169,7 @@ namespace DiaballikWPF.ViewModel {
         }
 
         private void SelectPieceExecute() {
-            Debug.WriteLine("Send piece selected");
-            MessengerInstance.Send(new NotificationMessage<ITilePresenter>(this, "New selected tile"),
-                                   token: SelectedTileMessageToken);
+            SetSelectedTileMessage.Send(MessengerInstance, this);
         }
 
         #endregion
@@ -190,9 +187,7 @@ namespace DiaballikWPF.ViewModel {
         }
 
         private void SelectMarkedMoveExecute() {
-            Debug.WriteLine("Send move committed");
-            MessengerInstance.Send(message: MarkedMove.Item2,
-                                   token: CommittedMoveMessageToken);
+            CommitMoveMessage.Send(MessengerInstance, MarkedMove.Item2);
         }
 
         #endregion

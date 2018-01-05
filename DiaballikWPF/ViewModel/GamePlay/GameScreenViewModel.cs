@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using System.Windows;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
-using Diaballik.Core.Builders;
-using Diaballik.Core.Util;
+using DiaballikWPF.Util;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
-using static DiaballikWPF.ViewModel.MessengerChannels;
+using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
+    using GameId = String;
+
+
     /// <summary>
     ///     View modes for the game view.
     /// </summary>
@@ -23,105 +23,86 @@ namespace DiaballikWPF.ViewModel {
 
     /// <summary>
     ///     View model for the screen in which the game can be played.
+    /// 
+    ///     One "master" game can be loaded at a time, which is updated when in Play mode.
+    ///     Updates on that game overwrite the previous saves for that game. The rationale
+    ///     is that previous saves are contained in the memento anyway (most of the times),
+    ///     and can be accessed from Replay mode.
+    /// 
+    ///     That game can be forked from the Replay mode, which creates a new game with a 
+    ///     new id.
     /// </summary>
     public class GameScreenViewModel : ViewModelBase {
         #region Constructor
 
-        /// <summary>
-        ///     Creates a new Game presenter, with the given game builder.
-        /// </summary>
-        /// <param name="builder">The builder used to build the game</param>
-        public GameScreenViewModel(Game game) {
+        public GameScreenViewModel(IMessenger UImessenger, Game game) {
             PrimaryGame = game;
+            MessengerInstance = UImessenger;
 
-            BoardViewModel = new BoardViewModel(MessengerInstance, PrimaryGame);
+            BoardViewModel = new BoardViewModel(MessengerInstance, PrimaryGame.State);
             PlayModeToolBarViewModel = new PlayModeToolBarViewModel(MessengerInstance, PrimaryGame);
             ReplayModeToolBarViewModel = new ReplayModeToolBarViewModel(MessengerInstance);
             Player1Tag = new PlayerTagViewModel(PrimaryGame.Player1);
             Player2Tag = new PlayerTagViewModel(PrimaryGame.Player2);
 
 
-            UpdatePlayerTags(game);
+            UpdatePlayerTags(game.State);
 
             InitMessageHandlers();
         }
 
+        /// Sets the given game as the currently played game, using the given ID.
+        /// The previous game is discarded.
+        public void Load(GameId id, Game game) {
+            PrimaryGame = game;
+            GameId = id;
+            BoardViewModel.Reset(PrimaryGame.State);
+            PlayModeToolBarViewModel.Game = PrimaryGame;
+            Player1Tag.Player = PrimaryGame.Player1;
+            Player2Tag.Player = PrimaryGame.Player2;
+            ActiveMode = ViewMode.Play;
+            UpdatePlayerTags(PrimaryGame.State);
+        }
+
+
+        #region Message handling
 
         private void InitMessageHandlers() {
             // Receive any move and update the primary game's state.
-            MessengerInstance.Register<IUpdateAction>(
-                recipient: this,
-                token: CommittedMoveMessageToken,
-                receiveDerivedMessagesToo: true, // receive MoveAction and PassAction
-                action: action => {
-                    Debug.WriteLine("Received message");
-                    UpdateGame(action, PrimaryGame);
-                    BoardViewModel.SelectedTile = null;
-                });
+            CommitMoveMessage.Register(MessengerInstance, this, action => UpdateGame(action, PrimaryGame));
+
 
             // These message handlers stay irrespective of the ActiveMode
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: UndoMessageToken,
-                action: message => Undo(ModeSpecificGame()));
+            UndoMessage.Register(MessengerInstance, this, () => Undo(ModeSpecificGame()));
+            RedoMessage.Register(MessengerInstance, this, () => Redo(ModeSpecificGame()));
+            SwitchGameViewMode.Register(MessengerInstance, this, mode => ActiveMode = mode);
 
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: RedoMessageToken,
-                action: message => Redo(ModeSpecificGame()));
-
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: SwitchToReplayModeMessageToken,
-                action: message => ActiveMode = ViewMode.Replay);
+            // someone requested that the current state of the game be saved
+            RequestSaveToGameScreenMessage.Register(
+                MessengerInstance,
+                this,
+                () => {
+                    SaveGameMessage.Send(MessengerInstance, (GameId, PrimaryGame.Memento));
+                    PrimaryNeedsSaving = false;
+                });
 
 
             // These are specific to the Replay mode
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: UndoTillRootMessageToken,
-                action: message => UndoTillRoot(ReplayGame)
-            );
-
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: RedoTillLastMessageToken,
-                action: message => RedoTillLast(ReplayGame)
-            );
-
-            MessengerInstance.Register<NotificationMessage>(
-                recipient: this,
-                token: ResumeGameMessageToken,
-                action: message => {
-                    Debug.WriteLine("Resume received");
-                    BoardViewModel.Reset(PrimaryGame);
-                    ActiveMode = ViewMode.Play;
-                });
+            UndoTillRootMessage.Register(MessengerInstance, this, () => UndoTillRoot(ReplayGame));
+            RedoTillLastMessage.Register(MessengerInstance, this, () => RedoTillLast(ReplayGame));
+            ResumeGameMessage.Register(MessengerInstance, this, () => {
+                BoardViewModel.Reset(PrimaryGame.State);
+                ActiveMode = ViewMode.Play;
+            });
 
 
-            MessengerInstance.Register<NotificationMessage<OptionStrategy>>(
-                recipient: this,
-                token: ForkGameMessageToken,
-                action: message => ForkGame(message.Content)
-            );
+            ForkGameMessage.Register(MessengerInstance, this, () => {
+                // this assigns a new id to the primary game, so that we don't overwrite the previous
+                OpenNewGame.Send(MessengerInstance, (ReplayGame, ViewMode.Play));
+            });
         }
 
-        private void ForkGame(OptionStrategy strat) {
-            if (strat == OptionStrategy.Save) {
-                // save game
-            }
-
-            PrimaryGame = ReplayGame;
-            ActiveMode = ViewMode.Play;
-        }
-
-        public enum OptionStrategy {
-            // Save the game before resume
-            Save,
-
-            // Lose previous state of the game and fork
-            Force
-        }
+        #endregion
 
         #endregion
 
@@ -144,12 +125,14 @@ namespace DiaballikWPF.ViewModel {
             if (mode == ViewMode.Play) {
                 Debug.WriteLine("Start game loop bc ActivMode = Play");
 
-                UpdatePlayerTags(PrimaryGame);
+                //UpdatePlayerTags(PrimaryGame);
                 StartGameLoop();
             } else {
                 // Enter replay mode
                 ReplayGame = Game.Fork(PrimaryGame);
-                ReplayModeToolBarViewModel.Game = ReplayGame;
+                _aiLoopCanRun = false;
+                ReplayModeToolBarViewModel.ReplayGame = ReplayGame;
+                ReplayModeToolBarViewModel.CanResume = !PrimaryGame.State.IsVictory;
                 BoardViewModel.UnlockedPlayer = null;
             }
         }
@@ -158,7 +141,6 @@ namespace DiaballikWPF.ViewModel {
         private Game ModeSpecificGame() => ActiveMode == ViewMode.Play ? PrimaryGame : ReplayGame;
 
         #endregion
-
 
         #region ViewModels
 
@@ -177,6 +159,8 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
+        #region Games
+
         private Game _primaryGame;
 
         /// Game which is updated when in Play mode
@@ -188,44 +172,42 @@ namespace DiaballikWPF.ViewModel {
             }
         }
 
+
         /// Copy used for navigation when in Replay mode.
         /// No update action must ever be taken on that one.
         private Game ReplayGame { get; set; }
 
-        public GameMemento Memento => PrimaryGame.Memento;
+
         public int BoardSize => PrimaryGame.State.BoardSize;
 
+        #endregion
+
+        #region Game saving
+
+        /// Identifies the current game for save operations
+        public GameId GameId { get; private set; }
+
+        private bool _primaryNeedsSaving;
+
+        /// If true, then asking to save is not needed
+        public bool PrimaryNeedsSaving {
+            get => _primaryNeedsSaving;
+            set {
+                if (value != PrimaryNeedsSaving) {
+                    Set(ref _primaryNeedsSaving, value);
+                    PlayModeToolBarViewModel.PrimaryNeedsSaving = value;
+                    ReplayModeToolBarViewModel.PrimaryNeedsSaving = value;
+                }
+            }
+        }
+
+        #endregion
 
         /// Delay in ms before an AI move. We don't want it to play as fast as it can.
         private const int AiStepTimeMillis = 500;
 
         #endregion
 
-        #region Public methods
-
-        /// Starts the game by requesting the first moves.
-        /// Only valid in Play mode.
-        private void StartGameLoop() {
-            if (ActiveMode == ViewMode.Replay) {
-                throw new ArgumentException("Game loop cannot be started in replay mode");
-            }
-
-            if (PrimaryGame.State.CurrentPlayer.IsAi) {
-                StartAiStepThread();
-            } else {
-                BoardViewModel.UnlockedPlayer = PrimaryGame.State.CurrentPlayer;
-            }
-        }
-
-        #endregion
-
-        #region Fields
-
-        private readonly NoobAiAlgo _noobAiAlgo = new NoobAiAlgo();
-        private readonly StartingAiAlgo _startingAiAlgo = new StartingAiAlgo();
-        private readonly ProgressiveAiAlgo _progressiveAiAlgo = new ProgressiveAiAlgo();
-
-        #endregion
 
         #region Private methods
 
@@ -238,7 +220,7 @@ namespace DiaballikWPF.ViewModel {
 
             game.Update(action);
 
-            UpdateHelper(game, previousPlayer, game.State.CurrentPlayer, action);
+            UpdateHelper(game.State, previousPlayer, game.State.CurrentPlayer, action);
         }
 
 
@@ -247,7 +229,7 @@ namespace DiaballikWPF.ViewModel {
 
             var action = (game.Memento as MementoNode)?.Action;
 
-            if (action == null) { 
+            if (action == null) {
                 // can happen when clicking repeatedly on the undo button
                 // and the game has no time to update 
                 return;
@@ -257,7 +239,7 @@ namespace DiaballikWPF.ViewModel {
 
             game.Undo();
 
-            UpdateHelper(game, previousPlayer, game.State.CurrentPlayer, action);
+            UpdateHelper(game.State, previousPlayer, game.State.CurrentPlayer, action);
         }
 
         private void Redo(Game game) {
@@ -265,44 +247,63 @@ namespace DiaballikWPF.ViewModel {
 
             var previousPlayer = game.Memento.Parent.State.CurrentPlayer;
             var action = ((MementoNode) game.Memento).Action;
-            UpdateHelper(game, previousPlayer, game.State.CurrentPlayer, action);
+            UpdateHelper(game.State, previousPlayer, game.State.CurrentPlayer, action);
         }
 
 
-        private void UpdateHelper(Game game, Player previous, Player player, IUpdateAction action) {
+        /// <summary>
+        ///     Updates the visual state of the game with an action.
+        ///     Doesn't modify the game.
+        /// </summary>
+        private void UpdateHelper(GameState state, Player actor, Player currentPlayer, IUpdateAction action) {
             if (action is MoveAction move) {
-                DispatcherHelper.UIDispatcher.Invoke(() => BoardViewModel.UpdateState(game.State, move));
+                DispatcherHelper.UIDispatcher.Invoke(() => BoardViewModel.UpdateState(state, move));
             }
 
-            if (ActiveMode == ViewMode.Play) {
-                if (action is MovePieceAction mpa) {
-                    BoardViewModel.TileAt(mpa.Src).IsSelectable = false;
-                    BoardViewModel.TileAt(mpa.Dst).IsSelectable = true;
-                }
-
-                if (player.IsAi) {
-                    StartAiStepThread();
-                } else {
-                    DispatcherHelper.UIDispatcher.Invoke(() => BoardViewModel.UnlockedPlayer = player);
-                }
-            }
-
-            DispatcherHelper.UIDispatcher.Invoke(() => UpdatePlayerTags(game));
+            DispatcherHelper.UIDispatcher.Invoke(() => UpdatePlayerTags(state));
             DispatcherHelper.UIDispatcher.Invoke(() => PlayModeToolBarViewModel.NotifyGameUpdate());
             DispatcherHelper.UIDispatcher.Invoke(() => ReplayModeToolBarViewModel.NotifyGameUpdate());
 
-            if (game.State.IsVictory) {
-                HandleVictory();
+            if (ActiveMode == ViewMode.Play) {
+                PrimaryNeedsSaving = true;
+                if (action is MovePieceAction movePiece && actor.IsHuman) {
+                    BoardViewModel.TileAt(movePiece.Src).IsSelectable = false;
+
+                    if (actor == currentPlayer) {
+                        BoardViewModel.TileAt(movePiece.Dst).IsSelectable = true;
+                    }
+                }
+
+                if (action is MoveAction moveAction && actor.IsHuman && actor == currentPlayer) {
+                    // select the destination to chain moves more easily
+                    BoardViewModel.SelectedTile = BoardViewModel.TileAt(moveAction.Dst);
+                } else {
+                    BoardViewModel.SelectedTile = null;
+                }
+
+                if (state.IsVictory) {
+                    HandleVictory();
+                    return;
+                }
+
+                if (actor != currentPlayer) {
+                    // player changed, ask for new player to play
+                    if (actor.IsHuman && currentPlayer.IsAi) {
+                        DispatcherHelper.UIDispatcher.Invoke(() => BoardViewModel.UnlockedPlayer = null);
+                        StartAiStepThread();
+                    } else {
+                        DispatcherHelper.UIDispatcher.Invoke(() => BoardViewModel.UnlockedPlayer = currentPlayer);
+                    }
+                }
             }
         }
 
-        private void UpdatePlayerTags(Game game) {
-            PlayerTagOf(game.State.CurrentPlayer).NumMovesLeft = game.State.NumMovesLeft;
-            PlayerTagOf(game.State.GetOtherPlayer(game.State.CurrentPlayer)).NumMovesLeft = 0;
+        private void UpdatePlayerTags(GameState state) {
+            PlayerTagOf(state.CurrentPlayer).NumMovesLeft = state.NumMovesLeft;
+            PlayerTagOf(state.GetOtherPlayer(state.CurrentPlayer)).NumMovesLeft = 0;
         }
 
         #endregion
-
 
         #region Replay mode specific methods
 
@@ -320,30 +321,64 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
-        public void HandleVictory() {
-            Debug.WriteLine($"Victory of {PrimaryGame.State.VictoriousPlayer}");
+        #region Play mode specific methods
+
+        /// Starts the game by requesting the first moves.
+        /// Only valid in Play mode.
+        private void StartGameLoop() {
+            if (ActiveMode == ViewMode.Replay) {
+                throw new ArgumentException("Game loop cannot be started in replay mode");
+            }
+
+            if (PrimaryGame.State.CurrentPlayer.IsAi) {
+                StartAiStepThread();
+            } else {
+                BoardViewModel.UnlockedPlayer = PrimaryGame.State.CurrentPlayer;
+            }
         }
 
+        private void HandleVictory() {
+            Debug.WriteLine($"Victory of {PrimaryGame.State.VictoriousPlayer}");
+            _aiLoopCanRun = false;
+            DispatcherHelper.UIDispatcher.Invoke(() => BoardViewModel.UnlockedPlayer = null);
+            RequestSaveToGameScreenMessage.Send(MessengerInstance);
+            ShowVictoryPopupMessage.Send(MessengerInstance, PrimaryGame.State.VictoriousPlayer);
+        }
+
+        #endregion
+
+        #region Ai step thread
+
         private Thread _loopThread;
+        private volatile bool _aiLoopCanRun;
+        private readonly object _gameUpdateLock = new object();
 
         /// Start a loop which queries and applies the moves of an AI player automatically.
         /// The loop stops when the current player is human.
         private void StartAiStepThread() {
-// Loops until the current player is human, then unlocks the human player
+            _aiLoopCanRun = true;
+
+            // Loops until the current player is human, then unlocks the human player
+            // the loop is interrupted by _aiLoopCanRun = false, and in case of victory
             void AiDecisionLoop() {
-                while (PrimaryGame.State.CurrentPlayer.IsAi) {
-                    Debug.WriteLine("inside loop");
-                    Thread.Sleep(AiStepTimeMillis);
-                    StepAi(PrimaryGame.State.CurrentPlayer);
+                while (true) {
+                    lock (_gameUpdateLock) {
+                        if (PrimaryGame.State.CurrentPlayer.IsAi && !PrimaryGame.State.IsVictory && _aiLoopCanRun) {
+                            StepAi(PrimaryGame.State.CurrentPlayer);
+                            Thread.Sleep(AiStepTimeMillis);
+                        } else break;
+                    }
                 }
-                Debug.WriteLine("outside loop");
-                DispatcherHelper.UIDispatcher.Invoke(() => BoardViewModel.UnlockedPlayer =
-                                                         PrimaryGame.State.CurrentPlayer);
             }
 
             _loopThread = new Thread(AiDecisionLoop);
             _loopThread.Start();
         }
+
+        private readonly NoobAiAlgo _noobAiAlgo = new NoobAiAlgo();
+        private readonly StartingAiAlgo _startingAiAlgo = new StartingAiAlgo();
+        private readonly ProgressiveAiAlgo _progressiveAiAlgo = new ProgressiveAiAlgo();
+
 
         /// If the player is an AI, updates the game with their next move.
         public void StepAi(Player player) {
@@ -360,8 +395,15 @@ namespace DiaballikWPF.ViewModel {
                     break;
                 default: return;
             }
-            UpdateGame(algo.NextMove(PrimaryGame.State, player), PrimaryGame);
+
+            // reentrant lock
+            lock (_gameUpdateLock) {
+                var move = algo.NextMove(PrimaryGame.State, player);
+                UpdateGame(move, PrimaryGame);
+            }
         }
+
+        #endregion
 
         #endregion
     }

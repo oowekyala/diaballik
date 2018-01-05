@@ -5,8 +5,9 @@ using System.Text;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
 using Diaballik.Core.Util;
+using Diaballik.Mock;
 using NUnit.Framework;
-using static Diaballik.Tests.MockUtil;
+using static Diaballik.Mock.MockUtil;
 
 namespace Diaballik.Tests {
     [TestFixture]
@@ -58,7 +59,7 @@ namespace Diaballik.Tests {
             // Console.WriteLine(GenerateTestCase(size, specs.Map(s => s.Positions)));
 
             board.BallCarrierPair
-                 .Foreach(p => CollectionAssert.AreEquivalent(MovesForBallReference(board, p).ToList(),
+                 .ForEach(p => CollectionAssert.AreEquivalent(MovesForBallReference(board, p).ToList(),
                                                               board.MovesForBall(p).ToList(), "{0}\n{1}", p));
         }
 
@@ -79,11 +80,11 @@ namespace Diaballik.Tests {
             board.BallCarrierPair
                  .Map(board.MovesForBall)
                  .Zip((expectedp1, expectedp2))
-                 .Foreach(t => CollectionAssert.AreEquivalent(t.Item2, t.Item1, "BoardAnalysis.MovesForBall failed"));
+                 .ForEach(t => CollectionAssert.AreEquivalent(t.Item2, t.Item1, "BoardAnalysis.MovesForBall failed"));
             board.BallCarrierPair
                  .Map(bb => MovesForBallReference(board, bb))
                  .Zip((expectedp1, expectedp2))
-                 .Foreach(t => CollectionAssert.AreEquivalent(t.Item2, t.Item1, "MovesForBallReference failed"));
+                 .ForEach(t => CollectionAssert.AreEquivalent(t.Item2, t.Item1, "MovesForBallReference failed"));
         }
 
 
