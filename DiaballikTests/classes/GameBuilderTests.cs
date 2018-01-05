@@ -64,7 +64,7 @@ namespace Diaballik.Tests {
             p2Pos.ForEach(x => Assert.AreEqual(0, x.X)); // top row
 
             // ball carriers are middle pieces
-            game.State.BallCarrierPair.Foreach(x => Assert.AreEqual(size / 2, x.Y));
+            game.State.BallCarrierPair.ForEach(x => Assert.AreEqual(size / 2, x.Y));
         }
 
 
@@ -80,7 +80,7 @@ namespace Diaballik.Tests {
             var game = builder.Build();
             var (p1Pos, p2Pos) = game.State.PositionsPair.Map(x => x.ToList());
 
-            game.State.PositionsPair.Foreach(ps => Assert.AreEqual(size, ps.Count()));
+            game.State.PositionsPair.ForEach(ps => Assert.AreEqual(size, ps.Count()));
 
             p1Pos.ForEach(x => Assert.AreEqual(size - 1, x.X)); // bottom row
             p2Pos.ForEach(x => Assert.AreEqual(0, x.X)); // top row
@@ -101,10 +101,10 @@ namespace Diaballik.Tests {
             var game = builder.Build();
             var positionsTuple = game.State.PositionsPair.Map(x => x.ToList());
 
-            positionsTuple.Foreach(ps => Assert.AreEqual(size, ps.Count));
+            positionsTuple.ForEach(ps => Assert.AreEqual(size, ps.Count));
 
             positionsTuple.Zip((size - 1, 0))
-                          .Foreach(t => {
+                          .ForEach(t => {
                               var (ps, row) = t;
                               Assert.AreEqual(size - 2, ps.Count(p => p.X == row)); // friend row
                               Assert.AreEqual(2, ps.Count(p => p.X == size - 1 - row)); // enemy row
@@ -113,7 +113,7 @@ namespace Diaballik.Tests {
             // ball carriers are middle pieces, in friend row
             game.State.BallCarrierPair
                 .Zip((size - 1, 0))
-                .Foreach(t => {
+                .ForEach(t => {
                     var (ball, row) = t;
                     Assert.AreEqual(size / 2, ball.Y);
                     Assert.AreEqual(row, ball.X);

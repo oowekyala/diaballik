@@ -11,7 +11,7 @@ namespace Diaballik.Tests {
         public void TestMovePiece([Range(3, 13)] int size) {
             var positions = RandomPositionsPair(size + 1, size).Map(e => e.ToList());
             var empty = positions.Item1[0];
-            positions.Foreach(e => e.RemoveAt(0));
+            positions.ForEach(e => e.RemoveAt(0));
             var specs = positions.Map(p => DummyPlayerSpec(size, p));
 
             var board = GameBoard.Create(size, specs);
@@ -30,7 +30,7 @@ namespace Diaballik.Tests {
             const int ballIndex = 1;
             var positions = RandomPositionsPair(size + 1, size).Map(e => e.ToList());
             var empty = positions.Item1[0];
-            positions.Foreach(e => e.RemoveAt(0));
+            positions.ForEach(e => e.RemoveAt(0));
             var ballCarrier = positions.Item1[ballIndex];
             var specs = positions.Map(p => DummyPlayerSpec(p, ballIndex));
 

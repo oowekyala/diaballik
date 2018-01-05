@@ -31,7 +31,7 @@ namespace Diaballik.Core.Util {
         public static (A, A) Pair<A>(A a) => (a, a);
 
 
-        public static (A, A) Foreach<A>(this(A, A) tuple, Action<A> f) {
+        public static (A, A) ForEach<A>(this(A, A) tuple, Action<A> f) {
             f(tuple.Item1);
             f(tuple.Item2);
             return tuple;

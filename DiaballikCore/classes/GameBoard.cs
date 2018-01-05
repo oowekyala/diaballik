@@ -66,7 +66,7 @@ namespace Diaballik.Core {
 
             var lookupBuilder = ImmutableDictionary.CreateBuilder<Position2D, Player>();
             specs.Map(spec => spec.Positions.Select(p => new KeyValuePair<Position2D, Player>(p, spec.Player)))
-                 .Foreach(lookupBuilder.AddRange);
+                 .ForEach(lookupBuilder.AddRange);
             _boardLookup = lookupBuilder.ToImmutable();
         }
 

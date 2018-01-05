@@ -24,7 +24,7 @@ namespace DiaballikWPF.ViewModel {
             PlayerBuilder2 = new PlayerBuilderViewModel(Builder.PlayerBuilder2, Colors.DarkRed, OnValidationChanged);
 
             var rng = new Random();
-            (Builder.PlayerBuilder1, Builder.PlayerBuilder2).Foreach(b => b.Name = GetDefaultPlayerName(rng));
+            (Builder.PlayerBuilder1, Builder.PlayerBuilder2).ForEach(b => b.Name = GetDefaultPlayerName(rng));
         }
 
         #endregion

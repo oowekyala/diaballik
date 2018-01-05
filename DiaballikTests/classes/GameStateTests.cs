@@ -104,7 +104,7 @@ namespace Diaballik.Tests {
 
         private static void AssertPassSucceeded(GameState before, GameState after) {
             before.PositionsPair.Zip(after.PositionsPair)
-                  .Foreach(t => CollectionAssert.AreEquivalent(t.Item1, t.Item2));
+                  .ForEach(t => CollectionAssert.AreEquivalent(t.Item1, t.Item2));
             Assert.AreEqual(before.BallCarrierPair, after.BallCarrierPair);
 
             AssertThatPlayerHasChanged(before, after);

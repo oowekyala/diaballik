@@ -45,6 +45,7 @@ namespace DiaballikWPF.ViewModel {
             Reset(state);
         }
 
+        /// Clears the current state and displays the given state.
         public void Reset(GameState state) {
             if (state.BoardSize == BoardSize) {
                 ResetDifferential(state);
@@ -65,13 +66,15 @@ namespace DiaballikWPF.ViewModel {
             }
         }
 
+        /// When the board size is the same, we only need to update pieces that have changed,
+        /// no need to create everything from scratch.
         private void ResetDifferential(GameState state) {
             DiaballikUtil.Assert(state.BoardSize == BoardSize, "Cannot reset differentially when changing board size");
 
 
             var modifiedPs = new HashSet<Position2D>();
-            CurrentState.PositionsPair.Foreach(ps => modifiedPs.UnionWith(ps));
-            state.PositionsPair.Foreach(ps => modifiedPs.UnionWith(ps));
+            CurrentState.PositionsPair.ForEach(ps => modifiedPs.UnionWith(ps));
+            state.PositionsPair.ForEach(ps => modifiedPs.UnionWith(ps));
             foreach (var p in modifiedPs) {
                 UpdateTile(p, state);
             }
