@@ -81,7 +81,10 @@ namespace DiaballikWPF.ViewModel {
             RequestSaveToGameScreenMessage.Register(
                 MessengerInstance,
                 this,
-                () => SaveGameMessage.Send(MessengerInstance, (GameId, PrimaryGame.Memento)));
+                () => {
+                    SaveGameMessage.Send(MessengerInstance, (GameId, PrimaryGame.Memento));
+                    PrimaryNeedsSaving = false;
+                });
 
 
             // These are specific to the Replay mode
@@ -179,10 +182,24 @@ namespace DiaballikWPF.ViewModel {
 
         #endregion
 
-        #region GameId
+        #region Game saving
 
         /// Identifies the current game for save operations
         public GameId GameId { get; private set; }
+
+        private bool _primaryNeedsSaving;
+
+        /// If true, then asking to save is not needed
+        public bool PrimaryNeedsSaving {
+            get => _primaryNeedsSaving;
+            set {
+                if (value != PrimaryNeedsSaving) {
+                    Set(ref _primaryNeedsSaving, value);
+                    PlayModeToolBarViewModel.PrimaryNeedsSaving = value;
+                    ReplayModeToolBarViewModel.PrimaryNeedsSaving = value;
+                }
+            }
+        }
 
         #endregion
 
@@ -248,6 +265,7 @@ namespace DiaballikWPF.ViewModel {
             DispatcherHelper.UIDispatcher.Invoke(() => ReplayModeToolBarViewModel.NotifyGameUpdate());
 
             if (ActiveMode == ViewMode.Play) {
+                PrimaryNeedsSaving = true;
                 if (action is MovePieceAction movePiece && actor.IsHuman) {
                     BoardViewModel.TileAt(movePiece.Src).IsSelectable = false;
 
@@ -323,7 +341,7 @@ namespace DiaballikWPF.ViewModel {
             Debug.WriteLine($"Victory of {PrimaryGame.State.VictoriousPlayer}");
             _aiLoopCanRun = false;
             DispatcherHelper.UIDispatcher.Invoke(() => BoardViewModel.UnlockedPlayer = null);
-
+            RequestSaveToGameScreenMessage.Send(MessengerInstance);
             ShowVictoryPopupMessage.Send(MessengerInstance, PrimaryGame.State.VictoriousPlayer);
         }
 

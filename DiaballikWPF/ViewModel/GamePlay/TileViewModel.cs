@@ -139,7 +139,7 @@ namespace DiaballikWPF.ViewModel {
 
         public bool IsSelected {
             get => _isSelected;
-            set => Set(ref _isSelected, value, "IsActive");
+            set => Set(ref _isSelected, value);
         }
 
         #endregion

@@ -3,14 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="clr-namespace:DiaballikWPF"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 
              xmlns:view="clr-namespace:DiaballikWPF.View"
              xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
-             xmlns:qc="http://QuickConverter.CodePlex.com/"
              mc:Ignorable="d"
-             xmlns:coll="clr-namespace:System.Collections.ObjectModel;assembly=System"
 
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              TextElement.FontWeight="Medium"
@@ -62,18 +59,18 @@
 
                 <ToolBar.Resources>
                     <Menu x:Key="NavigationMenu" x:Shared="False" Style="{DynamicResource MaterialDesignMenu}"
-                          Background="Transparent">
+                          >
 
                         <MenuItem Style="{DynamicResource MaterialDesignMenuItem}" Background="Transparent">
                             <MenuItem.Header>
-                                <materialDesign:PackIcon Kind="Menu" />
+                                <materialDesign:PackIcon Kind="Menu" Background="Transparent" />
                             </MenuItem.Header>
 
                             <MenuItem Command="{Binding BackToMainMenuCommand}"
-                                      Style="{DynamicResource MaterialDesignMenuItem}">
+                                      Style="{DynamicResource MaterialDesignMenuItem}"
+                                      Background="Transparent">
                                 <MenuItem.Header>
-                                    <StackPanel Orientation="Horizontal"
-                                                Background="{DynamicResource MaterialDesignBackground}">
+                                    <StackPanel Orientation="Horizontal">
                                         <materialDesign:PackIcon Kind="ExitToApp" Margin="0,0,10,0"
                                                                  VerticalAlignment="Center" />
                                         <ContentPresenter Content="Back to main menu" VerticalAlignment="Center" />
@@ -300,9 +297,9 @@
             </ToolBar>
 
             <ToolBar ToolBarTray.IsLocked="False"> <!-- Player tags -->
-                <view:PlayerTag DataContext="{Binding Player2Tag}" />
-
                 <view:PlayerTag DataContext="{Binding Player1Tag}" />
+
+                <view:PlayerTag DataContext="{Binding Player2Tag}" />
             </ToolBar>
 
 

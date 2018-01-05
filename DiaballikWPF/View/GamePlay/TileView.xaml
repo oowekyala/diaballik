@@ -37,7 +37,7 @@
                 <Setter Property="Stroke" Value="Black" />
                 <Setter Property="StrokeThickness" Value="2" />
                 <Setter Property="Fill"
-                        Value="{qc:MultiBinding Converter='new SolidColorBrush($P0 ? ConvertUtil.DimColor($P1, 70) : $P1)', P0={Binding IsSelected}, P1={Binding PieceOwner.Color}}" />
+                        Value="{qc:MultiBinding Converter='new SolidColorBrush($P0 ? ConvertUtil.DimColor($P1, 90) : $P1)', P0={Binding IsSelected}, P1={Binding PieceOwner.Color}}" />
                 <Setter Property="Width"
                         Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}, Path=ActualWidth, Converter={qc:QuickConverter '$P * 70 / 100.0'}}" />
                 <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />

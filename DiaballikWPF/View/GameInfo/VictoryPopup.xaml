@@ -52,19 +52,6 @@
                 </StackPanel>
             </Button>
 
-
-            <Button
-                ToolBar.OverflowMode="Never"
-                ToolTip="Save your game"
-                Command="{Binding ReplayModeCommand}"
-                Style="{DynamicResource MaterialDesignToolButton}">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="ContentSave" />
-                    <TextBlock VerticalAlignment="Center" Text="Save" />
-                </StackPanel>
-            </Button>
-
-
             <Button
                 ToolBar.OverflowMode="Never"
                 ToolTip="Back to the main menu"

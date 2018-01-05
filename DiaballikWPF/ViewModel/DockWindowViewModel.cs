@@ -94,6 +94,11 @@ namespace DiaballikWPF.ViewModel {
         public RelayCommand QuitCommand { get; }
 
         public void ShutdownApplication() {
+            if (ContentViewModel == GameScreenViewModel && GameScreenViewModel.PrimaryNeedsSaving) {
+                const string message = "Would you like to save the current game before exiting?";
+                ShowSavePopupMessage.Send(MessengerInstance, (message, () => { }, true));
+            }
+
             SaveManager.CommitSaves();
             Application.Current.Shutdown(0);
         }

@@ -109,7 +109,7 @@ namespace DiaballikWPF.Util {
             WriteManifest();
 
             //write only saves that must be written
-            foreach (var save in Saves.Values.Where(t => !t.IsValid)) {
+            foreach (var save in Saves.Values.Where(t => !t.IsOnDisk)) {
                 save.WriteMemento();
             }
         }
@@ -135,7 +135,7 @@ namespace DiaballikWPF.Util {
             public IReadOnlyGameMetadata Metadata => _metadata;
 
             private readonly GameMetadataBundle _metadata;
-            public bool IsValid { get; private set; }
+            public bool IsOnDisk { get; private set; }
 
             /// <summary>
             ///     Lazy loaded from disk if the entry is valid.
@@ -144,7 +144,7 @@ namespace DiaballikWPF.Util {
             /// </summary>
             public GameMemento Memento {
                 get {
-                    if (_memento == null && IsValid) {
+                    if (_memento == null && IsOnDisk) {
                         _memento = ReadMementoFromFile();
                     } else if (_memento != null) {
                         return _memento;
@@ -157,7 +157,7 @@ namespace DiaballikWPF.Util {
                 set {
                     if (value != null) {
                         _memento = value;
-                        IsValid = false;
+                        IsOnDisk = false;
                         _metadata.Update(_memento);
                     } else {
                         throw new ArgumentException("Cannot use null as a value");
@@ -166,15 +166,15 @@ namespace DiaballikWPF.Util {
             }
 
 
-            public SaveEntry(GameMetadataBundle bundle, bool isValid) {
+            public SaveEntry(GameMetadataBundle bundle, bool isOnDisk) {
                 _metadata = bundle;
-                IsValid = isValid;
+                IsOnDisk = isOnDisk;
             }
 
             public SaveEntry(GameMetadataBundle bundle, GameMemento memento) {
                 _metadata = bundle;
                 Memento = memento;
-                IsValid = false;
+                IsOnDisk = false;
             }
 
             private GameMemento ReadMementoFromFile() {

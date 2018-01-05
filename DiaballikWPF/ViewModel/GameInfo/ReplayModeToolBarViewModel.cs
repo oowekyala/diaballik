@@ -1,10 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using Diaballik.Core;
-using GalaSoft.MvvmLight;
+﻿using Diaballik.Core;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using static DiaballikWPF.ViewModel.GameScreenViewModel;
 using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
@@ -137,15 +133,18 @@ namespace DiaballikWPF.ViewModel {
             _forkGame ?? (_forkGame =
                 new RelayCommand(ForkGameCommandExecute, ForkGameCommandCanExecute));
 
-        private bool ForkGameCommandCanExecute() =>
-            ReplayGame.CanRedo; // not the last state, it's already the primary game
-
+        // not the last state, it's already the primary game
+        private bool ForkGameCommandCanExecute() => ReplayGame.CanRedo;
 
         private void ForkGameCommandExecute() {
-            const string message = "Forking will create a new game. Would you like to save the current game ?";
-
             void ForkAction() => ForkGameMessage.Send(MessengerInstance);
-            ShowSavePopupMessage.Send(MessengerInstance, (message, ForkAction, true));
+
+            if (PrimaryNeedsSaving) {
+                const string message = "Forking will create a new game. Would you like to save the current game ?";
+                ShowSavePopupMessage.Send(MessengerInstance, (message, ForkAction, true));
+            } else {
+                ForkAction();
+            }
         }
 
         #endregion

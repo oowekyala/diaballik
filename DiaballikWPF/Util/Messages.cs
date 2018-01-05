@@ -104,7 +104,6 @@ namespace DiaballikWPF.Util {
             } else {
                 _subscribers.Add(recipient, new List<Action<NotificationMessage<T>>> {notifAction});
             }
-
             messenger.Register(recipient: recipient,
                                token: Token,
                                action: notifAction);

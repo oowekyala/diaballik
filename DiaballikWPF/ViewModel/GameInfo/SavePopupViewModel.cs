@@ -18,6 +18,10 @@ namespace DiaballikWPF.ViewModel {
             HasCancelButton = hasCancelButton;
             hardReferences.Add(toConfirm);
 
+            // we have to keep a hard reference to the action passed to Register,
+            // otherwise it's garbage collected (because it uses closures).
+            // see https://stackoverflow.com/questions/25730530/bug-in-weakaction-in-case-of-closure-action
+
             Action saveCommandExecute = () => {
                 RequestSaveToGameScreenMessage.Send(MessengerInstance);
                 toConfirm();

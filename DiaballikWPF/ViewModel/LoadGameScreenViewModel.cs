@@ -78,9 +78,13 @@ namespace DiaballikWPF.ViewModel {
             Player2Tag = new PlayerTagViewModel(entry.Metadata.Player2);
 
             if (IsVictory) {
-                (Player1Tag, Player2Tag).ToLinq()
-                                        .First(tag => tag.Player == Entry.Metadata.VictoriousPlayer)
-                                        .IsVictorious = true;
+                if (Entry.Metadata.VictoriousPlayer == Player1Tag.Player) {
+                    Player1Tag.IsVictorious = true;
+                    Player2Tag.IsVictorious = false;
+                } else {
+                    Player2Tag.IsVictorious = true;
+                    Player1Tag.IsVictorious = false;
+                }
             }
 
 
