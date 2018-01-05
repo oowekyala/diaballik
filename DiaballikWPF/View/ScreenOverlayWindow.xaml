@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:DiaballikWPF.View"
         xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
         xmlns:qc="http://QuickConverter.CodePlex.com/"
+        xmlns:util="clr-namespace:DiaballikWPF.Util"
         mc:Ignorable="d"
 
 
@@ -16,58 +17,98 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
 
         Height="{StaticResource AppWindowHeight}" Width="{StaticResource AppWindowWidth}"
-
+        util:SizeObserver.Observe="True"
+        util:SizeObserver.ObservedWidth="{Binding WindowWidth, Mode=OneWayToSource}"
         Title="Diaballik!" d:DataContext="{d:DesignInstance viewModel:OverlayWindowViewModel}">
     <Window.Resources>
         <Storyboard x:Key="mainScreenSlideIn">
             <DoubleAnimationUsingKeyFrames
                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"
                 Storyboard.TargetName="startupScreen">
-                <EasingDoubleKeyFrame KeyTime="0" Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}}" />
-                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0"
+                                      Value="{Binding WindowWidth}" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="startupScreen">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="1"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+                                           Storyboard.TargetName="startupScreen">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="mainScreenSlideOut">
             <DoubleAnimationUsingKeyFrames
                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"
                 Storyboard.TargetName="startupScreen">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3"
+                                      Value="{Binding WindowWidth}" />
+                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="startupScreen">
-                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+                                           Storyboard.TargetName="startupScreen">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="gameCreationSlideIn">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="gameCreationScreen">
-                <EasingDoubleKeyFrame KeyTime="0" Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+            <DoubleAnimationUsingKeyFrames
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"
+                Storyboard.TargetName="gameCreationScreen">
+                <EasingDoubleKeyFrame KeyTime="0"
+                                      Value="{Binding WindowWidth}" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="gameCreationScreen">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+                                           Storyboard.TargetName="gameCreationScreen">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="gameCreationSlideOut">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="gameCreationScreen">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+            <DoubleAnimationUsingKeyFrames
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"
+                Storyboard.TargetName="gameCreationScreen">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3"
+                                      Value="{Binding WindowWidth}" />
+                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="gameCreationScreen">
-                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+                                           Storyboard.TargetName="gameCreationScreen">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="loadScreenSlideIn">
+            <DoubleAnimationUsingKeyFrames
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"
+                Storyboard.TargetName="LoadGameScreen">
+                <EasingDoubleKeyFrame KeyTime="0" Value="599.2" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+                                           Storyboard.TargetName="LoadGameScreen">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="loadScreenSlideOut">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+                                           Storyboard.TargetName="LoadGameScreen">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"
+                Storyboard.TargetName="LoadGameScreen">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="596" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </Window.Resources>
     <Window.Triggers>
         <EventTrigger RoutedEvent="FrameworkElement.Loaded">
             <BeginStoryboard x:Name="mainScreenSlideIn_BeginStoryboard" Storyboard="{StaticResource mainScreenSlideIn}" />
-            <BeginStoryboard Storyboard="{StaticResource gameCreationSlideOut}"/>
+            <BeginStoryboard Storyboard="{StaticResource gameCreationSlideOut}" />
+            <BeginStoryboard Storyboard="{StaticResource loadScreenSlideOut}" />
         </EventTrigger>
     </Window.Triggers>
     <Grid>
@@ -76,7 +117,9 @@
         <local:GameScreen Grid.ZIndex="3"
                           DataContext="{Binding GameScreenViewModel}" />
 
-        <local:StartupScreen x:Name="startupScreen" Grid.ZIndex="4" RenderTransformOrigin="0.5,0.5" DataContext="{Binding StartupScreenViewModel}">
+        <local:StartupScreen x:Name="startupScreen" Grid.ZIndex="4" RenderTransformOrigin="0.5,0.5"
+                             DataContext="{Binding StartupScreenViewModel}"
+                             Visibility="{Binding StartupScreenVisibility}">
             <local:StartupScreen.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform />
@@ -87,13 +130,30 @@
             </local:StartupScreen.RenderTransform>
         </local:StartupScreen>
 
-        <local:GameCreationScreen x:Name="gameCreationScreen" Grid.ZIndex="5"  DataContext="{Binding GameCreationScreenViewModel}" RenderTransformOrigin="0.5,0.5">
+        <local:LoadGameScreen x:Name="LoadGameScreen" Grid.ZIndex="5"
+                              DataContext="{Binding LoadGameScreenViewModel}"
+                              RenderTransformOrigin="0.5,0.5"
+                              Visibility="{Binding LoadScreenVisibility}">
+            <local:LoadGameScreen.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
+                </TransformGroup>
+            </local:LoadGameScreen.RenderTransform>
+        </local:LoadGameScreen>
+
+        <local:GameCreationScreen x:Name="gameCreationScreen" Grid.ZIndex="6"
+                                  DataContext="{Binding GameCreationScreenViewModel}"
+                                  Visibility="{Binding CreationScreenVisibility}"
+                                  RenderTransformOrigin="0.5,0.5">
             <local:GameCreationScreen.RenderTransform>
                 <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
+                    <ScaleTransform />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
                 </TransformGroup>
             </local:GameCreationScreen.RenderTransform>
         </local:GameCreationScreen>

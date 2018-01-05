@@ -56,7 +56,8 @@ namespace DiaballikWPF.Util {
         public static Message RedoTillLastMessage = new Message("redoTillLast");
         public static Message ResumeGameMessage = new Message("resume");
         public static Message ForkGameMessage = new Message("fork");
-        public static Message<ViewMode> SwitchGameViewMode = new Message<ViewMode>("switchViewMode");
+        public static Message<ViewMode> SwitchGameViewModeMessage = new Message<ViewMode>("switchViewMode");
+        public static Message PauseGameMessage = new Message("closeGame");
     }
 
     /// <summary>

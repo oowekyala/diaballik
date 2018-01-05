@@ -8,6 +8,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:viewModel="clr-namespace:DiaballikWPF.ViewModel"
              mc:Ignorable="d"
+             xmlns:qc="http://QuickConverter.CodePlex.com/"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance viewModel:SaveItemViewModel}">
 
     <!-- Represents one item in the load game screen listview -->
@@ -67,7 +68,8 @@
 
             <Button
                 ToolBar.OverflowMode="Never"
-                ToolTip="Resume where you left off"
+                ToolTipService.ShowOnDisabled="True"
+                ToolTip="{qc:Binding '$P ? \'Resume where you left off\' : \'That game is already won\'', P={Binding IsEnabled, RelativeSource={RelativeSource Self}}}"
                 Command="{Binding ResumeCommand}"
                 Style="{DynamicResource MaterialDesignToolButton}">
                 <StackPanel Orientation="Horizontal">

@@ -25,6 +25,8 @@
     <!-- Main window, within which each screen docks as a UserControl. -->
 
     <Window.Resources>
+        <local:GameScreen x:Key="GameScreen"></local:GameScreen>
+        
         <DataTemplate DataType="{x:Type viewModel:StartupScreenViewModel}">
             <local:StartupScreen />
         </DataTemplate>
@@ -32,7 +34,7 @@
             <local:GameCreationScreen />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:GameScreenViewModel}">
-            <local:GameScreen />
+            <ContentControl Content="{StaticResource GameScreen}"/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:LoadGameScreenViewModel}">
             <local:LoadGameScreen />

@@ -64,6 +64,8 @@ namespace DiaballikWPF.ViewModel {
                 tile.Update(state.PlayerOn(tile.Position), state.HasBall(tile.Position));
                 Tiles.Add(tile);
             }
+
+            UnlockedPlayer = null;
         }
 
         /// When the board size is the same, we only need to update pieces that have changed,
@@ -78,6 +80,7 @@ namespace DiaballikWPF.ViewModel {
             foreach (var p in modifiedPs) {
                 UpdateTile(p, state);
             }
+            UnlockedPlayer = null;
             CurrentState = state;
         }
 

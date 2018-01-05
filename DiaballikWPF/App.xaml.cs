@@ -31,7 +31,6 @@ namespace DiaballikWPF {
             var dockView = new DockWindow();
             var dock = new DockWindowViewModel(dockView);
             dockView.DataContext = dock;
-
             dock.ContentViewModel = dock.StartupScreenViewModel;
 
 //            var dockView = new ScreenOverlayWindow();

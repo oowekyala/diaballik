@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Threading;
 using Diaballik.AlgoLib;
 using Diaballik.Core;
-using DiaballikWPF.Util;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
@@ -75,7 +74,10 @@ namespace DiaballikWPF.ViewModel {
             // These message handlers stay irrespective of the ActiveMode
             UndoMessage.Register(MessengerInstance, this, () => Undo(ModeSpecificGame()));
             RedoMessage.Register(MessengerInstance, this, () => Redo(ModeSpecificGame()));
-            SwitchGameViewMode.Register(MessengerInstance, this, mode => ActiveMode = mode);
+            SwitchGameViewModeMessage.Register(MessengerInstance, this, mode => ActiveMode = mode);
+            PauseGameMessage.Register(MessengerInstance, this, () => {
+                _aiLoopCanRun = false;
+            });
 
             // someone requested that the current state of the game be saved
             RequestSaveToGameScreenMessage.Register(
@@ -338,11 +340,15 @@ namespace DiaballikWPF.ViewModel {
         }
 
         private void HandleVictory() {
-            Debug.WriteLine($"Victory of {PrimaryGame.State.VictoriousPlayer}");
             _aiLoopCanRun = false;
+            // lock the board
             DispatcherHelper.UIDispatcher.Invoke(() => BoardViewModel.UnlockedPlayer = null);
+            // save the game 
             RequestSaveToGameScreenMessage.Send(MessengerInstance);
-            ShowVictoryPopupMessage.Send(MessengerInstance, PrimaryGame.State.VictoriousPlayer);
+            // show the popup
+            DispatcherHelper.UIDispatcher
+                            .Invoke(() => ShowVictoryPopupMessage.Send(MessengerInstance,
+                                                                       PrimaryGame.State.VictoriousPlayer));
         }
 
         #endregion

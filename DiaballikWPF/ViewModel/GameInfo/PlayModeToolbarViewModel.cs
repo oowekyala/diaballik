@@ -89,7 +89,7 @@ namespace DiaballikWPF.ViewModel {
         private bool ReplayModeCommandCanExecute() => true;
 
         private void ReplayModeCommandExecute() {
-            SwitchGameViewMode.Send(MessengerInstance, ViewMode.Replay);
+            SwitchGameViewModeMessage.Send(MessengerInstance, ViewMode.Replay);
         }
 
         #endregion

@@ -10,7 +10,11 @@ namespace DiaballikWPF.ViewModel {
 
 
         void BackToMainMenuCommandExecute() {
-            void BackAction() => ShowMainMenuMessage.Send(MessengerInstance);
+            void BackAction() {
+                PauseGameMessage.Send(MessengerInstance); // stops the ai thread
+                ShowMainMenuMessage.Send(MessengerInstance);
+            }
+
             if (PrimaryNeedsSaving) {
                 const string message = "Would you like to save the current game before exiting?";
 

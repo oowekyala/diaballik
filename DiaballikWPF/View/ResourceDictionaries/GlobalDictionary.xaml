@@ -1,10 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                     xmlns:qc="http://QuickConverter.CodePlex.com/"
-           
+                    xmlns:qc="http://QuickConverter.CodePlex.com/"
+
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    
-    <sys:Double x:Key="AppWindowWidth">600</sys:Double>
+
+    <sys:Double x:Key="AppWindowWidth">650</sys:Double>
     <sys:Double x:Key="AppWindowHeight">400</sys:Double>
 
     <Style x:Key="ControlBase" TargetType="Control">
@@ -21,18 +21,16 @@
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
     </Style>
-    
+
     <Style x:Key="SectionTitle" TargetType="Label">
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="12pt" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
     </Style>
-   
-    <Style x:Key="GameStartButton" BasedOn="{StaticResource ControlBase}" TargetType="{x:Type Button}">
 
-    </Style>
-    
+    <Style x:Key="GameStartButton" BasedOn="{StaticResource ControlBase}" TargetType="{x:Type Button}" />
+
     <Style x:Key="ControlLabel" BasedOn="{StaticResource ControlBase}" TargetType="{x:Type Label}">
         <Setter Property="HorizontalAlignment" Value="Left" />
     </Style>

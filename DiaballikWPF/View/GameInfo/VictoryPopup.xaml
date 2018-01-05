@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DiaballikWPF.View.VictoryPopup"
+﻿<UserControl x:Name="userControl" x:Class="DiaballikWPF.View.VictoryPopup"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -27,8 +27,23 @@
                 <ResourceDictionary 
                     Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Storyboard x:Key="OnShowing">
+                <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
+                    <SplineThicknessKeyFrame KeyTime="00:00:00" Value="250,0,0,0" />
+                    <SplineThicknessKeyFrame KeyTime="00:00:0.3" Value="0,0,0,0" KeySpline="0,0,0.3,0.89"/>
+                </ThicknessAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Width" BeginTime="00:00:00">
+                    <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                    <SplineDoubleKeyFrame KeyTime="00:00:0.3" Value="500" KeySpline="0,0,0.3,0.89"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
         </ResourceDictionary>
     </UserControl.Resources>
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+<!--            <BeginStoryboard Storyboard="{StaticResource OnShowing}"/>-->
+        </EventTrigger>
+    </UserControl.Triggers>
     <Grid>
         <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Top"
