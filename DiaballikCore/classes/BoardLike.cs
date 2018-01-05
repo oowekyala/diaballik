@@ -126,7 +126,7 @@ namespace Diaballik.Core {
 
 
         // Gets the index of the starting row of a player. Used to check for victory
-        protected int GetRowIndexOfInitialLine(Player player) {
+        public int GetRowIndexOfInitialLine(Player player) {
             return GetPlayerProperty(player, (BoardSize - 1, 0));
         }
 

@@ -29,6 +29,16 @@ namespace Diaballik::AlgoLib {
 		[ExtensionAttribute]
 		static IEnumerable<MoveAction^>^ AvailableMoves(BoardLike^ Board, Position2D p);
 
+		/** Gets the set of dangerous pieces (i.e. 2 lines away or less from the player starting line) for the player */
+		[ExtensionAttribute]
+		static IEnumerable<Position2D>^ DangerousPieces(BoardLike^ Board, Player^ player);
+
+		/**Gets the set of the Reachable Positions from one Position giving a number of moves*/
+		static IEnumerable<Position2D>^ ReachablePositions(BoardLike^ Board, Position2D src, int nbMoves);
+
+		/**Gets the set of the tiles between src and dest*/
+		static IEnumerable<Position2D>^ GetTilesBetween(BoardLike ^ Board, Position2D src, Position2D dest);
+
 	private:
 		/* Helper class for the TryGetFriend algorithm. */
 		value struct Helper
@@ -50,6 +60,15 @@ namespace Diaballik::AlgoLib {
 		  *  The result is put into the accumulator of the helper if it is found.
 		  */
 		static void TryGetFriend(Helper help, int xstep, int ystep);
+
+		/**Determines if a position is reachable from another position giving a certain number of moves*/
+		static bool IsReachable(BoardLike^ Board, Position2D dest, Position2D src, int nbMoves);
+
+		/**Gets the set of the Neighbour Positions from one Position*/
+		static IEnumerable<Position2D>^ Neighbours(Position2D src);
+
+		/**Gets the set of the tiles between src and dest according to the direction given by xstep and ystep*/
+		static IEnumerable<Position2D>^ GetTiles(BoardLike ^ Board, Position2D src, Position2D dest, int xstep, int ystep);
 	};
 
 }
