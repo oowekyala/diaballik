@@ -20,10 +20,7 @@ namespace DiaballikWPF.Util {
         public static Message ShowNewGameMessage = new Message("showNewGame");
         public static Message AppShutdownMessage = new Message("appShutdown");
 
-        // popups
-
-        public static Message<Player> ShowVictoryPopupMessage = new Message<Player>("showVictoryPopup");
-        public static Message CloseVictoryPopupMessage = new Message("closeVictoryPopup");
+        // save popup
 
         public static Message<(string, Action, bool)> ShowSavePopupMessage =
             new Message<(string, Action, bool)>("showSavePopup");
@@ -35,8 +32,8 @@ namespace DiaballikWPF.Util {
         /// request the game screen to send its primary game to the save manager for saving
         public static Message RequestSaveToGameScreenMessage = new Message("saveRequest");
 
-        public static Message<((GameId, GameMemento), ViewMode)> OpenGameMessage =
-            new Message<((GameId, GameMemento), ViewMode)>("loadGameFromSave");
+        public static Message<((GameId, GameMemento), ViewMode)> OpenGameMessage 
+            = new Message<((GameId, GameMemento), ViewMode)>("loadGameFromSave");
 
         public static Message<GameId> DeleteSaveInManagerMessage = new Message<GameId>("deleteSaveForReal");
 

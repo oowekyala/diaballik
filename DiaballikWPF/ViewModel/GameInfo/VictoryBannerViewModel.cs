@@ -5,18 +5,28 @@ using GalaSoft.MvvmLight.Messaging;
 using static DiaballikWPF.Util.Messages;
 
 namespace DiaballikWPF.ViewModel {
-    public class VictoryPopupViewModel : ViewModelBase {
-        public VictoryPopupViewModel(IMessenger messenger, Player victoriousPlayer) {
+    public class VictoryBannerViewModel : ViewModelBase {
+        public VictoryBannerViewModel(IMessenger messenger) {
             MessengerInstance = messenger;
-            VictoriousPlayer = victoriousPlayer;
+        }
+
+        private Player _victoriousPlayer;
+
+        public Player VictoriousPlayer {
+            get => _victoriousPlayer;
+            set {
+                Set(ref _victoriousPlayer, value);
+                RaisePropertyChanged("IsVictory");
+            }
         }
 
 
-        public Player VictoriousPlayer { get; }
+        public bool IsVictory => VictoriousPlayer != null;
 
 
         private void ClosePopup() {
-            CloseVictoryPopupMessage.Send(MessengerInstance);
+            VictoriousPlayer = null;
+            // CloseVictoryPopupMessage.Send(MessengerInstance);
         }
 
         #region ReplayModeCommand

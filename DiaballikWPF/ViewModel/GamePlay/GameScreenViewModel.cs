@@ -43,6 +43,7 @@ namespace DiaballikWPF.ViewModel {
             ReplayModeToolBarViewModel = new ReplayModeToolBarViewModel(MessengerInstance);
             Player1Tag = new PlayerTagViewModel(PrimaryGame.Player1);
             Player2Tag = new PlayerTagViewModel(PrimaryGame.Player2);
+            VictoryBannerViewModel = new VictoryBannerViewModel(MessengerInstance);
 
 
             UpdatePlayerTags(game.State);
@@ -75,9 +76,7 @@ namespace DiaballikWPF.ViewModel {
             UndoMessage.Register(MessengerInstance, this, () => Undo(ModeSpecificGame()));
             RedoMessage.Register(MessengerInstance, this, () => Redo(ModeSpecificGame()));
             SwitchGameViewModeMessage.Register(MessengerInstance, this, mode => ActiveMode = mode);
-            PauseGameMessage.Register(MessengerInstance, this, () => {
-                _aiLoopCanRun = false;
-            });
+            PauseGameMessage.Register(MessengerInstance, this, () => _aiLoopCanRun = false);
 
             // someone requested that the current state of the game be saved
             RequestSaveToGameScreenMessage.Register(
@@ -152,6 +151,8 @@ namespace DiaballikWPF.ViewModel {
 
         public PlayerTagViewModel Player1Tag { get; }
         public PlayerTagViewModel Player2Tag { get; }
+
+        public VictoryBannerViewModel VictoryBannerViewModel { get; }
 
         private PlayerTagViewModel PlayerTagOf(Player player) {
             if (player == Player1Tag.Player) return Player1Tag;
@@ -346,9 +347,8 @@ namespace DiaballikWPF.ViewModel {
             // save the game 
             RequestSaveToGameScreenMessage.Send(MessengerInstance);
             // show the popup
-            DispatcherHelper.UIDispatcher
-                            .Invoke(() => ShowVictoryPopupMessage.Send(MessengerInstance,
-                                                                       PrimaryGame.State.VictoriousPlayer));
+            DispatcherHelper.UIDispatcher.Invoke(
+                () => VictoryBannerViewModel.VictoriousPlayer = PrimaryGame.State.VictoriousPlayer);
         }
 
         #endregion

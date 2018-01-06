@@ -1,4 +1,4 @@
-﻿<UserControl x:Name="userControl" x:Class="DiaballikWPF.View.VictoryPopup"
+﻿<UserControl x:Name="userControl" x:Class="DiaballikWPF.View.VictoryBanner"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -15,7 +15,7 @@
 
 
              d:DesignHeight="70" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance viewModel:VictoryPopupViewModel }">
+             d:DataContext="{d:DesignInstance viewModel:VictoryBannerViewModel }">
     <UserControl.Resources>
 
         <ResourceDictionary>
@@ -39,11 +39,6 @@
             </Storyboard>
         </ResourceDictionary>
     </UserControl.Resources>
-    <UserControl.Triggers>
-        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-<!--            <BeginStoryboard Storyboard="{StaticResource OnShowing}"/>-->
-        </EventTrigger>
-    </UserControl.Triggers>
     <Grid>
         <TextBlock HorizontalAlignment="Center"
                    VerticalAlignment="Top"

@@ -114,7 +114,7 @@
     <Compile Include="ViewModel\GameInfo\ToolBarItemsCollection.cs" />
     <Compile Include="ViewModel\GameInfo\PlayerTagViewModel.cs" />
     <Compile Include="ViewModel\GameInfo\PlayModeToolBarViewModel.cs" />
-    <Compile Include="ViewModel\GameInfo\VictoryPopupViewModel.cs" />
+    <Compile Include="ViewModel\GameInfo\VictoryBannerViewModel.cs" />
     <Compile Include="ViewModel\LoadGameScreenViewModel.cs" />
     <Compile Include="Util\Messages.cs" />
     <Compile Include="ViewModel\GamePlay\GameScreenViewModel.cs" />
@@ -137,8 +137,8 @@
     <Compile Include="View\GameInfo\SavePopup.xaml.cs">
       <DependentUpon>SavePopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\GameInfo\VictoryPopup.xaml.cs">
-      <DependentUpon>VictoryPopup.xaml</DependentUpon>
+    <Compile Include="View\GameInfo\VictoryBanner.xaml.cs">
+      <DependentUpon>VictoryBanner.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\GamePlay\GameScreen.xaml.cs">
       <DependentUpon>GameScreen.xaml</DependentUpon>
@@ -174,7 +174,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\GameInfo\VictoryPopup.xaml">
+    <Page Include="View\GameInfo\VictoryBanner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

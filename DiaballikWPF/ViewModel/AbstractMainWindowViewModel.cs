@@ -71,9 +71,6 @@ namespace DiaballikWPF.ViewModel {
 
             OpenGameMessage.Register(MessengerInstance, this, OpenGameAction);
 
-
-            ShowVictoryPopupMessage.Register(MessengerInstance, this, HandleVictory);
-
             ShowSavePopupMessage.Register(MessengerInstance, this, payload => {
                 var (message, action, hasCancelButton) = payload;
                 DisplaySavePopup(message, action, hasCancelButton);
@@ -105,30 +102,6 @@ namespace DiaballikWPF.ViewModel {
             SaveManager.CommitSaves();
             Application.Current.Shutdown(0);
         }
-
-        private Popup VictoryPopup => _victoryPopup ?? (_victoryPopup = new Popup {
-            Child = new VictoryPopup(),
-            Height = 70,
-            Width = 300,
-            PopupAnimation = PopupAnimation.Slide,
-            PlacementTarget = View,
-            Placement = PlacementMode.Center
-        });
-
-        private Popup _victoryPopup;
-
-        private void HandleVictory(Player player) {
-            var banner = new VictoryPopup();
-
-            VictoryPopup.DataContext = new VictoryPopupViewModel(MessengerInstance, player);
-            VictoryPopup.IsOpen = true;
-
-            CloseVictoryPopupMessage.Register(MessengerInstance, this, () => {
-                VictoryPopup.IsOpen = false;
-                CloseVictoryPopupMessage.Unregister(MessengerInstance, this);
-            });
-        }
-
 
         private Popup SavePopup => _savePopup ?? (_savePopup = new Popup {
             Child = new SavePopup(),

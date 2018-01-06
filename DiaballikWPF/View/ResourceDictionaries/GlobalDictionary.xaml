@@ -35,7 +35,7 @@
         <Setter Property="HorizontalAlignment" Value="Left" />
     </Style>
 
-    <qc:QuickConverter x:Key="BoolToVisibility" Convert="$P ? Visibility.Visible : Visibility.Hidden" />
+    <qc:QuickConverter x:Key="BoolToVisibility" Convert="$P ? Visibility.Visible : Visibility.Collapsed" />
     <qc:QuickConverter x:Key="ColorToBrush" Convert="new SolidColorBrush($P)" />
 
 </ResourceDictionary>

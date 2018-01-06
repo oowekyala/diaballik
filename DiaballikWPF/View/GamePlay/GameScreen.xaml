@@ -35,6 +35,219 @@
                 <!--                <ResourceDictionary-->
                 <!--                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />-->
             </ResourceDictionary.MergedDictionaries>
+            <Menu x:Key="NavigationMenu" x:Shared="False" Style="{DynamicResource MaterialDesignMenu}">
+
+                <MenuItem Style="{DynamicResource MaterialDesignMenuItem}" Background="Transparent">
+                    <MenuItem.Header>
+                        <materialDesign:PackIcon Kind="Menu" Background="Transparent" />
+                    </MenuItem.Header>
+
+                    <MenuItem Command="{Binding BackToMainMenuCommand}"
+                              Style="{DynamicResource MaterialDesignMenuItem}"
+                              Background="Transparent">
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ExitToApp" Margin="0,0,10,0"
+                                                         VerticalAlignment="Center" />
+                                <ContentPresenter Content="Back to main menu" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
+                </MenuItem>
+
+
+            </Menu>
+            <viewModel:ToolBarItemsCollection x:Key="PlayModeItems">
+
+                <ContentControl
+                    ToolBar.OverflowMode="Never"
+                    VerticalAlignment="Center"
+                    Content="{StaticResource NavigationMenu}" />
+
+
+                <Button
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <Button.ToolTip>
+                        <TextBlock>
+                            Play mode allows you to take actions on the game, such
+                            <LineBreak />
+                            as move a piece, move the ball, or pass your turn.
+                            <LineBreak />
+                            <LineBreak />
+                            The current player and the number of moves they have
+                            <LineBreak />
+                            left to play is indicated by the number in the circle,
+                            <LineBreak />
+                            at the top.
+                            <LineBreak />
+                            <LineBreak />
+                            When it's your turn, click on one of your pieces to
+                            <LineBreak />
+                            display the possible moves it can perform. When you've decided
+                            <LineBreak />
+                            which move you want to make, click on the white tiling on
+                            <LineBreak />
+                            the tile onto which you'd like to move. You can also pass your
+                            <LineBreak />
+                            turn using the dedicated button in the toolbar.
+                            <LineBreak />
+                            <LineBreak />
+                            In Play mode, you can undo and redo actions like in a web browser.
+                            <LineBreak />
+                            Performing a new action after undoing one will prevent you from
+                            <LineBreak />
+                            redoing the undone action. To view past moves more freely and safely,
+                            <LineBreak />
+                            enter Replay mode.
+                        </TextBlock>
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="HelpCircleOutline" />
+                </Button>
+
+                <Separator VerticalAlignment="Stretch" />
+
+
+                <Button
+                    ToolBar.OverflowMode="Never"
+                    ToolTip="Undo the last action"
+                    Command="{Binding UndoCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <materialDesign:PackIcon Kind="UndoVariant" />
+                </Button>
+
+                <Button
+                    ToolBar.OverflowMode="Never"
+                    ToolTip="Redo the last undone action"
+                    Command="{Binding RedoCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <materialDesign:PackIcon Kind="RedoVariant" />
+                </Button>
+                <Separator VerticalAlignment="Stretch" />
+                <Button
+                    ToolBar.OverflowMode="Never"
+                    ToolTip="Pass your turn"
+                    Command="{Binding PassCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Check" />
+                        <TextBlock VerticalAlignment="Center" Text="Pass"
+                                   Style="{DynamicResource MaterialDesignButtonTextBlock}" />
+                    </StackPanel>
+                </Button>
+                <Separator VerticalAlignment="Stretch" />
+                <Button
+                    ToolBar.OverflowMode="Never"
+                    ToolTip="Enter replay mode"
+                    Command="{Binding ReplayModeCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Television" />
+                        <TextBlock VerticalAlignment="Center" Text="Replay"
+                                   Style="{DynamicResource MaterialDesignButtonTextBlock}" />
+                    </StackPanel>
+                </Button>
+
+            </viewModel:ToolBarItemsCollection>
+
+            <viewModel:ToolBarItemsCollection x:Key="ReplayModeItems">
+
+                <ContentControl Content="{StaticResource NavigationMenu}" />
+
+                <Button
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <Button.ToolTip>
+                        <TextBlock>
+                            Replay mode allows you to review past actions without
+                            <LineBreak />
+                            affecting the current state of the game.
+                            <LineBreak />
+                            <LineBreak />
+                            Go back and forward with the buttons in this toolbar.
+                            <LineBreak />
+                            <LineBreak />
+                            When you'd like to return to the game where you left off,
+                            <LineBreak />
+                            use the Resume button.
+                            <LineBreak />
+                            <LineBreak />
+                            The Fork button opens Play mode on the state currently viewed.
+                            <LineBreak />
+                            That means that you'll lose the moves you made between that
+                            <LineBreak />
+                            state and the last move played.
+                            <LineBreak />
+                        </TextBlock>
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="HelpCircleOutline" />
+                </Button>
+
+                <Separator VerticalAlignment="Stretch" />
+
+                <Button
+                    ToolBar.OverflowMode="Never"
+                    ToolTip="Go back to the beginning of the game"
+                    Command="{Binding UndoTillRootCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <materialDesign:PackIcon Kind="SkipBackward" />
+                </Button>
+
+                <Button
+                    ToolBar.OverflowMode="Never"
+                    ToolTip="Go back one move"
+                    Command="{Binding UndoCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <materialDesign:PackIcon Kind="SkipPrevious" />
+                </Button>
+
+                <Button
+                    ToolBar.OverflowMode="Never"
+                    ToolTip="Go forward one move"
+                    Command="{Binding RedoCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <materialDesign:PackIcon Kind="SkipNext" />
+                </Button>
+
+
+                <Button
+                    ToolBar.OverflowMode="Never"
+                    ToolTip="Go forward to last committed move"
+                    Command="{Binding RedoTillLastCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <materialDesign:PackIcon Kind="SkipForward" />
+                </Button>
+
+                <Separator VerticalAlignment="Stretch" />
+
+                <Button
+                    ToolBar.OverflowMode="Never"
+                    ToolTip="Fork game"
+                    Command="{Binding ForkGameCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="DirectionsFork" />
+                        <TextBlock VerticalAlignment="Center" Text="Fork"
+                                   Style="{DynamicResource MaterialDesignButtonTextBlock}" />
+                    </StackPanel>
+                </Button>
+
+
+                <Button
+                    ToolBar.OverflowMode="Never"
+                    ToolTipService.ShowOnDisabled="True"
+                    ToolTip="{qc:Binding '$P ? \'Resume where you left off\' : \'That game is already won\'', P={Binding IsEnabled, RelativeSource={RelativeSource Self}}}"
+                    Command="{Binding ResumeCommand}"
+                    Style="{DynamicResource MaterialDesignToolButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="ArrowRightDropCircle" />
+                        <TextBlock VerticalAlignment="Center" Text="Resume"
+                                   Style="{DynamicResource MaterialDesignButtonTextBlock}" />
+                    </StackPanel>
+
+                </Button>
+
+
+            </viewModel:ToolBarItemsCollection>
+
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -51,231 +264,14 @@
         </Style>
     </UserControl.Style>
 
-    <DockPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
-
-        <ToolBarTray DockPanel.Dock="Top">
-
+        <ToolBarTray Grid.Row="0">
             <ToolBar ToolBarTray.IsLocked="True">
-
-                <ToolBar.Resources>
-                    <Menu x:Key="NavigationMenu" x:Shared="False" Style="{DynamicResource MaterialDesignMenu}"
-                          >
-
-                        <MenuItem Style="{DynamicResource MaterialDesignMenuItem}" Background="Transparent">
-                            <MenuItem.Header>
-                                <materialDesign:PackIcon Kind="Menu" Background="Transparent" />
-                            </MenuItem.Header>
-
-                            <MenuItem Command="{Binding BackToMainMenuCommand}"
-                                      Style="{DynamicResource MaterialDesignMenuItem}"
-                                      Background="Transparent">
-                                <MenuItem.Header>
-                                    <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="ExitToApp" Margin="0,0,10,0"
-                                                                 VerticalAlignment="Center" />
-                                        <ContentPresenter Content="Back to main menu" VerticalAlignment="Center" />
-                                    </StackPanel>
-                                </MenuItem.Header>
-                            </MenuItem>
-                        </MenuItem>
-
-
-                    </Menu>
-                    <viewModel:ToolBarItemsCollection x:Key="PlayModeItems">
-
-                        <ContentControl
-                            ToolBar.OverflowMode="Never"
-                            VerticalAlignment="Center"
-                            Content="{StaticResource NavigationMenu}" />
-
-
-                        <Button
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <Button.ToolTip>
-                                <TextBlock>
-                                    Play mode allows you to take actions on the game, such
-                                    <LineBreak />
-                                    as move a piece, move the ball, or pass your turn.
-                                    <LineBreak />
-                                    <LineBreak />
-                                    The current player and the number of moves they have
-                                    <LineBreak />
-                                    left to play is indicated by the number in the circle,
-                                    <LineBreak />
-                                    at the top.
-                                    <LineBreak />
-                                    <LineBreak />
-                                    When it's your turn, click on one of your pieces to
-                                    <LineBreak />
-                                    display the possible moves it can perform. When you've decided
-                                    <LineBreak />
-                                    which move you want to make, click on the white tiling on
-                                    <LineBreak />
-                                    the tile onto which you'd like to move. You can also pass your
-                                    <LineBreak />
-                                    turn using the dedicated button in the toolbar.
-                                    <LineBreak />
-                                    <LineBreak />
-                                    In Play mode, you can undo and redo actions like in a web browser.
-                                    <LineBreak />
-                                    Performing a new action after undoing one will prevent you from
-                                    <LineBreak />
-                                    redoing the undone action. To view past moves more freely and safely,
-                                    <LineBreak />
-                                    enter Replay mode.
-                                </TextBlock>
-                            </Button.ToolTip>
-                            <materialDesign:PackIcon Kind="HelpCircleOutline" />
-                        </Button>
-
-                        <Separator VerticalAlignment="Stretch" />
-
-
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTip="Undo the last action"
-                            Command="{Binding UndoCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <materialDesign:PackIcon Kind="UndoVariant" />
-                        </Button>
-
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTip="Redo the last undone action"
-                            Command="{Binding RedoCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <materialDesign:PackIcon Kind="RedoVariant" />
-                        </Button>
-                        <Separator VerticalAlignment="Stretch" />
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTip="Pass your turn"
-                            Command="{Binding PassCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Check" />
-                                <TextBlock VerticalAlignment="Center" Text="Pass"
-                                           Style="{DynamicResource MaterialDesignButtonTextBlock}" />
-                            </StackPanel>
-                        </Button>
-                        <Separator VerticalAlignment="Stretch" />
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTip="Enter replay mode"
-                            Command="{Binding ReplayModeCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Television" />
-                                <TextBlock VerticalAlignment="Center" Text="Replay"
-                                           Style="{DynamicResource MaterialDesignButtonTextBlock}" />
-                            </StackPanel>
-                        </Button>
-
-                    </viewModel:ToolBarItemsCollection>
-
-                    <viewModel:ToolBarItemsCollection x:Key="ReplayModeItems">
-
-                        <ContentControl Content="{StaticResource NavigationMenu}" />
-
-                        <Button
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <Button.ToolTip>
-                                <TextBlock>
-                                    Replay mode allows you to review past actions without
-                                    <LineBreak />
-                                    affecting the current state of the game.
-                                    <LineBreak />
-                                    <LineBreak />
-                                    Go back and forward with the buttons in this toolbar.
-                                    <LineBreak />
-                                    <LineBreak />
-                                    When you'd like to return to the game where you left off,
-                                    <LineBreak />
-                                    use the Resume button.
-                                    <LineBreak />
-                                    <LineBreak />
-                                    The Fork button opens Play mode on the state currently viewed.
-                                    <LineBreak />
-                                    That means that you'll lose the moves you made between that
-                                    <LineBreak />
-                                    state and the last move played.
-                                    <LineBreak />
-                                </TextBlock>
-                            </Button.ToolTip>
-                            <materialDesign:PackIcon Kind="HelpCircleOutline" />
-                        </Button>
-
-                        <Separator VerticalAlignment="Stretch" />
-
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTip="Go back to the beginning of the game"
-                            Command="{Binding UndoTillRootCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <materialDesign:PackIcon Kind="SkipBackward" />
-                        </Button>
-
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTip="Go back one move"
-                            Command="{Binding UndoCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <materialDesign:PackIcon Kind="SkipPrevious" />
-                        </Button>
-
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTip="Go forward one move"
-                            Command="{Binding RedoCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <materialDesign:PackIcon Kind="SkipNext" />
-                        </Button>
-
-
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTip="Go forward to last committed move"
-                            Command="{Binding RedoTillLastCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <materialDesign:PackIcon Kind="SkipForward" />
-                        </Button>
-
-                        <Separator VerticalAlignment="Stretch" />
-
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTip="Fork game"
-                            Command="{Binding ForkGameCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="DirectionsFork" />
-                                <TextBlock VerticalAlignment="Center" Text="Fork"
-                                           Style="{DynamicResource MaterialDesignButtonTextBlock}" />
-                            </StackPanel>
-                        </Button>
-
-
-                        <Button
-                            ToolBar.OverflowMode="Never"
-                            ToolTipService.ShowOnDisabled="True"
-                            ToolTip="{qc:Binding '$P ? \'Resume where you left off\' : \'That game is already won\'', P={Binding IsEnabled, RelativeSource={RelativeSource Self}}}"
-                            Command="{Binding ResumeCommand}"
-                            Style="{DynamicResource MaterialDesignToolButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="ArrowRightDropCircle" />
-                                <TextBlock VerticalAlignment="Center" Text="Resume"
-                                           Style="{DynamicResource MaterialDesignButtonTextBlock}" />
-                            </StackPanel>
-
-                        </Button>
-
-
-                    </viewModel:ToolBarItemsCollection>
-
-                </ToolBar.Resources>
-
-
                 <ToolBar.Style>
                     <Style>
                         <Style.Triggers>
@@ -294,25 +290,61 @@
                         </Style.Triggers>
                     </Style>
                 </ToolBar.Style>
-
-
             </ToolBar>
 
-            <ToolBar ToolBarTray.IsLocked="False"> <!-- Player tags -->
+            <ToolBar ToolBarTray.IsLocked="True">
+                <!-- Player tags -->
                 <view:PlayerTag DataContext="{Binding Player1Tag}" />
-
                 <view:PlayerTag DataContext="{Binding Player2Tag}" />
             </ToolBar>
-
-
         </ToolBarTray>
 
 
         <view:BoardView
+            Grid.Row="1"
+            Grid.ZIndex="0"
             Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
             DockPanel.Dock="Bottom"
             VerticalAlignment="Stretch"
             DataContext="{Binding BoardViewModel}" />
-    </DockPanel>
+
+        <!-- Prevents clicking on the toolbar when the victory banner shows-->
+        <Grid Grid.Row="0" Grid.RowSpan="2" Grid.ZIndex="3" 
+              VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+              Background="#01000000" 
+              Visibility="{Binding VictoryBannerViewModel.IsVictory, Converter={StaticResource BoolToVisibility}}"></Grid>
+        
+        <view:VictoryBanner
+            Grid.Row="1"
+            Grid.ZIndex="5"
+            Height="70"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="#E2E2E2"
+            DataContext="{Binding VictoryBannerViewModel}"
+            Visibility="{Binding IsVictory, Converter={StaticResource BoolToVisibility}}">
+            <view:VictoryBanner.Style>
+                <Style>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsVictory}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames
+                                            Storyboard.TargetProperty="(view:VictoryBanner.Width)" BeginTime="00:00:00">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:0.3" Value="600"
+                                                                  KeySpline="0,0,0.3,0.89" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </view:VictoryBanner.Style>
+        </view:VictoryBanner>
+
+    </Grid>
 
 </UserControl>
