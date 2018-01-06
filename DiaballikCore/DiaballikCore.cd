@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="Diaballik.Core.Game">
+    <Position X="11.5" Y="11.25" Width="4" />
+    <Members>
+      <Field Name="_breadCrumbs" Hidden="true" />
+      <Field Name="_syncLock" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="Game" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+      <Property Name="Player1" Hidden="true" />
+      <Property Name="Player2" Hidden="true" />
+      <Field Name="Rng" Hidden="true" />
+      <Property Name="State" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAQAAYAABAAABAAAwAAAAAABAAABAIAAAgICBQEABiA=</HashCode>
+      <FileName>classes\Game.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Memento" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Diaballik.Core.BoardLike">
+    <Position X="0.5" Y="1" Width="3" />
+    <Members>
+      <Field Name="_isVictory" Hidden="true" />
+      <Field Name="_specs" Hidden="true" />
+      <Field Name="_specsEmpty" Hidden="true" />
+      <Field Name="_victoriousPlayer" Hidden="true" />
+      <Method Name="ComputeVictory" Hidden="true" />
+      <Method Name="GetPlayerProperty" Hidden="true" />
+      <Method Name="IsVictoriousPlayer" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>CgAIAIAESAAAAEAQzAAAAIAQAAIBBAoEAAAIgQgACAE=</HashCode>
+      <FileName>classes\BoardLike.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Player1" />
+      <Property Name="Player2" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Diaballik.Core.BoardLikeDecorator&lt;T&gt;">
+    <Position X="5" Y="4.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>CgAAAAAASAAAAAAAwAAAAIAAAAABBAAAAAAAAAAAAAA=</HashCode>
+      <FileName>classes\BoardLike.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diaballik.Core.GameBoard">
+    <Position X="0.5" Y="6.75" Width="3.25" />
+    <Members>
+      <Field Name="_boardLookup" Hidden="true" />
+      <Field Name="_player1Positions" Hidden="true" />
+      <Field Name="_player2Positions" Hidden="true" />
+      <Method Name="CheckPieces" Hidden="true" />
+      <Method Name="CheckPositionIsValid" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GameBoard" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+      <Method Name="ToString" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>CwAAAgAACAAAAAAEwAAgCIAAAAABBMACAoAAAAAAAiA=</HashCode>
+      <FileName>classes\GameBoard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diaballik.Core.GameMemento">
+    <Position X="2.75" Y="12.5" Width="4.5" />
+    <Members>
+      <Field Name="_state" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="FullAncestryString" Hidden="true" />
+      <Method Name="GameMemento" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+      <Method Name="ToString" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAEgAIAyAEABAAAAIAAAAAABAAIAiA=</HashCode>
+      <FileName>classes\GameMemento.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="State" />
+      <Property Name="Parent" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Diaballik.Core.MementoNode">
+    <Position X="5.25" Y="15.75" Width="2.75" />
+    <Members>
+      <Field Name="_hashCode" Hidden="true" />
+      <Field Name="_hashCodeIsValid" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="MementoNode" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgQIAAAAAAAAAAIAAAAAgAAAAAiQ=</HashCode>
+      <FileName>classes\GameMemento.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Action" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Diaballik.Core.RootMemento">
+    <Position X="1.5" Y="15.75" Width="2.75" />
+    <Members>
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+      <Method Name="RootMemento" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAwAIAAAAAAAABAIAAEAAAAAAAAiA=</HashCode>
+      <FileName>classes\GameMemento.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diaballik.Core.GameState">
+    <Position X="4.5" Y="8.75" Width="4.5" />
+    <Members>
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="FullDescription" Hidden="true" />
+      <Method Name="GameState" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="GetNextStateWithBoard" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+      <Method Name="ToString" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAFgAAgCAAAABAAAIAAAAAAgAAABiA=</HashCode>
+      <FileName>classes\GameState.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diaballik.Core.MoveAction">
+    <Position X="14" Y="15.75" Width="3" />
+    <Members>
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="GetReversed" Hidden="true" />
+      <Method Name="MoveAction" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+      <Method Name="ToString" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAAAAAAAAAAAAIIAAAICBAAABiA=</HashCode>
+      <FileName>classes\IUpdateAction.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.713" Collapsed="true" />
+  </Class>
+  <Class Name="Diaballik.Core.MoveBallAction" Collapsed="true">
+    <Position X="18.5" Y="16" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAACBAAABAA=</HashCode>
+      <FileName>classes\IUpdateAction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diaballik.Core.MovePieceAction" Collapsed="true">
+    <Position X="18.75" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAACBAAABAA=</HashCode>
+      <FileName>classes\IUpdateAction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diaballik.Core.PassAction" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10.5" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAgAAAAAAAAAAIAAAAAABAAABiA=</HashCode>
+      <FileName>classes\IUpdateAction.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.514" Collapsed="true" />
+  </Class>
+  <Class Name="Diaballik.Core.Player">
+    <Position X="6.75" Y="1.5" Width="2" />
+    <Members>
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+      <Method Name="Player" Hidden="true" />
+      <Method Name="ToString" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAAAAAQgAAAEAIAAAQAAgAAAAiA=</HashCode>
+      <FileName>classes\Player.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Type" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Diaballik.Core.Builders.GameBuilder">
+    <Position X="19.25" Y="1" Width="3.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Diaballik.Core.Builders.GameBuilder.GameScenario">
+        <TypeIdentifier>
+          <NewMemberFileName>classes\builders\GameBuilder.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AQAACAAAAAAgAAAAAAAQAAAAAAABgQAAAAAAAAAAEgI=</HashCode>
+      <FileName>classes\builders\GameBuilder.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="PlayerBuilder1" />
+      <Property Name="PlayerBuilder2" />
+      <Property Name="InitStrategy" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Diaballik.Core.Builders.AbstractInitStrategy">
+    <Position X="15.5" Y="6.5" Width="2.5" />
+    <Members>
+      <Field Name="Rand" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>classes\builders\InitStrategy.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.715" Collapsed="true" />
+  </Class>
+  <Class Name="Diaballik.Core.Builders.StandardInitStrategy" Collapsed="true">
+    <Position X="13.25" Y="9" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>classes\builders\InitStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diaballik.Core.Builders.BallRandomStrategy" Collapsed="true">
+    <Position X="15.5" Y="9" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>classes\builders\InitStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diaballik.Core.Builders.EnemyAmongUsStrategy" Collapsed="true">
+    <Position X="18" Y="9" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>classes\builders\InitStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diaballik.Core.Builders.PlayerBuilder">
+    <Position X="14" Y="1" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAQAQAAAAAgQAAQAgAwAAAAgA=</HashCode>
+      <FileName>classes\builders\PlayerBuilder.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SelectedPlayerType" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Diaballik.Core.PlayerBoardSpec">
+    <Position X="19.75" Y="6.5" Width="2.25" />
+    <Members>
+      <Field Name="_positions" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+      <Method Name="PlayerBoardSpec" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAggAAAAAAAAAAAQIAAAAAAAAAAAiA=</HashCode>
+      <FileName>classes\PlayerBoardSpec.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diaballik.Core.FullPlayerBoardSpec">
+    <Position X="23" Y="6.5" Width="1.5" />
+    <Members>
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="FullPlayerBoardSpec" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAAAAAAAAAAAAIAAAAAAAQAAAiA=</HashCode>
+      <FileName>classes\PlayerBoardSpec.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Diaballik.Core.Position2D">
+    <Position X="9.5" Y="4.25" Width="1.5" />
+    <Members>
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="New" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+      <Method Name="Position2D" Hidden="true" />
+      <Method Name="ToString" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAEgAAAAAAAAAAAAIAAAAAAAAAAYiA=</HashCode>
+      <FileName>classes\Position2D.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="Diaballik.Core.IUpdateAction">
+    <Position X="10.5" Y="15.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAABAA=</HashCode>
+      <FileName>classes\IUpdateAction.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Diaballik.Core.Builders.IInitStrategy">
+    <Position X="15.5" Y="5.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>classes\builders\InitStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Diaballik.Core.PlayerType">
+    <Position X="9.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACQAAAAQACAA=</HashCode>
+      <FileName>classes\Player.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
