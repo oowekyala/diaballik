@@ -7,7 +7,18 @@
 namespace Diaballik{
 	namespace AlgoLib {
 
-
+		///
+		/// TODO this implementation is really limited, and could be more efficient.
+		/// We could compute travel costs from every position to its neighbours and
+		/// store that in a single array, then explore each dangerous position's
+		/// lines of views looking for an enemy piece, and recurse until we hit
+		/// MaxMovesPerTurn - (cost of original tile) depth. This could give us all harmful
+		/// MoveBall / MovePiece combinations for the next player's turn, which we
+		/// could then try to hinder in as few moves as possible.
+		///
+		/// We could change AiDecisionAlgo to give back not only the next move, but
+		/// all the moves for the turn, which would allow us to do the computation
+		/// only once.
 		public ref class StartingAiAlgo : public AiDecisionAlgo
 		{
 		private:
