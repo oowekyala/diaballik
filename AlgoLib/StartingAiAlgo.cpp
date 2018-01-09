@@ -13,7 +13,7 @@ namespace Diaballik {
 			IEnumerable<Position2D>^ threats = BoardAnalysis::DangerousPieces(board, player);
 			Position2D tmp = Enumerable::First<Position2D>(threats);
 			for each (auto pos in threats) {
-				if (pos.X < tmp.X) tmp = pos;
+				if (Math::Abs(board->GetRowIndexOfInitialLine(player)-pos.X) < Math::Abs(board->GetRowIndexOfInitialLine(player) - tmp.X)) tmp = pos;
 			}
 			return tmp;
 		}
@@ -26,7 +26,7 @@ namespace Diaballik {
 			int temp = board->BoardSize;
 			for each (auto pos in board->PositionsForPlayer(player))
 			{
-				if (Math::Abs(pos.X - playerBase) < Math::Abs(piece.X - playerBase) && Math::Abs(pos.Y - piece.Y) < temp) {
+				if (Math::Abs(pos.X - playerBase) < Math::Abs(piece.X - playerBase) && Math::Abs(pos.Y - piece.Y) < temp && !board->HasBall(pos)) {
 					temp = Math::Abs(pos.Y - piece.Y);
 					nearest = pos;
 				}
@@ -68,31 +68,36 @@ namespace Diaballik {
 			{
 				Position2D threat = MostDangerousPiece(board, player);
 				if (threat.X == board->GetRowIndexOfInitialLine(player)) { //the dangerous piece is on the player's starting line
-					if (Enumerable::Contains<Position2D>(BoardAnalysis::MovesForBall(board, board->BallCarrierForPlayer(board->GetOtherPlayer(player))), threat)) {
+					if (Enumerable::Contains<Position2D>(BoardAnalysis::MovesForBall(board, board->BallCarrierForPlayer(board->GetOtherPlayer(player))), threat)) { //verify if the player can pass the ball to the dangerous piece
 						for each (auto pos in board->PositionsForPlayer(player))
 						{
 							if (pos != board->BallCarrierForPlayer(player)) {
-								auto targets = Enumerable::Union(BoardAnalysis::ReachablePositions(board, pos, 3), BoardAnalysis::GetTilesBetween(board, board->BallCarrierForPlayer(board->GetOtherPlayer(player)), threat));
+								auto targets = Enumerable::Intersect(BoardAnalysis::ReachablePositions(board, pos, 1), BoardAnalysis::GetTilesBetween(board, board->BallCarrierForPlayer(board->GetOtherPlayer(player)), threat));
 								if (Enumerable::Any(targets)) {
 									Position2D p = moveTo(board, pos, Enumerable::ElementAt(targets, 0));
-									return MovePieceAction::New(pos, p);
+									if(!pos.Equals(p)) return MovePieceAction::New(pos, p);
 								}
 							}
 						}
+						return _noob->NextMove(board, player);
 					}
+					else return _noob->NextMove(board, player);
 				}
 				else {
 					Position2D pieceToMove = NearestPieceFrom(board, player, threat);
 					if (pieceToMove.Y == threat.Y) {
-						return gcnew PassAction();
+						if(board->NumMovesLeft != 3) return PassAction::New();
+						else return _noob->NextMove(board, player);
 					}
 					else if (pieceToMove.Y < threat.Y) {
 						Position2D dest = Position2D::New(pieceToMove.X, pieceToMove.Y + 1);
-						return MovePieceAction::New(pieceToMove, dest);
+						if(board->IsFree(dest) && board->IsOnBoard(dest)) return MovePieceAction::New(pieceToMove, dest);
+						else return _noob->NextMove(board, player);
 					}
 					else {
 						Position2D dest = Position2D::New(pieceToMove.X, pieceToMove.Y - 1);
-						return MovePieceAction::New(pieceToMove, dest);
+						if (board->IsFree(dest) && board->IsOnBoard(dest)) return MovePieceAction::New(pieceToMove, dest);
+						else return _noob->NextMove(board, player);
 					}
 				}
 			}

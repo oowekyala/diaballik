@@ -229,6 +229,12 @@ namespace Diaballik.Core {
             return "PassAction";
         }
 
+        public static PassAction New()
+        {
+            return new PassAction();
+        }
+
+
         #endregion
 
         #region Equality members

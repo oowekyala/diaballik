@@ -135,7 +135,7 @@ namespace Diaballik {
 						if (!src.Equals(pos2) && IsReachable(Board, pos2, src, nbMoves)) res->Add(pos2);
 					}
 				}
-				Enumerable::Distinct(res);
+				return Enumerable::Distinct(res);
 			}
 			else if (nbMoves == 3) {
 				for each(auto pos in Neighbours(src)) {
@@ -146,7 +146,7 @@ namespace Diaballik {
 						}
 					}
 				}
-				Enumerable::Distinct(res);
+				return Enumerable::Distinct(res);
 			}
 			return res;
 		}
@@ -216,11 +216,11 @@ namespace Diaballik {
 			int x = src.X + xstep, y = src.Y + ystep;
 			List<Position2D>^ res = gcnew List<Position2D>;
 			Position2D p(x + xstep, y + ystep);
-			while (p != dest)
+			while (x != dest.X && y != dest.Y)
 			{
 				p = Position2D(x, y);
 				if (Board->IsOnBoard(p)) res->Add(p);
-				CLIASSERT(!Board->IsOnBoard(p), "Out of the board (GetTiles function)");
+				//CLIASSERT(!Board->IsOnBoard(p), "Out of the board (GetTiles function)");
 				x += xstep;
 				y += ystep;
 			}
