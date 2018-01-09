@@ -108,54 +108,40 @@ namespace Diaballik {
 			help.accumulator->Add(p);
 		}
 
+		IEnumerable<Position2D>^ BoardAnalysis::ReachablePositionsHelper(BoardLike^ Board, int nbMoves, HashSet<Position2D>^ accumulator, HashSet<Position2D>^ edge)
+		{
+			if (nbMoves == 0) return accumulator;
+			else
+			{
+				auto newEdge = gcnew HashSet<Position2D>;
+				for each (auto pos in edge) // edge is the next positions to develop, on the edge of the search area
+				{
+					for each (auto p in Neighbours(pos))
+					{
+						if (Board->IsOnBoard(p) && Board->IsFree(p))
+						{
+							if (!accumulator->Contains(p))
+							{
+								accumulator->Add(p);
+								newEdge->Add(p);
+							}
+						}
+					}
+				}
+				return ReachablePositionsHelper(Board, nbMoves - 1, accumulator, newEdge);
+			}
+		}
+
 
 		IEnumerable<Position2D>^ BoardAnalysis::ReachablePositions(BoardLike^ Board, Position2D src, int nbMoves) {
-			List<Position2D>^ res = gcnew List<Position2D>;
-			if (nbMoves == 1) {
-				for each(auto pos in Neighbours(src)) {
-					if (IsReachable(Board, pos, src, nbMoves)) res->Add(pos);
-				}
-			}
-			else if (nbMoves == 2) {
-				for each(auto pos in Neighbours(src)) {
-					for each (auto pos2 in Neighbours(pos)) {
-						if (!src.Equals(pos2) && IsReachable(Board, pos2, src, nbMoves)) res->Add(pos2);
-					}
-				}
-				return Enumerable::Distinct(res);
-			}
-			else if (nbMoves == 3) {
-				for each(auto pos in Neighbours(src)) {
-					for each(auto pos2 in Neighbours(pos)) {
-						for each (auto pos3 in Neighbours(pos2))
-						{
-							if (!Enumerable::Contains(Neighbours(src), pos3) && IsReachable(Board, pos3, src, nbMoves))res->Add(pos3);
-						}
-					}
-				}
-				return Enumerable::Distinct(res);
-			}
-			return res;
+			auto acc = gcnew HashSet<Position2D>();
+			acc->Add(src);
+			auto edge = gcnew HashSet<Position2D>();
+			edge->Add(src);
+
+			return ReachablePositionsHelper(Board, nbMoves, acc, edge);
 		}
 
-
-		bool BoardAnalysis::IsReachable(BoardLike^ Board, Position2D dest, Position2D src, int nbMoves) {
-			if (nbMoves == 1) {
-				if (Enumerable::Contains<Position2D>(Neighbours(src), dest) && Board->IsOnBoard(dest) && Board->IsFree(dest)) return true;
-			}
-			else if (nbMoves > 1) {
-				for each(auto pos in Neighbours(dest)) {
-					if (Board->IsOnBoard(pos) && Board->IsFree(pos)) {
-						int i = 1;
-						while (nbMoves - i != 0) {
-							if (!IsReachable(Board, pos, dest, nbMoves - i)) break;
-							else i++;
-						}
-						if (nbMoves - i == 0) return true;
-					}
-				}
-			}
-		}
 
 		IEnumerable<Position2D>^ BoardAnalysis::Neighbours(Position2D src) {
 			List<Position2D>^ res = gcnew List<Position2D>;
@@ -208,7 +194,7 @@ namespace Diaballik {
 			{
 				p = Position2D(x, y);
 				if (Board->IsOnBoard(p)) res->Add(p);
-				//CLIASSERT(!Board->IsOnBoard(p), "Out of the board (GetTiles function)");
+				// CLIASSERT(Board->IsOnBoard(p), "Out of the board (GetTiles function)");
 				x += xstep;
 				y += ystep;
 			}
