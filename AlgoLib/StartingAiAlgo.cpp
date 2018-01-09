@@ -7,10 +7,22 @@ using namespace Diaballik::Core::Util;
 namespace Diaballik {
 	namespace AlgoLib {
 
+		IEnumerable<Position2D>^ StartingAiAlgo::DangerousPieces(BoardLike^ Board, Player^ player)
+		{
+			List<Position2D>^ threats = gcnew List<Position2D>;
+			for each(auto pos in Board->PositionsForPlayer(Board->GetOtherPlayer(player)))
+			{
+				if (Math::Abs(pos.X - Board->GetRowIndexOfInitialLine(player)) <= 2) threats->Add(pos);
+			}
+
+			return threats;
+		}
+
+
 		//Looks for the most dangerous adversary piece (i.e. the nearest for the player's starting line) among the dangerous pieces of the adversary
 		Position2D StartingAiAlgo::MostDangerousPiece(GameState^ board, Player^ player)
 		{
-			IEnumerable<Position2D>^ threats = BoardAnalysis::DangerousPieces(board, player);
+			IEnumerable<Position2D>^ threats = DangerousPieces(board, player);
 			Position2D tmp = Enumerable::First<Position2D>(threats);
 			for each (auto pos in threats) {
 				if (Math::Abs(board->GetRowIndexOfInitialLine(player)-pos.X) < Math::Abs(board->GetRowIndexOfInitialLine(player) - tmp.X)) tmp = pos;
@@ -64,7 +76,7 @@ namespace Diaballik {
 
 		IUpdateAction^ StartingAiAlgo::NextMove(GameState^ board, Player^ player)
 		{
-			if (Enumerable::Any(BoardAnalysis::DangerousPieces(board, player))) // verify if there is any dangerous piece for the player
+			if (Enumerable::Any(DangerousPieces(board, player))) // verify if there is any dangerous piece for the player
 			{
 				Position2D threat = MostDangerousPiece(board, player);
 				if (threat.X == board->GetRowIndexOfInitialLine(player)) { //the dangerous piece is on the player's starting line

@@ -29,9 +29,6 @@ namespace Diaballik{
 			[ExtensionAttribute]
 			static IEnumerable<MoveAction^>^ AvailableMoves(BoardLike^ Board, Position2D p);
 
-			/** Gets the set of dangerous pieces (i.e. 2 lines away or less from the player starting line) for the player */
-			static IEnumerable<Position2D>^ DangerousPieces(BoardLike^ Board, Player^ player);
-
 			/**Gets the set of the Reachable Positions from one Position giving a number of moves*/
 			static IEnumerable<Position2D>^ ReachablePositions(BoardLike^ Board, Position2D src, int nbMoves);
 

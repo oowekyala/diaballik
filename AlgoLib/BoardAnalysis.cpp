@@ -109,19 +109,6 @@ namespace Diaballik {
 		}
 
 
-
-
-		IEnumerable<Position2D>^ BoardAnalysis::DangerousPieces(BoardLike^ Board, Player^ player)
-		{
-			List<Position2D>^ threats = gcnew List<Position2D>;
-			for each(auto pos in Board->PositionsForPlayer(Board->GetOtherPlayer(player)))
-			{
-				if (Math::Abs(pos.X - Board->GetRowIndexOfInitialLine(player)) <= 2) threats->Add(pos);
-			}
-
-			return threats;
-		}
-
 		IEnumerable<Position2D>^ BoardAnalysis::ReachablePositions(BoardLike^ Board, Position2D src, int nbMoves) {
 			List<Position2D>^ res = gcnew List<Position2D>;
 			if (nbMoves == 1) {
@@ -150,6 +137,7 @@ namespace Diaballik {
 			}
 			return res;
 		}
+
 
 		bool BoardAnalysis::IsReachable(BoardLike^ Board, Position2D dest, Position2D src, int nbMoves) {
 			if (nbMoves == 1) {

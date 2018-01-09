@@ -21,6 +21,9 @@ namespace Diaballik{
 			//Returns a position to move from the src piece to the dest tile
 			Position2D moveTo(GameState ^ board, Position2D src, Position2D dest);
 
+			/// Gets the set of dangerous pieces (i.e. 2 lines away or less from the player starting line) for the player
+			static IEnumerable<Position2D>^ DangerousPieces(BoardLike^ Board, Player^ player);
+
 		public:
 			IUpdateAction ^ NextMove(GameState^ board, Player^ player) override;
 		};
