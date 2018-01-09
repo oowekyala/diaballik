@@ -9,18 +9,12 @@ using namespace Diaballik::Core::Util;
 namespace Diaballik {
 	namespace AlgoLib {
 
-		// I couldn't write a generic method for some reason
-
-		IEnumerable<Position2D>^ Shuffle(IEnumerable<Position2D>^ l)
+		generic<class T>
+		IEnumerable<T>^ Shuffle(IEnumerable<T>^ l)
 		{
 			return ExtensionUtil::Shuffle(Enumerable::ToList(l));
 		}
 
-
-		IEnumerable<MoveAction^>^ Shuffle(IEnumerable<MoveAction^>^ l)
-		{
-			return ExtensionUtil::Shuffle(Enumerable::ToList(l));
-		}
 
 		IUpdateAction^ NoobAiAlgo::TryGetAMovePiece(GameState^ state, IEnumerable<Position2D>^ ps, Position2D ballCarrier)
 		{

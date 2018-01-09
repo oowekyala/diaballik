@@ -19,7 +19,7 @@ namespace Diaballik {
 		}
 
 
-		//Looks for the most dangerous adversary piece (i.e. the nearest for the player's starting line) among the dangerous pieces of the adversary
+		// Looks for the most dangerous adversary piece (i.e. the nearest from the player's starting line) among the dangerous pieces of the adversary
 		Position2D StartingAiAlgo::MostDangerousPiece(GameState^ board, Player^ player)
 		{
 			IEnumerable<Position2D>^ threats = DangerousPieces(board, player);
@@ -30,7 +30,7 @@ namespace Diaballik {
 			return tmp;
 		}
 
-		//Returns the nearest piece from an adversary piece
+		// Returns the nearest piece from an adversary piece
 		Position2D StartingAiAlgo::NearestPieceFrom(GameState^ board, Player^ player, Position2D piece)
 		{
 			int playerBase = board->GetRowIndexOfInitialLine(player);
@@ -46,7 +46,7 @@ namespace Diaballik {
 			return nearest;
 		}
 
-		//Returns a position to move from the src piece to the dest tile
+		// Returns a position to move from the src piece to the dest tile
 		Position2D StartingAiAlgo::moveTo(GameState^ board, Position2D src, Position2D dest) {
 			if (src.X < dest.X) {
 				Position2D pos(src.X + 1, src.Y);
