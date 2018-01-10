@@ -34,6 +34,9 @@ namespace Diaballik{
 			/// Gets the set of the tiles between src and dest
 			static IEnumerable<Position2D>^ GetTilesBetween(BoardLike ^ Board, Position2D src, Position2D dest);
 
+			/// Gets the set of adversary pieces among src neighbours
+			static bool EnemyNeighbours(BoardLike^ Board, Player^ player, Position2D src);
+
 		private:
 			/// Helper class for the TryGetFriend algorithm. 
 			value struct Helper
@@ -56,7 +59,7 @@ namespace Diaballik{
 			static void TryGetFriend(Helper help, int xstep, int ystep);
 
 			/// Gets the neighbours of a position
-			static IEnumerable<Position2D>^ Neighbours(Position2D src);
+			static IEnumerable<Position2D>^ Neighbours(BoardLike^ Board, Position2D src);
 
 			/// Recursive helper 
 			static IEnumerable<Position2D>^ ReachablePositionsHelper(BoardLike^ Board, int nbMoves, HashSet<Position2D>^ accumulator, HashSet<Position2D>^ edge);

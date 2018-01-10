@@ -116,7 +116,7 @@ namespace Diaballik {
 				auto newEdge = gcnew HashSet<Position2D>;
 				for each (auto pos in edge) // edge is the next positions to develop, on the edge of the search area
 				{
-					for each (auto p in Neighbours(pos))
+					for each (auto p in Neighbours(Board, pos))
 					{
 						if (Board->IsOnBoard(p) && Board->IsFree(p))
 						{
@@ -143,13 +143,27 @@ namespace Diaballik {
 		}
 
 
-		IEnumerable<Position2D>^ BoardAnalysis::Neighbours(Position2D src) {
+		IEnumerable<Position2D>^ BoardAnalysis::Neighbours(BoardLike^ Board, Position2D src) {
 			List<Position2D>^ res = gcnew List<Position2D>;
 			Position2D haut = Position2D::New(src.X - 1, src.Y);
+			if (Board->IsOnBoard(haut)) res->Add(haut);
 			Position2D bas = Position2D::New(src.X + 1, src.Y);
+			if (Board->IsOnBoard(bas)) res->Add(bas);
 			Position2D droite = Position2D::New(src.X, src.Y + 1);
+			if (Board->IsOnBoard(droite)) res->Add(droite);
 			Position2D gauche = Position2D::New(src.X, src.Y - 1);
+			if (Board->IsOnBoard(gauche)) res->Add(gauche);
 			return res;
+		}
+
+		bool BoardAnalysis::EnemyNeighbours(BoardLike^ Board, Player^ player, Position2D src) {
+			List<Position2D>^ res = gcnew List<Position2D>;
+			Player^ adversary = Board->GetOtherPlayer(player);
+			for each (auto pos in BoardAnalysis::Neighbours(Board, src))
+			{
+				if (Enumerable::Contains<Position2D>(Board->PositionsForPlayer(adversary), pos)) return true;
+			}
+			return false;
 		}
 
 		IEnumerable<Position2D>^ BoardAnalysis::GetTilesBetween(BoardLike^ Board, Position2D src, Position2D dest) {

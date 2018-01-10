@@ -25,7 +25,7 @@ namespace Diaballik {
 			IEnumerable<Position2D>^ threats = DangerousPieces(board, player);
 			Position2D tmp = Enumerable::First<Position2D>(threats);
 			for each (auto pos in threats) {
-				if (Math::Abs(board->GetRowIndexOfInitialLine(player)-pos.X) < Math::Abs(board->GetRowIndexOfInitialLine(player) - tmp.X)) tmp = pos;
+				if (Math::Abs(board->GetRowIndexOfInitialLine(player)-pos.X) <= Math::Abs(board->GetRowIndexOfInitialLine(player) - tmp.X) && board->IsFree(Position2D(board->GetRowIndexOfInitialLine(player), pos.Y))) tmp = pos;
 			}
 			return tmp;
 		}
@@ -38,7 +38,7 @@ namespace Diaballik {
 			int temp = board->BoardSize;
 			for each (auto pos in board->PositionsForPlayer(player))
 			{
-				if (Math::Abs(pos.X - playerBase) < Math::Abs(piece.X - playerBase) && Math::Abs(pos.Y - piece.Y) < temp && !board->HasBall(pos)) {
+				if (Math::Abs(pos.X - playerBase) < Math::Abs(piece.X - playerBase) && Math::Abs(pos.Y - piece.Y) <= temp && !board->HasBall(pos) && !BoardAnalysis::EnemyNeighbours(board, player, pos)) {
 					temp = Math::Abs(pos.Y - piece.Y);
 					nearest = pos;
 				}
@@ -97,19 +97,21 @@ namespace Diaballik {
 				}
 				else {
 					Position2D pieceToMove = NearestPieceFrom(board, player, threat);
-					if (pieceToMove.Y == threat.Y) {
-						if(board->NumMovesLeft != 3) return PassAction::New();
-						else return _noob->NextMove(board, player);
-					}
-					else if (pieceToMove.Y < threat.Y) {
-						Position2D dest = Position2D::New(pieceToMove.X, pieceToMove.Y + 1);
-						if(board->IsFree(dest) && board->IsOnBoard(dest)) return MovePieceAction::New(pieceToMove, dest);
-						else return _noob->NextMove(board, player);
-					}
-					else {
-						Position2D dest = Position2D::New(pieceToMove.X, pieceToMove.Y - 1);
-						if (board->IsFree(dest) && board->IsOnBoard(dest)) return MovePieceAction::New(pieceToMove, dest);
-						else return _noob->NextMove(board, player);
+					if (!BoardAnalysis::EnemyNeighbours(board, player, pieceToMove)) {
+						if (pieceToMove.Y == threat.Y) {
+							if (board->NumMovesLeft != 3) return PassAction::New();
+							else return _noob->NextMove(board, player);
+						}
+						else if (pieceToMove.Y < threat.Y) {
+							Position2D dest = Position2D::New(pieceToMove.X, pieceToMove.Y + 1);
+							if (board->IsFree(dest) && board->IsOnBoard(dest)) return MovePieceAction::New(pieceToMove, dest);
+							else return _noob->NextMove(board, player);
+						}
+						else {
+							Position2D dest = Position2D::New(pieceToMove.X, pieceToMove.Y - 1);
+							if (board->IsFree(dest) && board->IsOnBoard(dest)) return MovePieceAction::New(pieceToMove, dest);
+							else return _noob->NextMove(board, player);
+						}
 					}
 				}
 			}
