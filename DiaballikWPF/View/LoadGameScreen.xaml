@@ -41,7 +41,8 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Menu Grid.Row="0" Style="{DynamicResource MaterialDesignMenu}" Background="Transparent">
+        <Menu Grid.Row="0" Style="{DynamicResource MaterialDesignMenu}" >
+
 
             <MenuItem Style="{DynamicResource MaterialDesignMenuItem}" Background="Transparent">
                 <MenuItem.Header>
@@ -51,7 +52,7 @@
                 <MenuItem Command="{Binding BackToMainMenuCommand}"
                           Style="{DynamicResource MaterialDesignMenuItem}">
                     <MenuItem.Header>
-                        <StackPanel Orientation="Horizontal" Background="{DynamicResource MaterialDesignBackground}">
+                        <StackPanel Orientation="Horizontal" Background="Transparent">
                             <materialDesign:PackIcon Kind="ExitToApp" Margin="0,0,10,0"
                                                      VerticalAlignment="Center" />
                             <ContentPresenter Content="Back to main menu" VerticalAlignment="Center" />
